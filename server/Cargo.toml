@@ -5,3 +5,16 @@ edition = "2021"
 
 [dependencies]
 dioxus = { workspace = true, features = ["fullstack"] }
+
+tokio = { version = "1.42.0", features = ["sync"], optional = true }
+sqlx = { version = "0.8.3", features = [
+  "chrono",
+  "postgres",
+  "runtime-tokio",
+  "tls-rustls-ring",
+  "uuid",
+], optional = true }
+
+[features]
+api = ["db"]
+db = ["tokio", "sqlx"]
