@@ -15,6 +15,10 @@ sqlx = { version = "0.8.3", features = [
   "uuid",
 ], optional = true }
 
+oauth2 = { version = "4.4.2", features = ["reqwest"] }
+reqwest = { version = "0.12.12", features = ["json"] }
+serde = { version = "1.0.217", features = ["derive"] }
+
 [features]
 api = ["db"]
 db = ["tokio", "sqlx"]

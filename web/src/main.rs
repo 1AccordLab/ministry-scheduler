@@ -9,6 +9,9 @@ const MAIN_CSS: Asset = asset!("/assets/main.css");
 const TAILWIND_CSS: Asset = asset!("/assets/tailwind.css");
 
 fn main() {
+    #[cfg(feature = "server")]
+    dotenv::dotenv().ok();
+
     dioxus::launch(App);
 }
 
@@ -29,6 +32,7 @@ fn Navbar() -> Element {
             Link { to: Route::Home {}, "Home" }
             Link { to: Route::Blog { id: 1 }, "Blog" }
             Link { to: Route::DbHealthCheck {}, "DB Health Check" }
+            Link { to: Route::LineLogin {}, "LINE Login" }
         }
 
         Outlet::<Route> {}

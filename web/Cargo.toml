@@ -7,6 +7,9 @@ edition = "2021"
 dioxus = { workspace = true, features = ["router"] }
 server = { workspace = true }
 
+dotenv = "0.15.0"
+web-sys = "0.3.76"
+
 [features]
 default = []
 web = ["dioxus/web"]

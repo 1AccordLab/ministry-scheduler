@@ -1,7 +1,7 @@
 use dioxus::prelude::*;
 
 use crate::{
-    views::{Blog, DbHealthCheck, Home},
+    views::{Blog, DbHealthCheck, Home, LineCallBack, LineLogin},
     Navbar,
 };
 
@@ -17,4 +17,10 @@ pub enum Route {
 
     #[route("/db_health_check")]
     DbHealthCheck {},
+
+    #[route("/oauth2/line/login")]
+    LineLogin {},
+
+    #[route("/oauth2/line/callback?:code")]
+    LineCallBack { code: String },
 }
