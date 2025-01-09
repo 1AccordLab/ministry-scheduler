@@ -49,7 +49,7 @@ mod server {
             .request_async(oauth2::reqwest::async_http_client)
             .await?;
         let profile: Profile = reqwest::Client::new()
-            .get("https://api.line.me/v2/profile")
+            .get(env::var("LINE_API_PROFILE").unwrap())
             .bearer_auth(token.access_token().secret())
             .send()
             .await?
