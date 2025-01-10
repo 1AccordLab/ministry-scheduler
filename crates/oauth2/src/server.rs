@@ -5,6 +5,7 @@ use oauth2::{
     Scope, TokenResponse, TokenUrl,
 };
 use std::env;
+use thiserror::Error;
 use uuid::Uuid;
 
 use crate::structs::Profile;
@@ -23,19 +24,32 @@ pub fn line_auth() -> String {
     auth_url.to_string()
 }
 
+#[derive(Error, Debug)]
+enum AuthError {
+    #[error("failed to fetch token")]
+    FetchTokenFailed,
+
+    #[error("failed to fetch profile")]
+    FetchProfileFailed,
+}
+
 pub async fn line_callback(code: String) -> Result<Profile, ServerFnError> {
     let client = create_client();
     let token = client
         .exchange_code(AuthorizationCode::new(code))
         .request_async(oauth2::reqwest::async_http_client)
-        .await?;
+        .await
+        .map_err(|_| AuthError::FetchTokenFailed)?;
+
     let profile: Profile = reqwest::Client::new()
         .get(env::var("LINE_API_PROFILE").unwrap())
         .bearer_auth(token.access_token().secret())
         .send()
-        .await?
+        .await
+        .map_err(|_| AuthError::FetchProfileFailed)?
         .json()
         .await?;
+
     Ok(profile)
 }
 
