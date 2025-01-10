@@ -73,7 +73,7 @@ fn set_cookie(session_id: Uuid) {
 
     server_context().response_parts_mut().headers.insert(
         "Set-Cookie",
-        format!("session_id={session_id}, Path=/, HttpOnly; Expires={expires}")
+        format!("session_id={session_id}; Path=/; HttpOnly; Secure; Expires={expires}")
             .parse()
             .unwrap(),
     );
