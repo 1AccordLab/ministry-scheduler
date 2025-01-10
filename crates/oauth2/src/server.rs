@@ -10,6 +10,15 @@ use uuid::Uuid;
 
 use crate::structs::Profile;
 
+#[derive(Error, Debug)]
+enum AuthError {
+    #[error("failed to fetch token")]
+    FetchTokenFailed,
+
+    #[error("failed to fetch profile")]
+    FetchProfileFailed,
+}
+
 pub fn line_auth() -> String {
     let client = create_client();
     let session_id = Uuid::new_v4();
@@ -22,15 +31,6 @@ pub fn line_auth() -> String {
 
     set_cookie(session_id);
     auth_url.to_string()
-}
-
-#[derive(Error, Debug)]
-enum AuthError {
-    #[error("failed to fetch token")]
-    FetchTokenFailed,
-
-    #[error("failed to fetch profile")]
-    FetchProfileFailed,
 }
 
 pub async fn line_callback(code: String) -> Result<Profile, ServerFnError> {
