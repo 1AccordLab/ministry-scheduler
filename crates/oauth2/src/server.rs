@@ -19,6 +19,11 @@ enum AuthError {
     FetchProfileFailed,
 }
 
+// TODO: impl this (get `session_id:Profile` from redis)
+pub fn get_current_user() -> Option<String> {
+    get_current_session_id()
+}
+
 pub fn line_auth() -> String {
     let client = create_client();
     let session_id = Uuid::new_v4();
@@ -77,4 +82,17 @@ fn set_cookie(session_id: Uuid) {
             .parse()
             .unwrap(),
     );
+}
+
+fn get_current_session_id() -> Option<String> {
+    server_context()
+        .request_parts()
+        .headers
+        .get("Cookie")?
+        .to_str()
+        .ok()?
+        .split(';')
+        .map(str::trim)
+        .find_map(|cookie| cookie.split('=').last())
+        .map(String::from)
 }
