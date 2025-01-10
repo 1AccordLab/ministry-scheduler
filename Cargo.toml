@@ -10,7 +10,7 @@ server = { path = "server" }
 
 [profile.wasm-dev]
 inherits = "dev"
-opt-level = 1
+opt-level = 0
 
 [profile.server-dev]
 inherits = "dev"
