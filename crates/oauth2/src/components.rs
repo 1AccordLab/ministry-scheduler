@@ -1,6 +1,6 @@
 use dioxus::prelude::*;
 
-use server::apis::oauth2::line_auth;
+use crate::server_fns::{line_auth, line_callback};
 
 #[component]
 pub fn LineLogin() -> Element {
@@ -13,4 +13,14 @@ pub fn LineLogin() -> Element {
     });
 
     rsx! {}
+}
+
+#[component]
+pub fn LineCallBack(code: String) -> Element {
+    let profile = use_server_future(move || {
+        let code = code.clone();
+        async { line_callback(code).await.unwrap() }
+    })?;
+
+    rsx! { "{profile().unwrap():?}" }
 }

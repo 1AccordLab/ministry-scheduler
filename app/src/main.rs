@@ -1,0 +1,80 @@
+use dioxus::prelude::*;
+use oauth2::components::{LineCallBack, LineLogin};
+
+const FAVICON: Asset = asset!("/assets/favicon.ico");
+const MAIN_CSS: Asset = asset!("/assets/main.css");
+const TAILWIND_CSS: Asset = asset!("/assets/tailwind.css");
+
+fn main() {
+    #[cfg(feature = "server")]
+    dotenv::dotenv().ok();
+
+    dioxus::launch(App);
+}
+
+#[derive(Debug, Clone, Routable, PartialEq)]
+#[rustfmt::skip]
+enum Route {
+    #[layout(Navbar)]
+    #[route("/")]
+    Home {},
+
+    #[route("/blog/:id")]
+    Blog { id: i32 },
+
+    #[route("/oauth2/line/login")]
+    LineLogin {},
+
+    #[route("/oauth2/line/callback?:code")]
+    LineCallBack { code: String },
+}
+
+#[component]
+fn App() -> Element {
+    rsx! {
+        document::Link { rel: "icon", href: FAVICON }
+        document::Link { rel: "stylesheet", href: MAIN_CSS }
+        document::Link { rel: "stylesheet", href: TAILWIND_CSS }
+
+        Router::<Route> {}
+    }
+}
+
+#[component]
+fn Navbar() -> Element {
+    rsx! {
+        div { id: "navbar",
+            Link { to: Route::Home {}, "Home" }
+            Link { to: Route::Blog { id: 1 }, "Blog" }
+            Link { to: Route::LineLogin {}, "LINE Login" }
+        }
+
+        Outlet::<Route> {}
+    }
+}
+
+#[component]
+fn Home() -> Element {
+    rsx! {
+        div {
+            h1 { "Hello Dioxus!" }
+        }
+    }
+}
+
+#[component]
+fn Blog(id: i32) -> Element {
+    rsx! {
+        div { id: "blog",
+
+            h1 { "This is blog #{id}!" }
+            p {
+                "In blog #{id}, we show how the Dioxus router works and how URL parameters can be passed as props to our route components."
+            }
+
+            Link { to: Route::Blog { id: id - 1 }, "Previous" }
+            span { " <---> " }
+            Link { to: Route::Blog { id: id + 1 }, "Next" }
+        }
+    }
+}
