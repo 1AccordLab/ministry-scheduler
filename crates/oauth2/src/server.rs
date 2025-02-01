@@ -1,8 +1,12 @@
 use chrono::{Duration, Utc};
 use dioxus::prelude::{server_context, ServerFnError};
 use oauth2::{
-    basic::BasicClient, AuthUrl, AuthorizationCode, ClientId, ClientSecret, CsrfToken, RedirectUrl,
-    Scope, TokenResponse, TokenUrl,
+    basic::{
+        BasicClient, BasicErrorResponse, BasicRevocationErrorResponse,
+        BasicTokenIntrospectionResponse, BasicTokenResponse,
+    },
+    AuthUrl, AuthorizationCode, Client, ClientId, ClientSecret, CsrfToken, EndpointNotSet,
+    EndpointSet, RedirectUrl, Scope, StandardRevocableToken, TokenResponse, TokenUrl,
 };
 use std::env;
 use thiserror::Error;
@@ -40,9 +44,16 @@ pub fn line_auth() -> String {
 
 pub async fn line_callback(code: String) -> Result<Profile, ServerFnError> {
     let client = create_client();
+
+    let http_client = reqwest::ClientBuilder::new()
+        // Following redirects opens the client up to SSRF vulnerabilities.
+        .redirect(reqwest::redirect::Policy::none())
+        .build()
+        .unwrap();
+
     let token = client
         .exchange_code(AuthorizationCode::new(code))
-        .request_async(oauth2::reqwest::async_http_client)
+        .request_async(&http_client)
         .await
         .map_err(|_| AuthError::FetchTokenFailed)?;
 
@@ -58,18 +69,18 @@ pub async fn line_callback(code: String) -> Result<Profile, ServerFnError> {
     Ok(profile)
 }
 
-fn create_client() -> BasicClient {
+fn create_client() -> LineOAuthClient {
     let client_id = ClientId::new(env::var("LINE_CHANNEL_ID").unwrap());
     let client_secret = ClientSecret::new(env::var("LINE_CHANNEL_SECRET").unwrap());
+    let auth_url = AuthUrl::new(env::var("LINE_API_AUTHORIZE").unwrap()).unwrap();
+    let token_url = TokenUrl::new(env::var("LINE_API_TOKEN").unwrap()).unwrap();
     let redirect_url = RedirectUrl::new(env::var("REDIRECT_URL").unwrap()).unwrap();
 
-    BasicClient::new(
-        client_id,
-        Some(client_secret),
-        AuthUrl::new(env::var("LINE_API_AUTHORIZE").unwrap()).unwrap(),
-        Some(TokenUrl::new(env::var("LINE_API_TOKEN").unwrap()).unwrap()),
-    )
-    .set_redirect_uri(redirect_url)
+    BasicClient::new(client_id)
+        .set_client_secret(client_secret)
+        .set_auth_uri(auth_url)
+        .set_token_uri(token_url)
+        .set_redirect_uri(redirect_url)
 }
 
 fn set_cookie(session_id: Uuid) {
@@ -96,3 +107,23 @@ fn get_current_session_id() -> Option<String> {
         .find_map(|cookie| cookie.split('=').last())
         .map(String::from)
 }
+
+// I think the oauth2 crate should have a way to make this easier
+type LineOAuthClient<
+    HasAuthUrl = EndpointSet,
+    HasDeviceAuthUrl = EndpointNotSet,
+    HasIntrospectionUrl = EndpointNotSet,
+    HasRevocationUrl = EndpointNotSet,
+    HasTokenUrl = EndpointSet,
+> = Client<
+    BasicErrorResponse,
+    BasicTokenResponse,
+    BasicTokenIntrospectionResponse,
+    StandardRevocableToken,
+    BasicRevocationErrorResponse,
+    HasAuthUrl,
+    HasDeviceAuthUrl,
+    HasIntrospectionUrl,
+    HasRevocationUrl,
+    HasTokenUrl,
+>;

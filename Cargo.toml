@@ -3,7 +3,7 @@ resolver = "2"
 members = ["app", "crates/oauth2"]
 
 [workspace.dependencies]
-dioxus = { version = "0.6.1", default-features = false, features = [
+dioxus = { version = "0.6.2", default-features = false, features = [
   "html",
   "document",
   "macro",
@@ -12,7 +12,7 @@ dioxus = { version = "0.6.1", default-features = false, features = [
   "asset",
   "fullstack",
 ] }
-thiserror = "2.0.10"
+thiserror = "2.0.11"
 serde = { version = "1.0.217", features = ["derive"] }
 
 oauth2 = { path = "crates/oauth2" }
