@@ -12,7 +12,7 @@ use std::env;
 use thiserror::Error;
 use uuid::Uuid;
 
-use crate::structs::Profile;
+use crate::models::Profile;
 
 #[derive(Error, Debug)]
 enum AuthError {

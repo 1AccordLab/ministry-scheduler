@@ -3,7 +3,7 @@ use dioxus::prelude::{server, server_fn, ServerFnError};
 #[cfg(feature = "server")]
 use crate::server;
 
-use crate::structs::Profile;
+use crate::models::Profile;
 
 #[server]
 pub async fn line_auth() -> Result<String, ServerFnError> {
