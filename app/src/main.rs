@@ -5,11 +5,22 @@ const FAVICON: Asset = asset!("/assets/favicon.ico");
 const MAIN_CSS: Asset = asset!("/assets/main.css");
 const TAILWIND_CSS: Asset = asset!("/assets/tailwind.css");
 
+#[cfg(not(feature = "server"))]
 fn main() {
-    #[cfg(feature = "server")]
+    dioxus::launch(App);
+}
+
+#[cfg(feature = "server")]
+#[tokio::main]
+async fn main() {
+    use axum::Router;
+
     dotenv::dotenv().ok();
 
-    dioxus::launch(App);
+    let app = Router::new().serve_dioxus_application(ServeConfig::new().unwrap(), App);
+    let addr = dioxus_cli_config::fullstack_address_or_localhost();
+    let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
+    axum::serve(listener, app).await.unwrap();
 }
 
 #[derive(Debug, Clone, Routable, PartialEq)]

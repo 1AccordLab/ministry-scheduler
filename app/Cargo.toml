@@ -7,9 +7,22 @@ edition = "2021"
 dioxus = { workspace = true, features = ["launch", "router"] }
 oauth2 = { workspace = true }
 
+dioxus-cli-config = { version = "0.6.2", optional = true }
+tokio = { version = "1.43.0", optional = true }
+axum = { version = "0.7.9", optional = true }
 dotenv = { version = "0.15.0", optional = true }
 
 [features]
 default = []
 web = ["dioxus/web"]
-server = ["dioxus/server", "dotenv", "oauth2/server"]
+server = [
+  # crates for launching the server
+  "dioxus/server",
+  "dioxus-cli-config",
+  "tokio",
+  "axum",
+  "dotenv",
+
+  # crates for business logic
+  "oauth2/server",
+]
