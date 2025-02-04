@@ -6,13 +6,28 @@ use oauth2::{
         BasicTokenIntrospectionResponse, BasicTokenResponse,
     },
     AuthUrl, AuthorizationCode, Client, ClientId, ClientSecret, CsrfToken, EndpointNotSet,
-    EndpointSet, RedirectUrl, Scope, StandardRevocableToken, TokenResponse, TokenUrl,
+    EndpointSet, PkceCodeChallenge, PkceCodeVerifier, RedirectUrl, Scope, StandardRevocableToken,
+    TokenResponse, TokenUrl,
 };
-use std::env;
+use std::{
+    collections::HashMap,
+    env,
+    sync::{Arc, LazyLock},
+};
 use thiserror::Error;
+use tokio::sync::Mutex;
 use uuid::Uuid;
 
 use crate::models::Profile;
+
+type SessionStore<SessionId = String> = Arc<Mutex<HashMap<SessionId, AuthState>>>;
+static SESSION_STORE: LazyLock<SessionStore> = LazyLock::new(Default::default);
+
+struct AuthState {
+    profile: Option<Profile>,
+    csrf_token: CsrfToken,
+    pkce_code_verifier: String,
+}
 
 #[derive(Error, Debug)]
 enum AuthError {
@@ -21,6 +36,15 @@ enum AuthError {
 
     #[error("failed to fetch profile")]
     FetchProfileFailed,
+
+    #[error("no session retrieved from cookie")]
+    NoSessionFromCookie,
+
+    #[error("no session found in store")]
+    NoSessionInStore,
+
+    #[error("csrf token mismatch")]
+    CsrfTokenMismatch,
 }
 
 // TODO: impl this (get `session_id:Profile` from redis)
@@ -28,21 +52,42 @@ pub fn get_current_user() -> Option<String> {
     get_current_session_id()
 }
 
-pub fn line_auth() -> String {
+pub async fn line_auth() -> String {
     let client = create_client();
     let session_id = Uuid::new_v4();
+    let (pkce_code_challenge, pkce_code_verifier) = PkceCodeChallenge::new_random_sha256();
 
-    let (auth_url, _csrf_token) = client
+    let (auth_url, csrf_token) = client
         .authorize_url(CsrfToken::new_random)
+        .set_pkce_challenge(pkce_code_challenge)
         .add_scope(Scope::new("profile".to_string()))
         .add_scope(Scope::new("openid".to_string()))
         .url();
+
+    SESSION_STORE.lock().await.insert(
+        session_id.to_string(),
+        AuthState {
+            profile: None,
+            csrf_token,
+            pkce_code_verifier: pkce_code_verifier.into_secret(),
+        },
+    );
 
     set_cookie(session_id);
     auth_url.to_string()
 }
 
-pub async fn line_callback(code: String) -> Result<Profile, ServerFnError> {
+pub async fn line_callback(code: String, state: String) -> Result<Profile, ServerFnError> {
+    let session_id = get_current_session_id().ok_or(AuthError::NoSessionFromCookie)?;
+    let mut auth_state = SESSION_STORE.lock().await;
+    let auth_state = auth_state
+        .get_mut(&session_id)
+        .ok_or(AuthError::NoSessionInStore)?;
+
+    if auth_state.csrf_token.secret().ne(&state) {
+        return Err(ServerFnError::new(AuthError::CsrfTokenMismatch));
+    }
+
     let client = create_client();
 
     let http_client = reqwest::ClientBuilder::new()
@@ -53,6 +98,7 @@ pub async fn line_callback(code: String) -> Result<Profile, ServerFnError> {
 
     let token = client
         .exchange_code(AuthorizationCode::new(code))
+        .set_pkce_verifier(PkceCodeVerifier::new(auth_state.pkce_code_verifier.clone()))
         .request_async(&http_client)
         .await
         .map_err(|_| AuthError::FetchTokenFailed)?;
@@ -65,6 +111,8 @@ pub async fn line_callback(code: String) -> Result<Profile, ServerFnError> {
         .map_err(|_| AuthError::FetchProfileFailed)?
         .json()
         .await?;
+
+    auth_state.profile = Some(profile.clone());
 
     Ok(profile)
 }

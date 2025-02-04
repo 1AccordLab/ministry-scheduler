@@ -11,10 +11,11 @@ serde = { workspace = true }
 web-sys = { version = "0.3.76" }
 
 oauth2 = { version = "5.0.0", features = ["reqwest"], optional = true }
+tokio = { workspace = true, optional = true }
 reqwest = { version = "0.12.12", features = ["json"], optional = true }
 uuid = { version = "1.11.0", features = ["v4"], optional = true }
 chrono = { version = "0.4.39", optional = true }
 
 [features]
 default = []
-server = ["oauth2", "reqwest", "uuid", "chrono"]
+server = ["oauth2", "tokio", "reqwest", "uuid", "chrono"]

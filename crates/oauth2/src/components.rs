@@ -16,10 +16,11 @@ pub fn LineLogin() -> Element {
 }
 
 #[component]
-pub fn LineCallBack(code: String) -> Element {
+pub fn LineCallBack(code: String, state: String) -> Element {
     let profile = use_server_future(move || {
         let code = code.clone();
-        async { line_callback(code).await }
+        let state = state.clone();
+        async { line_callback(code, state).await }
     })?;
 
     rsx! { "{profile().unwrap():?}" }

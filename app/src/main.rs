@@ -36,8 +36,8 @@ enum Route {
     #[route("/oauth2/line/login")]
     LineLogin {},
 
-    #[route("/oauth2/line/callback?:code")]
-    LineCallBack { code: String },
+    #[route("/oauth2/line/callback?:code&:state")]
+    LineCallBack { code: String, state: String },
 }
 
 #[component]

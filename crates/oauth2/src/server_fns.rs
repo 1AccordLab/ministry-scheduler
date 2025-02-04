@@ -7,12 +7,12 @@ use crate::models::Profile;
 
 #[server]
 pub async fn line_auth() -> Result<String, ServerFnError> {
-    let auth_url = server::line_auth();
+    let auth_url = server::line_auth().await;
     Ok(auth_url)
 }
 
 #[server]
-pub async fn line_callback(code: String) -> Result<Profile, ServerFnError> {
-    let profile = server::line_callback(code).await?;
+pub async fn line_callback(code: String, state: String) -> Result<Profile, ServerFnError> {
+    let profile = server::line_callback(code, state).await?;
     Ok(profile)
 }
