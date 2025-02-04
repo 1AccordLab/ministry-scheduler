@@ -1,5 +1,11 @@
-use chrono::{Duration, Utc};
-use dioxus::prelude::{server_context, ServerFnError};
+use axum::{
+    async_trait,
+    extract::{FromRef, FromRequestParts, Query, State},
+    http::{request::Parts, StatusCode},
+    response::{IntoResponse, Redirect, Response},
+    Json,
+};
+use axum_extra::extract::{cookie::Cookie, CookieJar};
 use oauth2::{
     basic::{
         BasicClient, BasicErrorResponse, BasicRevocationErrorResponse,
@@ -9,28 +15,25 @@ use oauth2::{
     EndpointSet, PkceCodeChallenge, PkceCodeVerifier, RedirectUrl, Scope, StandardRevocableToken,
     TokenResponse, TokenUrl,
 };
-use std::{
-    collections::HashMap,
-    env,
-    sync::{Arc, LazyLock},
-};
+use serde::Deserialize;
+use serde_json::json;
+use std::{collections::HashMap, env, sync::Arc};
 use thiserror::Error;
 use tokio::sync::Mutex;
 use uuid::Uuid;
 
 use crate::models::Profile;
 
-type SessionStore<SessionId = String> = Arc<Mutex<HashMap<SessionId, AuthState>>>;
-static SESSION_STORE: LazyLock<SessionStore> = LazyLock::new(Default::default);
+pub type SessionStore<SessionId = String> = Arc<Mutex<HashMap<SessionId, AuthState>>>;
 
-struct AuthState {
+pub struct AuthState {
     profile: Option<Profile>,
     csrf_token: CsrfToken,
     pkce_code_verifier: String,
 }
 
 #[derive(Error, Debug)]
-enum AuthError {
+pub enum AuthError {
     #[error("failed to fetch token")]
     FetchTokenFailed,
 
@@ -47,12 +50,20 @@ enum AuthError {
     CsrfTokenMismatch,
 }
 
-// TODO: impl this (get `session_id:Profile` from redis)
-pub fn get_current_user() -> Option<String> {
-    get_current_session_id()
+#[derive(Deserialize)]
+pub struct Oauth2CallbackRequest {
+    code: String,
+    state: String,
 }
 
-pub async fn line_auth() -> String {
+pub async fn get_profile(ProfileExtractor(profile): ProfileExtractor) -> Json<Profile> {
+    Json(profile)
+}
+
+pub async fn line_auth(
+    State(session_store): State<SessionStore>,
+    jar: CookieJar,
+) -> (CookieJar, Redirect) {
     let client = create_client();
     let session_id = Uuid::new_v4();
     let (pkce_code_challenge, pkce_code_verifier) = PkceCodeChallenge::new_random_sha256();
@@ -64,7 +75,7 @@ pub async fn line_auth() -> String {
         .add_scope(Scope::new("openid".to_string()))
         .url();
 
-    SESSION_STORE.lock().await.insert(
+    session_store.lock().await.insert(
         session_id.to_string(),
         AuthState {
             profile: None,
@@ -73,19 +84,28 @@ pub async fn line_auth() -> String {
         },
     );
 
-    set_cookie(session_id);
-    auth_url.to_string()
+    (
+        jar.add(Cookie::build(("session_id", session_id.to_string())).path("/")),
+        Redirect::temporary(auth_url.as_str()),
+    )
 }
 
-pub async fn line_callback(code: String, state: String) -> Result<Profile, ServerFnError> {
-    let session_id = get_current_session_id().ok_or(AuthError::NoSessionFromCookie)?;
-    let mut auth_state = SESSION_STORE.lock().await;
+pub async fn line_callback(
+    Query(params): Query<Oauth2CallbackRequest>,
+    State(session_store): State<SessionStore>,
+    jar: CookieJar,
+) -> Result<Redirect, AuthError> {
+    let session_id = jar
+        .get("session_id")
+        .ok_or(AuthError::NoSessionFromCookie)?
+        .value();
+    let mut auth_state = session_store.lock().await;
     let auth_state = auth_state
-        .get_mut(&session_id)
+        .get_mut(session_id)
         .ok_or(AuthError::NoSessionInStore)?;
 
-    if auth_state.csrf_token.secret().ne(&state) {
-        return Err(ServerFnError::new(AuthError::CsrfTokenMismatch));
+    if auth_state.csrf_token.secret().ne(&params.state) {
+        return Err(AuthError::CsrfTokenMismatch);
     }
 
     let client = create_client();
@@ -97,7 +117,7 @@ pub async fn line_callback(code: String, state: String) -> Result<Profile, Serve
         .unwrap();
 
     let token = client
-        .exchange_code(AuthorizationCode::new(code))
+        .exchange_code(AuthorizationCode::new(params.code))
         .set_pkce_verifier(PkceCodeVerifier::new(auth_state.pkce_code_verifier.clone()))
         .request_async(&http_client)
         .await
@@ -110,11 +130,12 @@ pub async fn line_callback(code: String, state: String) -> Result<Profile, Serve
         .await
         .map_err(|_| AuthError::FetchProfileFailed)?
         .json()
-        .await?;
+        .await
+        .map_err(|_| AuthError::FetchProfileFailed)?;
 
     auth_state.profile = Some(profile.clone());
 
-    Ok(profile)
+    Ok(Redirect::temporary("/profile"))
 }
 
 fn create_client() -> LineOAuthClient {
@@ -131,29 +152,63 @@ fn create_client() -> LineOAuthClient {
         .set_redirect_uri(redirect_url)
 }
 
-fn set_cookie(session_id: Uuid) {
-    let expiration_date = Utc::now() + Duration::days(30);
-    let expires = expiration_date.to_rfc2822();
+impl IntoResponse for AuthError {
+    fn into_response(self) -> Response {
+        let status = match self {
+            AuthError::FetchTokenFailed => StatusCode::INTERNAL_SERVER_ERROR,
+            AuthError::FetchProfileFailed => StatusCode::INTERNAL_SERVER_ERROR,
 
-    server_context().response_parts_mut().headers.insert(
-        "Set-Cookie",
-        format!("session_id={session_id}; Path=/; HttpOnly; Secure; Expires={expires}")
-            .parse()
-            .unwrap(),
-    );
+            AuthError::NoSessionFromCookie => StatusCode::UNAUTHORIZED,
+            AuthError::NoSessionInStore => StatusCode::UNAUTHORIZED,
+
+            AuthError::CsrfTokenMismatch => StatusCode::FORBIDDEN,
+        };
+
+        let body = json!({
+            "error": self.to_string(),
+        });
+
+        (status, Json(body)).into_response()
+    }
 }
 
-fn get_current_session_id() -> Option<String> {
-    server_context()
-        .request_parts()
-        .headers
-        .get("Cookie")?
-        .to_str()
-        .ok()?
-        .split(';')
-        .map(str::trim)
-        .find_map(|cookie| cookie.split('=').last())
-        .map(String::from)
+pub struct AuthRedirect;
+
+impl IntoResponse for AuthRedirect {
+    fn into_response(self) -> Response {
+        Redirect::temporary("/oauth2/line/login").into_response()
+    }
+}
+
+pub struct ProfileExtractor(Profile);
+
+#[async_trait]
+impl<S: Send + Sync> FromRequestParts<S> for ProfileExtractor
+where
+    SessionStore: FromRef<S>,
+{
+    type Rejection = AuthRedirect;
+
+    async fn from_request_parts(parts: &mut Parts, state: &S) -> Result<Self, Self::Rejection> {
+        let jar = CookieJar::from_request_parts(parts, state)
+            .await
+            .map_err(|_| AuthRedirect)?;
+
+        let session_id = jar.get("session_id").ok_or(AuthRedirect)?.value();
+
+        let session_store = SessionStore::from_ref(state);
+
+        let profile = session_store
+            .lock()
+            .await
+            .get(session_id)
+            .ok_or(AuthRedirect)?
+            .profile
+            .clone()
+            .ok_or(AuthRedirect)?;
+
+        Ok(ProfileExtractor(profile))
+    }
 }
 
 // I think the oauth2 crate should have a way to make this easier

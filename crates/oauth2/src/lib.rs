@@ -1,7 +1,4 @@
 #[cfg(feature = "server")]
-mod server;
+pub mod apis;
 
 mod models;
-
-pub mod components;
-pub mod server_fns;

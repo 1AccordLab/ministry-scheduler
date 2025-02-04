@@ -1,5 +1,4 @@
 use dioxus::prelude::*;
-use oauth2::components::{LineCallBack, LineLogin};
 
 const FAVICON: Asset = asset!("/assets/favicon.ico");
 const MAIN_CSS: Asset = asset!("/assets/main.css");
@@ -13,13 +12,20 @@ fn main() {
 #[cfg(feature = "server")]
 #[tokio::main]
 async fn main() {
-    use axum::Router;
+    use axum::{routing::get, Router};
+    use oauth2::apis::{get_profile, line_auth, line_callback, SessionStore};
 
     dotenv::dotenv().ok();
 
-    let app = Router::new().serve_dioxus_application(ServeConfig::new().unwrap(), App);
     let addr = dioxus_cli_config::fullstack_address_or_localhost();
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
+    let app = Router::new()
+        .serve_dioxus_application(ServeConfig::new().unwrap(), App)
+        .route("/profile", get(get_profile))
+        .route("/oauth2/line/login", get(line_auth))
+        .route("/oauth2/line/callback", get(line_callback))
+        .with_state(SessionStore::default());
+
     axum::serve(listener, app).await.unwrap();
 }
 
@@ -32,12 +38,6 @@ enum Route {
 
     #[route("/blog/:id")]
     Blog { id: i32 },
-
-    #[route("/oauth2/line/login")]
-    LineLogin {},
-
-    #[route("/oauth2/line/callback?:code&:state")]
-    LineCallBack { code: String, state: String },
 }
 
 #[component]
@@ -57,7 +57,8 @@ fn Navbar() -> Element {
         div { id: "navbar",
             Link { to: Route::Home {}, "Home" }
             Link { to: Route::Blog { id: 1 }, "Blog" }
-            Link { to: Route::LineLogin {}, "LINE Login" }
+            Link { to: "/profile", "Profile" }
+            Link { to: "/oauth2/line/login", "LINE Login" }
         }
 
         Outlet::<Route> {}

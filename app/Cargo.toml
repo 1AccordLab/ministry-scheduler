@@ -7,9 +7,10 @@ edition = "2021"
 dioxus = { workspace = true, features = ["launch", "router"] }
 oauth2 = { workspace = true }
 
-dioxus-cli-config = { version = "0.6.2", optional = true }
 tokio = { workspace = true, optional = true }
-axum = { version = "0.7.9", optional = true }
+axum = { workspace = true, optional = true }
+
+dioxus-cli-config = { version = "0.6.2", optional = true }
 dotenv = { version = "0.15.0", optional = true }
 
 [features]
