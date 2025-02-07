@@ -1,10 +1,10 @@
 [package]
-name = "oauth2"
+name = "server"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-dioxus = { workspace = true }
+dioxus = { workspace = true, features = ["fullstack"] }
 serde = { workspace = true }
 
 thiserror = { workspace = true, optional = true }
@@ -21,7 +21,7 @@ chrono = { version = "0.4.39", optional = true }
 
 [features]
 default = []
-server = [
+api = [
   "thiserror",
   "serde_json",
   "tokio",

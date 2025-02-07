@@ -1,8 +1,10 @@
 [workspace]
 resolver = "2"
-members = ["app", "crates/oauth2"]
+members = ["app", "server"]
 
 [workspace.dependencies]
+server = { path = "server" }
+
 dioxus = { version = "0.6.2", default-features = false, features = [
   "html",
   "document",
@@ -10,7 +12,6 @@ dioxus = { version = "0.6.2", default-features = false, features = [
   "signals",
   "hooks",
   "asset",
-  "fullstack",
 ] }
 thiserror = "2.0.11"
 serde = { version = "1.0.217", features = ["derive"] }
@@ -28,7 +29,6 @@ sqlx = { version = "0.8.3", features = [
 ] }
 reqwest = "0.12.12"
 
-oauth2 = { path = "crates/oauth2" }
 
 [profile]
 

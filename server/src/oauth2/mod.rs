@@ -1,4 +1,4 @@
-#[cfg(feature = "server")]
+#[cfg(feature = "api")]
 pub mod apis;
 
 mod models;

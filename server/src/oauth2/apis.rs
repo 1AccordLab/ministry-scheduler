@@ -23,7 +23,7 @@ use thiserror::Error;
 use tokio::sync::Mutex;
 use uuid::Uuid;
 
-use crate::models::Profile;
+use super::models::Profile;
 
 pub type SessionStore<SessionId = String> = Arc<Mutex<HashMap<SessionId, AuthState>>>;
 

@@ -13,7 +13,7 @@ fn main() {
 #[tokio::main]
 async fn main() {
     use axum::Router;
-    use oauth2::apis::SessionStore;
+    use server::oauth2::apis::SessionStore;
 
     dotenv::dotenv().ok();
 
@@ -21,7 +21,7 @@ async fn main() {
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
     let app = Router::new()
         .serve_dioxus_application(ServeConfig::new().unwrap(), App)
-        .nest("/", oauth2::apis::router())
+        .nest("/", server::oauth2::apis::router())
         .with_state(SessionStore::default());
 
     axum::serve(listener, app).await.unwrap();
