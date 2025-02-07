@@ -58,6 +58,7 @@ fn Navbar() -> Element {
             Link { to: "/profile", "Profile" }
             Link { to: "/oauth2/line/login", "LINE Login" }
             button {
+                class: "hover:cursor-pointer hover:text-[#91a4d2]",
                 onclick: |_| async {
                     let client = reqwest::Client::new();
                     client.post("http://localhost:8080/oauth2/line/logout").send().await.unwrap();
