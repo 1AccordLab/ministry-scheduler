@@ -47,6 +47,7 @@ dependencies = [
  "dioxus-cli-config",
  "dotenv",
  "oauth2 0.1.0",
+ "reqwest",
  "tokio",
 ]
 

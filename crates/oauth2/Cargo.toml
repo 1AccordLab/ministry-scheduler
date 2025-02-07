@@ -12,9 +12,9 @@ serde_json = { workspace = true, optional = true }
 tokio = { workspace = true, optional = true }
 axum = { workspace = true, optional = true }
 axum-extra = { workspace = true, optional = true }
+reqwest = { workspace = true, features = ["json"], optional = true }
 
 oauth2 = { version = "5.0.0", features = ["reqwest"], optional = true }
-reqwest = { version = "0.12.12", features = ["json"], optional = true }
 uuid = { version = "1.11.0", features = ["v4"], optional = true }
 chrono = { version = "0.4.39", optional = true }
 

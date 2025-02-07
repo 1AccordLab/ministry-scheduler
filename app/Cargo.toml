@@ -6,6 +6,7 @@ edition = "2021"
 [dependencies]
 dioxus = { workspace = true, features = ["launch", "router"] }
 oauth2 = { workspace = true }
+reqwest = { workspace = true }
 
 tokio = { workspace = true, optional = true }
 axum = { workspace = true, optional = true }

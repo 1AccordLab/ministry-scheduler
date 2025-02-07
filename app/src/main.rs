@@ -57,6 +57,13 @@ fn Navbar() -> Element {
             Link { to: Route::Blog { id: 1 }, "Blog" }
             Link { to: "/profile", "Profile" }
             Link { to: "/oauth2/line/login", "LINE Login" }
+            button {
+                onclick: |_| async {
+                    let client = reqwest::Client::new();
+                    client.post("http://localhost:8080/oauth2/line/logout").send().await.unwrap();
+                },
+                "Logout"
+            }
         }
 
         Outlet::<Route> {}

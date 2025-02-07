@@ -3,7 +3,7 @@ use axum::{
     extract::{FromRef, FromRequestParts, Query, State},
     http::{request::Parts, StatusCode},
     response::{IntoResponse, Redirect, Response},
-    routing::get,
+    routing::{get, post},
     Json, Router,
 };
 use axum_extra::extract::{cookie::Cookie, CookieJar};
@@ -62,6 +62,7 @@ pub fn router() -> Router<SessionStore> {
         .route("/profile", get(get_profile))
         .route("/oauth2/line/login", get(line_auth))
         .route("/oauth2/line/callback", get(line_callback))
+        .route("/oauth2/line/logout", post(line_logout))
 }
 
 pub async fn get_profile(ProfileExtractor(profile): ProfileExtractor) -> Json<Profile> {
@@ -144,6 +145,13 @@ pub async fn line_callback(
     auth_state.profile = Some(profile.clone());
 
     Ok(Redirect::temporary("/profile"))
+}
+
+pub async fn line_logout(State(session_store): State<SessionStore>, jar: CookieJar) {
+    if let Some(cookie) = jar.get("session_id") {
+        let session_id = cookie.value();
+        session_store.lock().await.remove(session_id);
+    }
 }
 
 fn create_client() -> LineOAuthClient {
