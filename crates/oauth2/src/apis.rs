@@ -3,7 +3,8 @@ use axum::{
     extract::{FromRef, FromRequestParts, Query, State},
     http::{request::Parts, StatusCode},
     response::{IntoResponse, Redirect, Response},
-    Json,
+    routing::get,
+    Json, Router,
 };
 use axum_extra::extract::{cookie::Cookie, CookieJar};
 use oauth2::{
@@ -54,6 +55,13 @@ pub enum AuthError {
 pub struct Oauth2CallbackRequest {
     code: String,
     state: String,
+}
+
+pub fn router() -> Router<SessionStore> {
+    Router::new()
+        .route("/profile", get(get_profile))
+        .route("/oauth2/line/login", get(line_auth))
+        .route("/oauth2/line/callback", get(line_callback))
 }
 
 pub async fn get_profile(ProfileExtractor(profile): ProfileExtractor) -> Json<Profile> {

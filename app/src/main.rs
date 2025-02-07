@@ -12,8 +12,8 @@ fn main() {
 #[cfg(feature = "server")]
 #[tokio::main]
 async fn main() {
-    use axum::{routing::get, Router};
-    use oauth2::apis::{get_profile, line_auth, line_callback, SessionStore};
+    use axum::Router;
+    use oauth2::apis::SessionStore;
 
     dotenv::dotenv().ok();
 
@@ -21,9 +21,7 @@ async fn main() {
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
     let app = Router::new()
         .serve_dioxus_application(ServeConfig::new().unwrap(), App)
-        .route("/profile", get(get_profile))
-        .route("/oauth2/line/login", get(line_auth))
-        .route("/oauth2/line/callback", get(line_callback))
+        .nest("/", oauth2::apis::router())
         .with_state(SessionStore::default());
 
     axum::serve(listener, app).await.unwrap();
