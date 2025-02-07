@@ -1,14 +1,5 @@
 use dioxus::prelude::*;
 
-const FAVICON: Asset = asset!("/assets/favicon.ico");
-const MAIN_CSS: Asset = asset!("/assets/main.css");
-const TAILWIND_CSS: Asset = asset!("/assets/tailwind.css");
-
-#[cfg(not(feature = "server"))]
-fn main() {
-    dioxus::launch(App);
-}
-
 #[cfg(feature = "server")]
 #[tokio::main]
 async fn main() {
@@ -27,6 +18,11 @@ async fn main() {
     axum::serve(listener, app).await.unwrap();
 }
 
+#[cfg(not(feature = "server"))]
+fn main() {
+    dioxus::launch(App);
+}
+
 #[derive(Debug, Clone, Routable, PartialEq)]
 #[rustfmt::skip]
 enum Route {
@@ -41,9 +37,9 @@ enum Route {
 #[component]
 fn App() -> Element {
     rsx! {
-        document::Link { rel: "icon", href: FAVICON }
-        document::Link { rel: "stylesheet", href: MAIN_CSS }
-        document::Link { rel: "stylesheet", href: TAILWIND_CSS }
+        document::Link { rel: "icon", href: asset!("/assets/favicon.ico") }
+        document::Link { rel: "stylesheet", href: asset!("/assets/main.css") }
+        document::Link { rel: "stylesheet", href: asset!("/assets/tailwind.css") }
 
         Router::<Route> {}
     }
