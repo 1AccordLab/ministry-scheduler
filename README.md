@@ -9,6 +9,7 @@ cd app/
 2. compile tailwind css
 
 ```bash
+npm install
 npx @tailwindcss/cli -i ./input.css -o ./assets/tailwind.css
 ```
 
@@ -24,10 +25,10 @@ dx serve
 ## Todos
 
 - oauth2 with line
-  - [] postgres: user table
+  - [x] postgres: user table
   - [x] login
   - [] signup (persistence user data in postgres)
-  - [] logout
+  - [x] logout
   - [] session/cookie
     - [x] in-memory
     - [] redis
