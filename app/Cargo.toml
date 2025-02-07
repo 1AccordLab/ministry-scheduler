@@ -4,25 +4,24 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-dioxus = { workspace = true, features = ["launch", "router"] }
-server = { workspace = true }
+server = { workspace = true, optional = true }
+
+dioxus = { workspace = true, features = [
+  "html",
+  "document",
+  "macro",
+  "signals",
+  "hooks",
+  "asset",
+  "launch",
+  "router",
+  "fullstack",
+] }
 reqwest = { workspace = true }
-
 tokio = { workspace = true, optional = true }
-axum = { workspace = true, optional = true }
 
-dioxus-cli-config = { version = "0.6.2", optional = true }
-dotenv = { version = "0.15.0", optional = true }
 
 [features]
 default = []
 web = ["dioxus/web"]
-server = [
-  "dioxus/server",
-  "dioxus-cli-config",
-  "tokio",
-  "axum",
-  "dotenv",
-
-  "server/api",
-]
+server = ["dioxus/server", "tokio", "dep:server"]

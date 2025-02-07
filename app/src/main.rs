@@ -1,26 +1,14 @@
 use dioxus::prelude::*;
 
-#[cfg(feature = "server")]
-#[tokio::main]
-async fn main() {
-    use axum::Router;
-    use server::oauth2::apis::SessionStore;
-
-    dotenv::dotenv().ok();
-
-    let addr = dioxus_cli_config::fullstack_address_or_localhost();
-    let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
-    let app = Router::new()
-        .serve_dioxus_application(ServeConfig::new().unwrap(), App)
-        .nest("/", server::oauth2::apis::router())
-        .with_state(SessionStore::default());
-
-    axum::serve(listener, app).await.unwrap();
-}
-
 #[cfg(not(feature = "server"))]
 fn main() {
     dioxus::launch(App);
+}
+
+#[cfg(feature = "server")]
+#[tokio::main]
+async fn main() {
+    server::launch(App).await;
 }
 
 #[derive(Debug, Clone, Routable, PartialEq)]

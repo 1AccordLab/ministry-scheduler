@@ -42,10 +42,7 @@ dependencies = [
 name = "app"
 version = "0.1.0"
 dependencies = [
- "axum",
  "dioxus",
- "dioxus-cli-config",
- "dotenv",
  "reqwest",
  "server",
  "tokio",
@@ -2646,6 +2643,8 @@ dependencies = [
  "axum-extra",
  "chrono",
  "dioxus",
+ "dioxus-cli-config",
+ "dotenv",
  "oauth2",
  "reqwest",
  "serde",

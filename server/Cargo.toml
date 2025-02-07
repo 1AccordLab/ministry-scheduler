@@ -4,32 +4,25 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-dioxus = { workspace = true, features = ["fullstack"] }
-serde = { workspace = true }
+dioxus = { workspace = true }
+tokio = { workspace = true }
+reqwest = { workspace = true, features = ["json"] }
 
-thiserror = { workspace = true, optional = true }
-serde_json = { workspace = true, optional = true }
-tokio = { workspace = true, optional = true }
-axum = { workspace = true, optional = true }
-axum-extra = { workspace = true, optional = true }
-sqlx = { workspace = true, optional = true }
-reqwest = { workspace = true, features = ["json"], optional = true }
-
-oauth2 = { version = "5.0.0", features = ["reqwest"], optional = true }
-uuid = { version = "1.11.0", features = ["v4"], optional = true }
-chrono = { version = "0.4.39", optional = true }
-
-[features]
-default = []
-api = [
-  "thiserror",
-  "serde_json",
-  "tokio",
-  "axum",
-  "axum-extra",
-  "sqlx",
-  "oauth2",
-  "reqwest",
+axum = "0.7.9"
+axum-extra = { version = "0.9.6", features = ["cookie"] }
+dotenv = { version = "0.15.0" }
+dioxus-cli-config = { version = "0.6.2" }
+sqlx = { version = "0.8.3", features = [
+  "runtime-tokio",
+  "tls-rustls",
+  "postgres",
+  "macros",
   "uuid",
   "chrono",
-]
+] }
+thiserror = "2.0.11"
+serde = { version = "1.0.217", features = ["derive"] }
+serde_json = "1.0.138"
+oauth2 = { version = "5.0.0", features = ["reqwest"] }
+uuid = { version = "1.11.0", features = ["v4"] }
+chrono = { version = "0.4.39" }
