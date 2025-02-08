@@ -7,7 +7,7 @@ CREATE TABLE USERS (
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
   -- OAuth2 related fields
-  line_id TEXT NOT NULL,
+  line_id TEXT UNIQUE NOT NULL,
   line_name TEXT NOT NULL,
   avatar_url TEXT NOT NULL,
   status_message TEXT NOT NULL
