@@ -24,6 +24,7 @@ use tokio::sync::Mutex;
 use uuid::Uuid;
 
 use super::models::Profile;
+use crate::AppState;
 
 pub type SessionStore<SessionId = String> = Arc<Mutex<HashMap<SessionId, AuthState>>>;
 
@@ -57,7 +58,7 @@ pub struct Oauth2CallbackRequest {
     state: String,
 }
 
-pub fn router() -> Router<SessionStore> {
+pub fn router() -> Router<AppState> {
     Router::new()
         .route("/profile", get(get_profile))
         .route("/oauth2/line/login", get(line_auth))
@@ -69,10 +70,7 @@ pub async fn get_profile(ProfileExtractor(profile): ProfileExtractor) -> Json<Pr
     Json(profile)
 }
 
-pub async fn line_auth(
-    State(session_store): State<SessionStore>,
-    jar: CookieJar,
-) -> (CookieJar, Redirect) {
+pub async fn line_auth(State(state): State<AppState>, jar: CookieJar) -> (CookieJar, Redirect) {
     let client = create_client();
     let session_id = Uuid::new_v4();
     let (pkce_code_challenge, pkce_code_verifier) = PkceCodeChallenge::new_random_sha256();
@@ -84,7 +82,7 @@ pub async fn line_auth(
         .add_scope(Scope::new("openid".to_string()))
         .url();
 
-    session_store.lock().await.insert(
+    state.session_store.lock().await.insert(
         session_id.to_string(),
         AuthState {
             profile: None,
@@ -101,14 +99,14 @@ pub async fn line_auth(
 
 pub async fn line_callback(
     Query(params): Query<Oauth2CallbackRequest>,
-    State(session_store): State<SessionStore>,
+    State(state): State<AppState>,
     jar: CookieJar,
 ) -> Result<Redirect, AuthError> {
     let session_id = jar
         .get("session_id")
         .ok_or(AuthError::NoSessionFromCookie)?
         .value();
-    let mut auth_state = session_store.lock().await;
+    let mut auth_state = state.session_store.lock().await;
     let auth_state = auth_state
         .get_mut(session_id)
         .ok_or(AuthError::NoSessionInStore)?;
@@ -147,10 +145,10 @@ pub async fn line_callback(
     Ok(Redirect::temporary("/profile"))
 }
 
-pub async fn line_logout(State(session_store): State<SessionStore>, jar: CookieJar) {
+pub async fn line_logout(State(state): State<AppState>, jar: CookieJar) {
     if let Some(cookie) = jar.get("session_id") {
         let session_id = cookie.value();
-        session_store.lock().await.remove(session_id);
+        state.session_store.lock().await.remove(session_id);
     }
 }
 
@@ -201,7 +199,7 @@ pub struct ProfileExtractor(Profile);
 #[async_trait]
 impl<S: Send + Sync> FromRequestParts<S> for ProfileExtractor
 where
-    SessionStore: FromRef<S>,
+    AppState: FromRef<S>,
 {
     type Rejection = AuthRedirect;
 
@@ -212,7 +210,7 @@ where
 
         let session_id = jar.get("session_id").ok_or(AuthRedirect)?.value();
 
-        let session_store = SessionStore::from_ref(state);
+        let session_store = AppState::from_ref(state).session_store;
 
         let profile = session_store
             .lock()

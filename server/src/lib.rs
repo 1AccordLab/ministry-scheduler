@@ -4,6 +4,11 @@ use axum::Router;
 use dioxus::prelude::{DioxusRouterExt, Element, ServeConfig};
 use oauth2::apis::SessionStore;
 
+#[derive(Clone, Default)]
+pub struct AppState {
+    session_store: SessionStore,
+}
+
 pub async fn launch(app: fn() -> Element) {
     dotenv::dotenv().ok();
 
@@ -12,7 +17,7 @@ pub async fn launch(app: fn() -> Element) {
     let app = Router::new()
         .serve_dioxus_application(ServeConfig::new().unwrap(), app)
         .nest("/", oauth2::apis::router())
-        .with_state(SessionStore::default());
+        .with_state(AppState::default());
 
     axum::serve(listener, app).await.unwrap();
 }
