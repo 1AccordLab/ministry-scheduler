@@ -20,13 +20,13 @@ use serde::Deserialize;
 use serde_json::json;
 use std::{collections::HashMap, env, sync::Arc};
 use thiserror::Error;
-use tokio::sync::Mutex;
+use tokio::sync::RwLock;
 use uuid::Uuid;
 
 use super::models::Profile;
 use crate::AppState;
 
-pub type SessionStore<SessionId = String> = Arc<Mutex<HashMap<SessionId, AuthState>>>;
+pub type SessionStore<SessionId = String> = Arc<RwLock<HashMap<SessionId, AuthState>>>;
 
 pub struct AuthState {
     profile: Option<Profile>,
@@ -82,7 +82,7 @@ pub async fn line_auth(State(state): State<AppState>, jar: CookieJar) -> (Cookie
         .add_scope(Scope::new("openid".to_string()))
         .url();
 
-    state.session_store.lock().await.insert(
+    state.session_store.write().await.insert(
         session_id.to_string(),
         AuthState {
             profile: None,
@@ -106,7 +106,7 @@ pub async fn line_callback(
         .get("session_id")
         .ok_or(AuthError::NoSessionFromCookie)?
         .value();
-    let mut auth_state = state.session_store.lock().await;
+    let mut auth_state = state.session_store.write().await;
     let auth_state = auth_state
         .get_mut(session_id)
         .ok_or(AuthError::NoSessionInStore)?;
@@ -148,7 +148,7 @@ pub async fn line_callback(
 pub async fn line_logout(State(state): State<AppState>, jar: CookieJar) {
     if let Some(cookie) = jar.get("session_id") {
         let session_id = cookie.value();
-        state.session_store.lock().await.remove(session_id);
+        state.session_store.write().await.remove(session_id);
     }
 }
 
@@ -213,7 +213,7 @@ where
         let session_store = AppState::from_ref(state).session_store;
 
         let profile = session_store
-            .lock()
+            .read()
             .await
             .get(session_id)
             .ok_or(AuthRedirect)?
