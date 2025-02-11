@@ -7,6 +7,7 @@ edition = "2021"
 server = { workspace = true, optional = true }
 
 dioxus = { workspace = true, features = [
+  "web",
   "html",
   "document",
   "macro",
@@ -15,13 +16,10 @@ dioxus = { workspace = true, features = [
   "asset",
   "launch",
   "router",
-  "fullstack",
 ] }
 reqwest = { workspace = true }
 tokio = { workspace = true, optional = true }
 
 
 [features]
-default = []
-web = ["dioxus/web"]
-server = ["dioxus/server", "tokio", "dep:server"]
+server = ["tokio", "dep:server"]

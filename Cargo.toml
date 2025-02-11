@@ -5,7 +5,9 @@ members = ["app", "server"]
 [workspace.dependencies]
 server = { path = "server" }
 
-dioxus = { version = "0.6.2", default-features = false }
+dioxus = { version = "0.6.2", default-features = false, features = [
+  "fullstack",
+] }
 tokio = "1.43.0"
 reqwest = "0.12.12"
 
