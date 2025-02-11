@@ -10,7 +10,7 @@ cd app/
 
 ```bash
 npm install
-npx @tailwindcss/cli -i ./input.css -o ./assets/tailwind.css
+npm run tailwind:build
 ```
 
 3. serve the dioxus app with both client & server:
