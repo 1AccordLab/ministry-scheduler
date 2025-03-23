@@ -1,3 +1,4 @@
 tmp/
-node_modules/
 public/tailwind.css
+node_modules/
+.postgres/
