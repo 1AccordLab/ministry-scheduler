@@ -6,3 +6,4 @@ node_modules/
 
 public/tailwind.css
 gen/
+views/*.go

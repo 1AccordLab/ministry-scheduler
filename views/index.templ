@@ -1,0 +1,33 @@
+package views
+
+templ Index(name string) {
+	<!DOCTYPE html>
+	<html>
+		<head>
+			<title>Ministry Scheduler</title>
+			@partials()
+		</head>
+		<body>
+			@hello(name)
+			<div id="alpine-example" x-data="{ message: 'Hello Alpine!' }">
+				<span x-text="message"></span>
+			</div>
+			<button hx-get="/data" hx-target="#htmx-example">
+				Load Data
+			</button>
+			<div id="htmx-example"></div>
+		</body>
+	</html>
+}
+
+templ hello(name string) {
+	<h1>
+		Hello, { name }!
+	</h1>
+}
+
+templ partials() {
+	<style src="public/tailwind.css"> </style>
+	<script defer src="https://unpkg.com/htmx.org@1.9.12"></script>
+	<script defer src="https://unpkg.com/alpinejs@3.13.3"></script>
+}
