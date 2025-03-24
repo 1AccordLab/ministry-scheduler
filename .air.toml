@@ -1,0 +1,15 @@
+root = "."
+tmp_dir = "tmp"
+
+[build]
+pre_cmd = [
+  "npm run tailwind:build",
+  "templ generate",
+  "sqlc generate",
+  "goose up",
+]
+exclude_dir = ["tmp", "node_modules", "gen", "spec", "static"]
+exclude_file = ["views/*.go"]
+
+[screen]
+clear_on_rebuild = true

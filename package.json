@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "tailwind:build": "tailwindcss -i ./static/tailwind.css -o ./public/tailwind.css"
+    "tailwind:build": "tailwindcss -i ./static/tailwind.css -o ./public/tailwind.css -m"
   },
   "dependencies": {
     "@tailwindcss/cli": "^4.0.15",
