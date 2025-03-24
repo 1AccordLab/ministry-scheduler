@@ -3,6 +3,7 @@ tmp_dir = "tmp"
 
 [build]
 pre_cmd = [
+  "npm run core:build",
   "npm run tailwind:build",
   "templ generate",
   "sqlc generate",
