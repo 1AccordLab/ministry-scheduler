@@ -4,7 +4,6 @@ node_modules/
 .postgres/
 .env
 
-public/core.js
-public/tailwind.css
+public/
 gen/
 views/*.go

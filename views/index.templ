@@ -12,8 +12,8 @@ templ Index(name string) {
 			<div id="alpine-example" x-data="{ message: 'Hello Alpine!' }">
 				<span x-text="message"></span>
 			</div>
-			<button hx-get="/data" hx-target="#htmx-example">
-				Load Data
+			<button class="btn btn-outline" hx-get="/data" hx-target="#htmx-example">
+				點我！
 			</button>
 			<div id="htmx-example"></div>
 		</body>
@@ -27,6 +27,6 @@ templ hello(name string) {
 }
 
 templ import_core() {
-	<style src="public/tailwind.css"> </style>
+	<link rel="stylesheet" href="public/tailwind.css"/>
 	<script defer src="public/core.js"></script>
 }
