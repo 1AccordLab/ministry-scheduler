@@ -11,7 +11,7 @@ pre_cmd = [
 ]
 include_ext = ["go", "templ", "sql", "js", "css"]
 exclude_dir = ["tmp", "node_modules", "gen", "spec", "public"]
-exclude_file = ["views/*.go"]
+exclude_regex = ["_templ.go"]
 
 [screen]
 clear_on_rebuild = true
