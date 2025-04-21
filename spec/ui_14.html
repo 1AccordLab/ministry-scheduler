@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Harmony Grove - 服事管理</title>
+  <!-- Using Tailwind CSS via CDN for rapid prototyping -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Using a more playful, rounded font from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=Noto+Sans+TC:wght@400;500;700&display=swap"
+    rel="stylesheet">
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <style>
+    :root {
+      /* Unique, Relaxing Color Palette - Inspired by nature, dawn, gentle growth */
+      --color-primary-light: #A0D2DB;
+      /* Soft Sky Blue / Aqua */
+      --color-primary-medium: #5EAAA8;
+      /* Muted Teal */
+      --color-secondary: #F8B195;
+      /* Warm Coral/Peach */
+      --color-accent: #E85A4F;
+      /* Gentle Terracotta Red */
+      --color-background: #F9F7F3;
+      /* Warm Off-White / Parchment */
+      --color-text-dark: #4A4A4A;
+      /* Dark Grey for readability */
+      --color-text-light: #F9F7F3;
+      --color-success: #8DB580;
+      /* Muted Green */
+      --color-warning: #F0A07E;
+      /* Soft Orange */
+      --color-locked: #B0A8B9;
+      /* Dusty Lavender/Grey for locks */
+    }
+
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      background-color: var(--color-background);
+      color: var(--color-text-dark);
+    }
+
+    /* Applying the playful font to specific elements */
+    .font-game {
+      font-family: 'Mochiy Pop One', sans-serif;
+    }
+
+    /* Custom scrollbar for a softer look */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--color-background);
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: var(--color-primary-light);
+      border-radius: 10px;
+      border: 2px solid var(--color-background);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background-color: var(--color-primary-medium);
+    }
+
+    /* Avoiding card styles - using borders, backgrounds, and layout instead */
+    .section-container {
+      background-color: rgba(255, 255, 255, 0.6);
+      /* Slightly transparent white */
+      backdrop-filter: blur(5px);
+      /* Frosted glass effect */
+      border: 1px solid var(--color-primary-light);
+      border-radius: 20px;
+      /* Softer, game-like corners */
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 15px rgba(94, 170, 168, 0.1);
+      /* Subtle shadow */
+    }
+
+    /* Button Styles - Rounded, slightly playful */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.6rem 1.2rem;
+      border-radius: 999px;
+      /* Pill shape */
+      font-weight: 500;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+      /* Remove underline from potential <a> tags used as buttons */
+    }
+
+    .btn-primary {
+      background-color: var(--color-primary-medium);
+      color: var(--color-text-light);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--color-primary-light);
+      color: var(--color-text-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(94, 170, 168, 0.3);
+    }
+
+    .btn-secondary {
+      background-color: var(--color-secondary);
+      color: var(--color-text-dark);
+    }
+
+    .btn-secondary:hover {
+      background-color: #f7a084;
+      /* Slightly darker peach */
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(248, 177, 149, 0.3);
+    }
+
+    .btn-accent {
+      background-color: var(--color-accent);
+      color: var(--color-text-light);
+    }
+
+    .btn-accent:hover {
+      background-color: #e04a3f;
+      /* Slightly darker terracotta */
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(232, 90, 79, 0.3);
+    }
+
+    .btn-icon {
+      padding: 0.5rem;
+      width: 2.5rem;
+      height: 2.5rem;
+    }
+
+    /* Input Styles */
+    .input-field {
+      border: 1px solid var(--color-primary-light);
+      border-radius: 15px;
+      /* Rounded inputs */
+      padding: 0.75rem 1rem;
+      background-color: white;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .input-field:focus {
+      outline: none;
+      border-color: var(--color-primary-medium);
+      box-shadow: 0 0 0 3px rgba(94, 170, 168, 0.2);
+    }
+
+    /* Game-like elements */
+    .achievement-badge {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: var(--color-secondary);
+      color: white;
+      text-align: center;
+      line-height: 40px;
+      font-size: 1.2rem;
+      margin: 0 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s ease;
+    }
+
+    .achievement-badge:hover {
+      transform: scale(1.1);
+    }
+
+    /* Timeline / Path style for schedules */
+    .schedule-path {
+      position: relative;
+      padding: 20px 0 20px 40px;
+      /* Space for the path line */
+      border-left: 3px dashed var(--color-primary-light);
+    }
+
+    .schedule-node {
+      position: relative;
+      margin-bottom: 30px;
+      padding-left: 30px;
+      /* Space from the path line */
+    }
+
+    .schedule-node::before {
+      /* The 'dot' on the path */
+      content: '';
+      position: absolute;
+      left: -48px;
+      /* Adjust to center on the border-left */
+      top: 5px;
+      width: 18px;
+      height: 18px;
+      background-color: var(--color-secondary);
+      border-radius: 50%;
+      border: 3px solid var(--color-background);
+      box-shadow: 0 0 0 3px var(--color-secondary);
+    }
+
+    .schedule-node:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Scheduler Grid - Conceptual - Using CSS Grid */
+    .scheduler-grid {
+      display: grid;
+      /* Define columns dynamically based on needs (e.g., days of week) */
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .scheduler-cell {
+      background-color: rgba(255, 255, 255, 0.7);
+      border: 1px dashed var(--color-primary-light);
+      border-radius: 15px;
+      padding: 1rem;
+      min-height: 150px;
+      /* Ensure cells have some height */
+      position: relative;
+      /* For positioning elements inside */
+    }
+
+    .scheduler-cell h4 {
+      font-weight: 500;
+      color: var(--color-primary-medium);
+      margin-bottom: 0.5rem;
+      border-bottom: 1px solid var(--color-primary-light);
+      padding-bottom: 0.3rem;
+    }
+
+    .assigned-person {
+      display: flex;
+      align-items: center;
+      background-color: var(--color-primary-light);
+      color: var(--color-text-dark);
+      padding: 0.3rem 0.6rem;
+      border-radius: 10px;
+      margin-bottom: 0.4rem;
+      font-size: 0.9rem;
+      transition: background-color 0.2s ease;
+    }
+
+    .assigned-person:hover {
+      background-color: var(--color-primary-medium);
+      color: var(--color-text-light);
+    }
+
+    .assigned-person i {
+      margin-right: 0.4rem;
+      opacity: 0.7;
+    }
+
+    .locked-indicator {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      color: var(--color-locked);
+      font-size: 1.2rem;
+      cursor: help;
+      /* Indicate hoverable for tooltip */
+    }
+
+    .conflict-indicator {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      color: var(--color-accent);
+      font-size: 1.2rem;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+
+      50% {
+        transform: scale(1.2);
+        opacity: 0.7;
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    /* Background elements for game feel */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50px;
+      left: -50px;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(160, 210, 219, 0.3) 0%, rgba(160, 210, 219, 0) 70%);
+      z-index: -1;
+      opacity: 0.6;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: -80px;
+      right: -80px;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(248, 177, 149, 0.2) 0%, rgba(248, 177, 149, 0) 70%);
+      z-index: -1;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen flex flex-col">
+
+  <!-- Header / Navigation -->
+  <header class="sticky top-0 z-10 shadow-md backdrop-filter backdrop-blur-lg bg-opacity-80"
+    style="background-color: rgba(249, 247, 243, 0.8);">
+    <nav class="container mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="font-game text-2xl" style="color: var(--color-primary-medium);">
+        <i class="fas fa-seedling mr-2"></i>Harmony Grove
+      </div>
+      <div class="flex items-center space-x-4">
+        <!-- User Info & Achievements -->
+        <div class="flex items-center">
+          <span class="mr-3 hidden md:inline">哈囉, 以利亞！</span>
+          <div class="flex items-center">
+            <span class="achievement-badge" title="服事新手 (First Service!)"><i class="fas fa-leaf"></i></span>
+            <span class="achievement-badge" title="穩定貢獻 (Served 10 times)"><i class="fas fa-star"></i></span>
+            <span class="achievement-badge bg-gray-300" title="團隊合作 (Swap Approved)"><i class="fas fa-users"></i></span>
+          </div>
+        </div>
+        <!-- Navigation Icons -->
+        <a href="#dashboard" class="btn btn-icon btn-primary" title="儀表板"><i class="fas fa-home"></i></a>
+        <a href="#schedule" class="btn btn-icon btn-secondary" title="查看/安排服事"><i class="fas fa-calendar-alt"></i></a>
+        <a href="#requests" class="btn btn-icon btn-accent relative" title="請求與通知">
+          <i class="fas fa-bell"></i>
+          <span
+            class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">3</span>
+        </a>
+        <a href="#settings" class="btn btn-icon" style="background-color: var(--color-locked); color: white;"
+          title="設定"><i class="fas fa-cog"></i></a>
+        <button class="btn btn-icon" style="background: none; color: var(--color-accent);" title="登出"><i
+            class="fas fa-sign-out-alt"></i></button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="container mx-auto px-4 py-8 flex-grow">
+
+    <!-- Example Section: User Dashboard (Personal Mode) -->
+    <section id="dashboard" class="section-container">
+      <h2 class="font-game text-2xl mb-6" style="color: var(--color-primary-medium);">我的服事小徑</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <!-- Upcoming Ministry -->
+        <div class="p-4 rounded-lg" style="background-color: rgba(160, 210, 219, 0.2);">
+          <h3 class="font-semibold text-lg mb-2 flex items-center"><i class="fas fa-hourglass-half mr-2 text-sm"
+              style="color: var(--color-primary-medium);"></i>即將到來</h3>
+          <p class="text-xl font-bold" style="color: var(--color-secondary);">主日敬拜 - 吉他手</p>
+          <p class="text-gray-600"><i class="far fa-clock mr-1"></i> 2023/10/28 (六) 09:30</p>
+        </div>
+        <!-- Quick Actions -->
+        <div class="p-4 rounded-lg flex flex-col justify-center items-center space-y-3"
+          style="background-color: rgba(248, 177, 149, 0.2);">
+          <h3 class="font-semibold text-lg mb-2"><i class="fas fa-bolt mr-2 text-sm"
+              style="color: var(--color-secondary);"></i>快速行動</h3>
+          <button class="btn btn-secondary w-full"><i class="fas fa-calendar-times mr-2"></i>申請休假</button>
+          <button class="btn btn-accent w-full"><i class="fas fa-exchange-alt mr-2"></i>找人代班</button>
+        </div>
+        <!-- Personal Stats/Growth -->
+        <div class="p-4 rounded-lg" style="background-color: rgba(141, 181, 128, 0.2);">
+          <h3 class="font-semibold text-lg mb-2 flex items-center"><i class="fas fa-chart-line mr-2 text-sm"
+              style="color: var(--color-success);"></i>我的成長</h3>
+          <p>本月已服事: <span class="font-bold text-xl" style="color: var(--color-success);">1</span> 次</p>
+          <p>累積服事時數: <span class="font-bold text-xl" style="color: var(--color-success);">35</span> 小時</p>
+          <p>獲得徽章: <span class="font-bold text-xl" style="color: var(--color-success);">3</span> 個</p>
+        </div>
+      </div>
+
+      <h3 class="font-game text-xl mb-4" style="color: var(--color-primary-medium);">未來行程</h3>
+      <div class="schedule-path">
+        <!-- Schedule Item 1 -->
+        <div class="schedule-node">
+          <p class="font-semibold text-lg">主日敬拜 - 吉他手</p>
+          <p class="text-sm text-gray-500 mb-1">2023/10/28 (六) 09:30 - 12:00</p>
+          <div class="flex space-x-2 mt-1">
+            <button
+              class="text-xs py-1 px-2 rounded-full bg-yellow-200 text-yellow-800 hover:bg-yellow-300 transition duration-150"><i
+                class="fas fa-exchange-alt mr-1"></i>請求換班</button>
+          </div>
+        </div>
+        <!-- Schedule Item 2 -->
+        <div class="schedule-node">
+          <p class="font-semibold text-lg">禱告會 - 領會</p>
+          <p class="text-sm text-gray-500 mb-1">2023/11/01 (三) 19:30 - 21:00</p>
+          <div class="flex space-x-2 mt-1">
+            <button
+              class="text-xs py-1 px-2 rounded-full bg-yellow-200 text-yellow-800 hover:bg-yellow-300 transition duration-150"><i
+                class="fas fa-exchange-alt mr-1"></i>請求換班</button>
+          </div>
+        </div>
+        <!-- Schedule Item 3 -->
+        <div class="schedule-node">
+          <p class="font-semibold text-lg">SC 服事 - 招待</p>
+          <p class="text-sm text-gray-500 mb-1">2023/11/11 (六) 14:00 - 16:00</p>
+          <div class="flex space-x-2 mt-1">
+            <button
+              class="text-xs py-1 px-2 rounded-full bg-yellow-200 text-yellow-800 hover:bg-yellow-300 transition duration-150"><i
+                class="fas fa-exchange-alt mr-1"></i>請求換班</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Example Section: Scheduler View (Leader/Admin) -->
+    <section id="schedule" class="section-container">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="font-game text-2xl" style="color: var(--color-primary-medium);">服事排程花園</h2>
+        <div class="flex space-x-2">
+          <button class="btn btn-primary"><i class="fas fa-plus mr-2"></i>新增服事時段</button>
+          <button class="btn btn-secondary"><i class="fas fa-filter mr-2"></i>篩選檢視</button>
+          <button class="btn" style="background-color: var(--color-locked); color: white;"><i
+              class="fas fa-lock mr-2"></i>管理限制</button>
+        </div>
+      </div>
+
+      <!-- Time Period Navigation -->
+      <div class="flex justify-center space-x-4 mb-6 bg-white p-2 rounded-full shadow-inner"
+        style="border: 1px solid var(--color-primary-light);">
+        <button class="btn btn-sm px-4 py-1 rounded-full bg-gray-200 text-gray-700">每日</button>
+        <button class="btn btn-sm px-4 py-1 rounded-full"
+          style="background-color: var(--color-primary-medium); color: white;">每週</button>
+        <button class="btn btn-sm px-4 py-1 rounded-full bg-gray-200 text-gray-700">每月</button>
+        <input type="month" value="2023-10" class="input-field !py-1 !rounded-full">
+      </div>
+
+      <!-- Conceptual Scheduler Grid -->
+      <div class="scheduler-grid">
+        <!-- Cell for Sat Morning -->
+        <div class="scheduler-cell">
+          <h4>週六 上午 (10/28)</h4>
+          <div class="space-y-2">
+            <p class="text-sm font-medium text-gray-700">主日敬拜 (09:30)</p>
+            <div class="assigned-person">
+              <i class="fas fa-guitar"></i> <span>以利亞 (吉他)</span>
+            </div>
+            <div class="assigned-person">
+              <i class="fas fa-microphone-alt"></i> <span>哈拿 (主領)</span>
+            </div>
+            <div class="assigned-person">
+              <i class="fas fa-drum"></i> <span>大衛 (鼓手)</span>
+            </div>
+            <div class="assigned-person bg-gray-200 text-gray-500 cursor-not-allowed">
+              <i class="fas fa-keyboard"></i> <span><i class="fas fa-lock text-xs mr-1"
+                  style="color: var(--color-locked);"></i>莎拉 (鍵盤 - 休假)</span>
+            </div>
+            <button class="text-xs btn btn-secondary !py-1 !px-2 mt-2"><i class="fas fa-plus text-xs"></i> 指派</button>
+          </div>
+          <!-- Example Lock Indicator -->
+          <i class="fas fa-ban locked-indicator" title="大衛本月最多服事2次，已達上限"></i>
+        </div>
+
+        <!-- Cell for Sat Afternoon -->
+        <div class="scheduler-cell">
+          <h4>週六 下午 (10/28)</h4>
+          <p class="text-sm font-medium text-gray-700">SC 服事 (14:00)</p>
+          <div class="assigned-person">
+            <i class="fas fa-concierge-bell"></i> <span>約書亞 (招待)</span>
+          </div>
+          <div class="assigned-person">
+            <i class="fas fa-coffee"></i> <span>馬利亞 (茶水)</span>
+          </div>
+          <button class="text-xs btn btn-secondary !py-1 !px-2 mt-2"><i class="fas fa-plus text-xs"></i> 指派</button>
+          <!-- Example Conflict Indicator -->
+          <i class="fas fa-exclamation-triangle conflict-indicator" title="約書亞與馬利亞不能同時服事招待！"></i>
+        </div>
+
+        <!-- Cell for Sun Morning -->
+        <div class="scheduler-cell">
+          <h4>週日 上午 (10/29)</h4>
+          <p class="text-sm font-medium text-gray-700">主日敬拜 (09:30)</p>
+          <p class="text-sm text-gray-400 italic mt-4">尚無安排</p>
+          <button class="text-xs btn btn-secondary !py-1 !px-2 mt-2"><i class="fas fa-plus text-xs"></i> 指派</button>
+        </div>
+
+        <!-- More cells would follow -->
+        <div class="scheduler-cell">
+          <h4>週一</h4>
+          <p class="text-sm text-gray-400 italic mt-4">無常規服事</p>
+        </div>
+        <div class="scheduler-cell">
+          <h4>週二</h4>
+          <p class="text-sm text-gray-400 italic mt-4">無常規服事</p>
+        </div>
+        <div class="scheduler-cell">
+          <h4>週三 晚上 (11/01)</h4>
+          <p class="text-sm font-medium text-gray-700">禱告會 (19:30)</p>
+          <div class="assigned-person">
+            <i class="fas fa-praying-hands"></i> <span>以利亞 (領會)</span>
+          </div>
+          <button class="text-xs btn btn-secondary !py-1 !px-2 mt-2"><i class="fas fa-plus text-xs"></i> 指派</button>
+        </div>
+        <div class="scheduler-cell">
+          <h4>週四</h4>
+          <p class="text-sm text-gray-400 italic mt-4">無常規服事</p>
+        </div>
+        <div class="scheduler-cell">
+          <h4>週五</h4>
+          <p class="text-sm text-gray-400 italic mt-4">無常規服事</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Example Section: Requests & Notifications (Placeholder) -->
+    <section id="requests" class="section-container">
+      <h2 class="font-game text-2xl mb-6" style="color: var(--color-primary-medium);">訊息與請求中心</h2>
+      <div class="space-y-4">
+        <div class="p-4 rounded-lg flex justify-between items-center"
+          style="background-color: rgba(240, 160, 126, 0.2);"> <!-- Warning color background -->
+          <div>
+            <p><i class="fas fa-exchange-alt mr-2" style="color: var(--color-warning);"></i><strong>哈拿</strong> 請求換班:
+              <strong>主日敬拜 (10/28 主領)</strong></p>
+            <p class="text-sm text-gray-600">原因：臨時家中有事</p>
+            <p class="text-sm text-gray-600">建議代班人：馬利亞, 路得</p>
+          </div>
+          <div class="flex space-x-2">
+            <button class="btn btn-sm" style="background-color: var(--color-success); color: white;"><i
+                class="fas fa-check"></i> 核准</button>
+            <button class="btn btn-sm btn-accent"><i class="fas fa-times"></i> 拒絕</button>
+            <button class="btn btn-sm btn-secondary"><i class="fas fa-search"></i> 尋找更多</button>
+          </div>
+        </div>
+        <div class="p-4 rounded-lg flex justify-between items-center"
+          style="background-color: rgba(160, 210, 219, 0.2);"> <!-- Primary color background -->
+          <div>
+            <p><i class="fas fa-calendar-times mr-2" style="color: var(--color-primary-medium);"></i><strong>大衛</strong>
+              申請休假: <strong>2023/11/15 - 2023/11/20</strong></p>
+            <p class="text-sm text-gray-600">原因：年度旅遊</p>
+          </div>
+          <div class="flex space-x-2">
+            <button class="btn btn-sm" style="background-color: var(--color-success); color: white;"><i
+                class="fas fa-check"></i> 核准</button>
+            <button class="btn btn-sm btn-accent"><i class="fas fa-times"></i> 拒絕</button>
+          </div>
+        </div>
+        <div class="p-4 rounded-lg flex justify-between items-center"
+          style="background-color: rgba(141, 181, 128, 0.2);"> <!-- Success color background -->
+          <div>
+            <p><i class="fas fa-bell mr-2" style="color: var(--color-success);"></i>系統提醒：本週六 (10/28) 主日服事人員已確認。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="text-center py-4 mt-8" style="color: var(--color-primary-medium);">
+    <p class="text-sm">© 2023 Harmony Grove Ministry Scheduler. Designed with <i class="fas fa-heart text-red-500"></i>.
+    </p>
+  </footer>
+
+  <!-- Potential JS for interactivity (e.g., modals, dynamic updates) would go here -->
+  <script>
+    // Basic interactivity placeholders
+    console.log("Harmony Grove UI Initialized");
+
+    // Example: Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const targetId = this.getAttribute('href');
+        const targetElement = document.querySelector(targetId);
+        if (targetElement) {
+          targetElement.scrollIntoView({
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+  </script>
+
+</body>
+
+</html>

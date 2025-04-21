@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>教會服事表管理系統</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      background-color: #f5f7ff;
+      color: #333;
+    }
+
+    .app-container {
+      max-width: 430px;
+      margin: 0 auto;
+      background: linear-gradient(145deg, #ffffff 0%, #f5f7ff 100%);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      border-radius: 24px;
+      overflow: hidden;
+    }
+
+    .nav-pill {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+    }
+
+    .ministry-card {
+      border-radius: 16px;
+      background: #fff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+    }
+
+    .ministry-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .badge {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
+      transition: all 0.3s;
+    }
+
+    .badge:hover {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .progress-bar {
+      height: 8px;
+      border-radius: 4px;
+      background-color: #ddd;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      border-radius: 12px;
+      padding: 10px 20px;
+      color: white;
+      font-weight: 500;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(99, 102, 241, 0.4);
+    }
+
+    .btn-secondary {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 10px 20px;
+      color: #4b5563;
+      font-weight: 500;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+      background-color: #f9fafb;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid white;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .avatar-stack .avatar {
+      margin-left: -10px;
+    }
+
+    .avatar-stack .avatar:first-child {
+      margin-left: 0;
+    }
+
+    .level-badge {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: white;
+      border-radius: 12px;
+      padding: 3px 8px;
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    .tab-active {
+      color: #6366f1;
+      border-bottom: 3px solid #6366f1;
+      font-weight: 500;
+    }
+
+    .pulse-animation {
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7);
+      }
+
+      70% {
+        box-shadow: 0 0 0 10px rgba(99, 102, 241, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
+      }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.5s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* 模态窗口样式 */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 50;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+  </style>
+</head>
+
+<body class="py-6">
+  <!-- 模拟手机视图容器 -->
+  <div class="app-container min-h-screen flex flex-col">
+
+    <!-- 首页视图 -->
+    <div id="home-view" class="flex-1 p-5">
+      <!-- 顶部状态栏 -->
+      <div class="flex justify-between items-center mb-8">
+        <div>
+          <h1 class="text-2xl font-bold">你好，小王！</h1>
+          <div class="flex items-center mt-1">
+            <span class="level-badge mr-2">Lv. 7</span>
+            <span class="text-gray-600 text-sm">榮耀服事者</span>
+          </div>
+        </div>
+        <div class="relative">
+          <div class="avatar bg-indigo-500 flex items-center justify-center text-white">
+            <span>小王</span>
+          </div>
+          <span
+            class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center text-white text-xs">3</span>
+        </div>
+      </div>
+
+      <!-- 成就进度 -->
+      <div class="bg-white p-4 rounded-2xl shadow-sm mb-6">
+        <div class="flex justify-between items-center mb-2">
+          <h3 class="font-medium">服事成就</h3>
+          <span class="text-sm text-indigo-600">查看更多</span>
+        </div>
+        <div class="flex space-x-4 mb-3">
+          <div class="badge text-white pulse-animation">
+            <i class="fas fa-star text-xl"></i>
+          </div>
+          <div class="flex-1">
+            <div class="flex justify-between mb-1">
+              <span class="font-medium">主日敬拜精英</span>
+              <span class="text-sm text-gray-500">75%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 75%;"></div>
+            </div>
+            <p class="text-xs text-gray-500 mt-1">再服事3次即可達成</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3 mt-4">
+          <div class="text-center">
+            <div class="h-12 w-12 mx-auto rounded-full bg-green-100 flex items-center justify-center mb-1">
+              <i class="fas fa-trophy text-green-500"></i>
+            </div>
+            <span class="text-xs">12個成就</span>
+          </div>
+          <div class="text-center">
+            <div class="h-12 w-12 mx-auto rounded-full bg-blue-100 flex items-center justify-center mb-1">
+              <i class="fas fa-handshake text-blue-500"></i>
+            </div>
+            <span class="text-xs">35次服事</span>
+          </div>
+          <div class="text-center">
+            <div class="h-12 w-12 mx-auto rounded-full bg-purple-100 flex items-center justify-center mb-1">
+              <i class="fas fa-heart text-purple-500"></i>
+            </div>
+            <span class="text-xs">8次鼓勵</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 即将到来的服事 -->
+      <h3 class="font-medium mb-3">本週服事</h3>
+      <div class="ministry-card p-4 mb-4 fade-in">
+        <div class="flex justify-between items-start mb-3">
+          <div>
+            <span
+              class="inline-block px-2 py-1 bg-indigo-100 text-indigo-700 rounded-lg text-xs font-medium mb-1">週日主日</span>
+            <h4 class="font-medium">敬拜團 - 吉他手</h4>
+            <p class="text-sm text-gray-500">11月5日 9:30-11:30</p>
+          </div>
+          <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs">已確認</span>
+        </div>
+        <div class="flex items-center space-x-1">
+          <div class="avatar-stack flex">
+            <div class="avatar bg-blue-500 flex items-center justify-center text-white">
+              <span>小明</span>
+            </div>
+            <div class="avatar bg-green-500 flex items-center justify-center text-white">
+              <span>小華</span>
+            </div>
+            <div class="avatar bg-yellow-500 flex items-center justify-center text-white">
+              <span>小美</span>
+            </div>
+          </div>
+          <span class="text-xs text-gray-500 ml-2">+2人一同服事</span>
+        </div>
+        <div class="flex justify-between mt-4">
+          <button class="btn-secondary text-sm flex-1 mr-2">
+            <i class="fas fa-exchange-alt mr-1"></i> 申請換人
+          </button>
+          <button class="btn-primary text-sm flex-1">
+            <i class="fas fa-check mr-1"></i> 確認出席
+          </button>
+        </div>
+      </div>
+
+      <div class="ministry-card p-4 mb-4 fade-in">
+        <div class="flex justify-between items-start mb-3">
+          <div>
+            <span
+              class="inline-block px-2 py-1 bg-purple-100 text-purple-700 rounded-lg text-xs font-medium mb-1">週三禱告會</span>
+            <h4 class="font-medium">主領敬拜</h4>
+            <p class="text-sm text-gray-500">11月8日 19:30-21:00</p>
+          </div>
+          <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs">待確認</span>
+        </div>
+        <div class="flex items-center space-x-1">
+          <div class="avatar-stack flex">
+            <div class="avatar bg-red-500 flex items-center justify-center text-white">
+              <span>小陳</span>
+            </div>
+          </div>
+          <span class="text-xs text-gray-500 ml-2">+1人一同服事</span>
+        </div>
+        <div class="flex justify-between mt-4">
+          <button class="btn-secondary text-sm flex-1 mr-2">
+            <i class="fas fa-times mr-1"></i> 無法出席
+          </button>
+          <button class="btn-primary text-sm flex-1">
+            <i class="fas fa-check mr-1"></i> 確認出席
+          </button>
+        </div>
+      </div>
+
+      <!-- 快速功能 -->
+      <h3 class="font-medium mb-3">快速操作</h3>
+      <div class="grid grid-cols-2 gap-4 mb-6">
+        <div class="bg-white p-4 rounded-xl shadow-sm">
+          <div class="h-12 w-12 rounded-full bg-indigo-100 flex items-center justify-center mb-3">
+            <i class="fas fa-calendar-plus text-indigo-600"></i>
+          </div>
+          <h4 class="font-medium">申請休假</h4>
+          <p class="text-xs text-gray-500 mt-1">提前安排你的休假時間</p>
+        </div>
+        <div class="bg-white p-4 rounded-xl shadow-sm">
+          <div class="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center mb-3">
+            <i class="fas fa-sync-alt text-green-600"></i>
+          </div>
+          <h4 class="font-medium">換服事申請</h4>
+          <p class="text-xs text-gray-500 mt-1">一鍵尋找可互換的弟兄姊妹</p>
+        </div>
+        <div class="bg-white p-4 rounded-xl shadow-sm">
+          <div class="h-12 w-12 rounded-full bg-yellow-100 flex items-center justify-center mb-3">
+            <i class="fas fa-clock text-yellow-600"></i>
+          </div>
+          <h4 class="font-medium">服事歷史</h4>
+          <p class="text-xs text-gray-500 mt-1">查看你過去的服事記錄</p>
+        </div>
+        <div class="bg-white p-4 rounded-xl shadow-sm">
+          <div class="h-12 w-12 rounded-full bg-red-100 flex items-center justify-center mb-3">
+            <i class="fas fa-bell text-red-600"></i>
+          </div>
+          <h4 class="font-medium">提醒設定</h4>
+          <p class="text-xs text-gray-500 mt-1">設定服事前的提醒時間</p>
+        </div>
+      </div>
+
+      <!-- 通知摘要 -->
+      <div class="bg-white p-4 rounded-2xl shadow-sm mb-8">
+        <div class="flex justify-between items-center mb-3">
+          <h3 class="font-medium">最新通知</h3>
+          <span class="text-sm text-indigo-600">全部標為已讀</span>
+        </div>
+
+        <div class="border-l-4 border-red-500 pl-3 py-2 mb-3">
+          <h4 class="font-medium text-sm">換服事邀請</h4>
+          <p class="text-xs text-gray-500">小美希望與你交換這週主日的服事</p>
+          <div class="flex mt-1">
+            <button class="bg-indigo-500 text-white text-xs px-3 py-1 rounded-full mr-2">查看詳情</button>
+          </div>
+        </div>
+
+        <div class="border-l-4 border-green-500 pl-3 py-2 mb-3">
+          <h4 class="font-medium text-sm">主責通知</h4>
+          <p class="text-xs text-gray-500">你下週主日的服事細節已更新</p>
+          <span class="text-xs text-gray-400">3小時前</span>
+        </div>
+
+        <div class="border-l-4 border-gray-300 pl-3 py-2">
+          <h4 class="font-medium text-sm">成就已解鎖</h4>
+          <p class="text-xs text-gray-500">恭喜您獲得「敬拜多面手」徽章！</p>
+          <span class="text-xs text-gray-400">1天前</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 日历视图 -->
+    <div id="calendar-view" class="flex-1 p-5 hidden">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-bold">服事日曆</h2>
+        <div class="flex space-x-2">
+          <button class="bg-gray-100 p-2 rounded-lg">
+            <i class="fas fa-chevron-left text-gray-600"></i>
+          </button>
+          <button class="bg-gray-100 p-2 rounded-lg">
+            <i class="fas fa-chevron-right text-gray-600"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="text-center mb-6">
+        <h3 class="text-lg font-medium">2023年11月</h3>
+      </div>
+
+      <!-- 周日标题 -->
+      <div class="grid grid-cols-7 mb-2 text-center text-sm text-gray-500">
+        <div>日</div>
+        <div>一</div>
+        <div>二</div>
+        <div>三</div>
+        <div>四</div>
+        <div>五</div>
+        <div>六</div>
+      </div>
+
+      <!-- 日历格子 -->
+      <div class="grid grid-cols-7 gap-1 mb-6">
+        <!-- 上个月尾巴 -->
+        <div class="aspect-square p-1 text-center text-gray-400 text-sm">29</div>
+        <div class="aspect-square p-1 text-center text-gray-400 text-sm">30</div>
+        <div class="aspect-square p-1 text-center text-gray-400 text-sm">31</div>
+
+        <!-- 当月日期 -->
+        <div class="aspect-square p-1 text-center text-sm">1</div>
+        <div class="aspect-square p-1 text-center text-sm">2</div>
+        <div class="aspect-square p-1 text-center text-sm">3</div>
+        <div class="aspect-square p-1 text-center text-sm relative">
+          4
+          <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-indigo-500 rounded-full"></div>
+        </div>
+
+        <div class="aspect-square p-1 text-center text-sm relative bg-indigo-100 rounded-lg">
+          5
+          <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-indigo-500 rounded-full"></div>
+        </div>
+        <div class="aspect-square p-1 text-center text-sm">6</div>
+        <div class="aspect-square p-1 text-center text-sm">7</div>
+        <div class="aspect-square p-1 text-center text-sm relative">
+          8
+          <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-purple-500 rounded-full"></div>
+        </div>
+        <div class="aspect-square p-1 text-center text-sm">9</div>
+        <div class="aspect-square p-1 text-center text-sm">10</div>
+        <div class="aspect-square p-1 text-center text-sm">11</div>
+
+        <div class="aspect-square p-1 text-center text-sm relative">
+          12
+          <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-indigo-500 rounded-full"></div>
+        </div>
+        <div class="aspect-square p-1 text-center text-sm">13</div>
+        <div class="aspect-square p-1 text-center text-sm">14</div>
+        <div class="aspect-square p-1 text-center text-sm">15</div>
+        <div class="aspect-square p-1 text-center text-sm">16</div>
+        <div class="aspect-square p-1 text-center text-sm">17</div>
+        <div class="aspect-square p-1 text-center text-sm">18</div>
+
+        <div class="aspect-square p-1 text-center text-sm relative">
+          19
+          <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-indigo-500 rounded-full"></div>
+        </div>
+        <div class="aspect-square p-1 text-center text-sm">20</div>
+        <div class="aspect-square p-1 text-center text-sm">21</div>
+        <div class="aspect-square p-1 text-center text-sm relative">
+          22
+          <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-purple-500 rounded-full"></div>
+        </div>
+        <div class="aspect-square p-1 text-center text-sm">23</div>
+        <div class="aspect-square p-1 text-center text-sm">24</div>
+        <div class="aspect-square p-1 text-center text-sm">25</div>
+
+        <div class="aspect-square p-1 text-center text-sm relative">
+          26
+          <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-indigo-500 rounded-full"></div>
+        </div>
+        <div class="aspect-square p-1 text-center text-sm">27</div>
+        <div class="aspect-square p-1 text-center text-sm">28</div>
+        <div class="aspect-square p-1 text-center text-sm">29</div>
+        <div class="aspect-square p-1 text-center text-sm">30</div>
+        <div class="aspect-square p-1 text-center text-gray-400 text-sm">1</div>
+        <div class="aspect-square p-1 text-center text-gray-400 text-sm">2</div>
+      </div>
+
+      <div class="flex items-center space-x-4 mb-4 text-sm">
+        <div class="flex items-center">
+          <div class="w-3 h-3 rounded-full bg-indigo-500 mr-1"></div>
+          <span>主日服事</span>
+        </div>
+        <div class="flex items-center">
+          <div class="w-3 h-3 rounded-full bg-purple-500 mr-1"></div>
+          <span>禱告會</span>
+        </div>
+        <div class="flex items-center">
+          <div class="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
+          <span>特殊活動</span>
+        </div>
+      </div>
+
+      <!-- 即将到来的服事列表 -->
+      <h3 class="font-medium mb-3">即將到來的服事</h3>
+
+      <div class="ministry-card p-4 mb-4">
+        <div class="flex justify-between items-start">
+          <div>
+            <span
+              class="inline-block px-2 py-1 bg-indigo-100 text-indigo-700 rounded-lg text-xs font-medium mb-1">週日主日</span>
+            <h4 class="font-medium">敬拜團 - 吉他手</h4>
+            <p class="text-sm text-gray-500">11月5日 9:30-11:30</p>
+          </div>
+          <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs">已確認</span>
+        </div>
+      </div>
+
+      <div class="ministry-card p-4 mb-4">
+        <div class="flex justify-between items-start">
+          <div>
+            <span
+              class="inline-block px-2 py-1 bg-purple-100 text-purple-700 rounded-lg text-xs font-medium mb-1">週三禱告會</span>
+            <h4 class="font-medium">主領敬拜</h4>
+            <p class="text-sm text-gray-500">11月8日 19:30-21:00</p>
+          </div>
+          <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs">待確認</span>
+        </div>
+      </div>
+
+      <div class="ministry-card p-4 mb-4">
+        <div class="flex justify-between items-start">
+          <div>
+            <span
+              class="inline-block px-2 py-1 bg-indigo-100 text-indigo-700 rounded-lg text-xs font-medium mb-1">週日主日</span>
+            <h4 class="font-medium">敬拜團 - 主領</h4>
+            <p class="text-sm text-gray-500">11月19日 9:30-11:30</p>
+          </div>
+          <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs">計劃中</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 团队视图 -->
+    <div id="team-view" class="flex-1 p-5 hidden">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-bold">我的團隊</h2>
+        <button class="bg-indigo-500 text-white p-2 rounded-lg">
+          <i class="fas fa-plus"></i>
+        </button>
+      </div>
+
+      <!-- 搜索栏 -->
+      <div class="relative mb-6">
+        <input type="text" placeholder="搜尋團隊或服事類型" class="w-full p-3 bg-white rounded-xl pl-10 shadow-sm">
+        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+      </div>
+
+      <!-- 过滤选项 -->
+      <div class="flex space-x-3 mb-6 overflow-x-auto pb-2 scrollbar-hide">
+        <div class="px-4 py-2 bg-indigo-500 text-white rounded-full text-sm whitespace-nowrap">所有團隊</div>
+        <div class="px-4 py-2 bg-white text-gray-600 rounded-full text-sm whitespace-nowrap">敬拜團</div>
+        <div class="px-4 py-2 bg-white text-gray-600 rounded-full text-sm whitespace-nowrap">接待組</div>
+        <div class="px-4 py-2 bg-white text-gray-600 rounded-full text-sm whitespace-nowrap">主日學</div>
+        <div class="px-4 py-2 bg-white text-gray-600 rounded-full text-sm whitespace-nowrap">禱告會</div>
+      </div>
+
+      <!-- 团队列表 -->
+      <div class="ministry-card p-4 mb-4">
+        <div class="flex justify-between items-start mb-3">
+          <div>
+            <h4 class="font-medium">主日敬拜團</h4>
+            <p class="text-xs text-gray-500">18位成員 · 每週日晨間服事</p>
+          </div>
+          <span class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-xs">你是組員</span>
+        </div>
+        <div class="flex">
+          <div class="avatar-stack flex">
+            <!-- 头像1-5 -->
+            <div class="avatar bg-red-500 flex items-center justify-center text-white">
+              <span>小陳</span>
+            </div>
+            <div class="avatar bg-blue-500 flex items-center justify-center text-white">
+              <span>小明</span>
+            </div>
+            <div class="avatar bg-green-500 flex items-center justify-center text-white">
+              <span>小華</span>
+            </div>
+            <div class="avatar bg-yellow-500 flex items-center justify-center text-white">
+              <span>小美</span>
+            </div>
+            <div class="avatar bg-purple-500 flex items-center justify-center text-white">
+              <span>小林</span>
+            </div>
+          </div>
+          <span class="text-xs text-gray-500 ml-2 self-center">+13人</span>
+        </div>
+        <div class="flex justify-between mt-4">
+          <button class="btn-secondary text-sm flex-1 mr-2">
+            <i class="fas fa-calendar-alt mr-1"></i> 查看排班表
+          </button>
+          <button class="btn-primary text-sm flex-1">
+            <i class="fas fa-comment-alt mr-1"></i> 團隊聊天
+          </button>
+        </div>
+      </div>
+
+      <div class="ministry-card p-4 mb-4">
+        <div class="flex justify-between items-start mb-3">
+          <div>
+            <h4 class="font-medium">禱告會團隊</h4>
+            <p class="text-xs text-gray-500">8位成員 · 每週三晚間服事</p>
+          </div>
+          <span class="bg-green-100 text-green-600 px-3 py-1 rounded-full text-xs">你是組長</span>
+        </div>
+        <div class="flex">
+          <div class="avatar-stack flex">
+            <!-- 头像1-5 -->
+            <div class="avatar bg-pink-500 flex items-center justify-center text-white">
+              <span>小趙</span>
+            </div>
+            <div class="avatar bg-indigo-500 flex items-center justify-center text-white">
+              <span>小李</span>
+            </div>
+            <div class="avatar bg-orange-500 flex items-center justify-center text-white">
+              <span>小張</span>
+            </div>
+            <div class="avatar bg-teal-500 flex items-center justify-center text-white">
+              <span>小周</span>
+            </div>
+          </div>
+          <span class="text-xs text-gray-500 ml-2 self-center">+4人</span>
+        </div>
+        <div class="flex justify-between mt-4">
+          <button class="btn-secondary text-sm flex-1 mr-2">
+            <i class="fas fa-calendar-alt mr-1"></i> 查看排班表
+          </button>
+          <button class="btn-primary text-sm flex-1">
+            <i class="fas fa-comment-alt mr-1"></i> 團隊聊天
+          </button>
+        </div>
+      </div>
+
+      <div class="ministry-card p-4 mb-4">
+        <div class="flex justify-between items-start mb-3">
+          <div>
+            <h4 class="font-medium">接待組</h4>
+            <p class="text-xs text-gray-500">12位成員 · 每週日晨間服事</p>
+          </div>
+          <span class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-xs">你是組員</span>
+        </div>
+        <div class="flex">
+          <div class="avatar-stack flex">
+            <!-- 头像1-5 -->
+            <div class="avatar bg-purple-500 flex items-center justify-center text-white">
+              <span>小林</span>
+            </div>
+            <div class="avatar bg-green-500 flex items-center justify-center text-white">
+              <span>小華</span>
+            </div>
+            <div class="avatar bg-blue-500 flex items-center justify-center text-white">
+              <span>小明</span>
+            </div>
+          </div>
+          <span class="text-xs text-gray-500 ml-2 self-center">+9人</span>
+        </div>
+        <div class="flex justify-between mt-4">
+          <button class="btn-secondary text-sm flex-1 mr-2">
+            <i class="fas fa-calendar-alt mr-1"></i> 查看排班表
+          </button>
+          <button class="btn-primary text-sm flex-1">
+            <i class="fas fa-comment-alt mr-1"></i> 團隊聊天
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 个人资料视图 -->
+    <div id="profile-view" class="flex-1 p-5 hidden">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-bold">個人檔案</h2>
+        <button class="text-indigo-500 flex items-center">
+          <i class="fas fa-pen mr-1"></i> 編輯
+        </button>
+      </div>
+
+      <!-- 个人信息卡 -->
+      <div class="bg-white rounded-2xl p-5 shadow-sm mb-6 relative">
+        <div class="absolute top-3 right-3">
+          <span class="level-badge">Lv. 7</span>
+        </div>
+        <div class="flex items-center mb-4">
+          <div
+            class="h-20 w-20 rounded-full bg-indigo-500 flex items-center justify-center text-white text-2xl font-bold mr-4">
+            小王
+          </div>
+          <div>
+            <h3 class="text-lg font-medium">王小明</h3>
+            <p class="text-gray-500">榮耀服事者</p>
+            <div class="mt-1 flex items-center">
+              <i class="fas fa-star text-yellow-400 mr-1"></i>
+              <div class="progress-bar w-24 h-2">
+                <div class="progress-fill" style="width: 75%;"></div>
+              </div>
+              <span class="text-xs text-gray-500 ml-2">75/100</span>
+            </div>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4 text-center">
+          <div>
+            <p class="text-gray-500 text-sm">總服事次數</p>
+            <p class="text-2xl font-bold text-indigo-500">35</p>
+          </div>
+          <div>
+            <p class="text-gray-500 text-sm">獲得徽章</p>
+            <p class="text-2xl font-bold text-indigo-500">12</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 服事技能 -->
+      <div class="bg-white rounded-2xl p-5 shadow-sm mb-6">
+        <h3 class="font-medium mb-3">我的服事技能</h3>
+        <div class="grid grid-cols-3 gap-3 mb-3">
+          <div class="text-center">
+            <div class="h-14 w-14 mx-auto rounded-full bg-indigo-100 flex items-center justify-center mb-1">
+              <i class="fas fa-guitar text-indigo-500 text-lg"></i>
+            </div>
+            <span class="text-xs">吉他</span>
+            <div class="h-1 bg-gray-200 rounded-full mt-1">
+              <div class="h-full bg-indigo-500 rounded-full" style="width: 90%;"></div>
+            </div>
+          </div>
+          <div class="text-center">
+            <div class="h-14 w-14 mx-auto rounded-full bg-blue-100 flex items-center justify-center mb-1">
+              <i class="fas fa-microphone text-blue-500 text-lg"></i>
+            </div>
+            <span class="text-xs">主領</span>
+            <div class="h-1 bg-gray-200 rounded-full mt-1">
+              <div class="h-full bg-blue-500 rounded-full" style="width: 80%;"></div>
+            </div>
+          </div>
+          <div class="text-center">
+            <div class="h-14 w-14 mx-auto rounded-full bg-green-100 flex items-center justify-center mb-1">
+              <i class="fas fa-video text-green-500 text-lg"></i>
+            </div>
+            <span class="text-xs">多媒體</span>
+            <div class="h-1 bg-gray-200 rounded-full mt-1">
+              <div class="h-full bg-green-500 rounded-full" style="width: 65%;"></div>
+            </div>
+          </div>
+          <div class="text-center">
+            <div class="h-14 w-14 mx-auto rounded-full bg-yellow-100 flex items-center justify-center mb-1">
+              <i class="fas fa-hands-helping text-yellow-500 text-lg"></i>
+            </div>
+            <span class="text-xs">接待</span>
+            <div class="h-1 bg-gray-200 rounded-full mt-1">
+              <div class="h-full bg-yellow-500 rounded-full" style="width: 70%;"></div>
+            </div>
+          </div>
+          <div class="text-center">
+            <div class="h-14 w-14 mx-auto rounded-full bg-purple-100 flex items-center justify-center mb-1">
+              <i class="fas fa-praying-hands text-purple-500 text-lg"></i>
+            </div>
+            <span class="text-xs">禱告會</span>
+            <div class="h-1 bg-gray-200 rounded-full mt-1">
+              <div class="h-full bg-purple-500 rounded-full" style="width: 75%;"></div>
+            </div>
+          </div>
+          <div class="text-center">
+            <div class="h-14 w-14 mx-auto rounded-full bg-gray-100 flex items-center justify-center mb-1">
+              <i class="fas fa-plus text-gray-500 text-lg"></i>
+            </div>
+            <span class="text-xs">添加技能</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 成就与徽章 -->
+      <div class="bg-white rounded-2xl p-5 shadow-sm mb-6">
+        <div class="flex justify-between items-center mb-3">
+          <h3 class="font-medium">成就與徽章</h3>
+          <span class="text-sm text-indigo-600">查看全部</span>
+        </div>
+        <div class="grid grid-cols-4 gap-3">
+          <div class="text-center">
+            <div class="badge mx-auto">
+              <i class="fas fa-star text-white text-lg"></i>
+            </div>
+            <span class="text-xs mt-1 block">首席服事</span>
+          </div>
+          <div class="text-center">
+            <div class="badge mx-auto" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+              <i class="fas fa-hands-helping text-white text-lg"></i>
+            </div>
+            <span class="text-xs mt-1 block">貴賓招待</span>
+          </div>
+          <div class="text-center">
+            <div class="badge mx-auto" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+              <i class="fas fa-guitar text-white text-lg"></i>
+            </div>
+            <span class="text-xs mt-1 block">吉他高手</span>
+          </div>
+          <div class="text-center">
+            <div class="badge mx-auto" style="background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);">
+              <i class="fas fa-heart text-white text-lg"></i>
+            </div>
+            <span class="text-xs mt-1 block">熱心助人</span>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <div class="flex justify-between text-sm mb-1">
+            <span>下一級: 主教級服事者</span>
+            <span>75/100</span>
+          </div>
+          <div class="h-2 bg-gray-200 rounded-full">
+            <div class="h-full bg-indigo-500 rounded-full" style="width: 75%;"></div>
+          </div>
+          <p class="text-xs text-gray-500 mt-1">再服事25次即可升級</p>
+        </div>
+      </div>
+
+      <!-- 服事统计 -->
+      <div class="bg-white rounded-2xl p-5 shadow-sm mb-6">
+        <h3 class="font-medium mb-3">服事統計</h3>
+        <div class="grid grid-cols-2 gap-4 mb-4">
+          <div class="border border-gray-200 rounded-xl p-3 text-center">
+            <p class="text-gray-500 text-sm">本月服事</p>
+            <p class="text-2xl font-bold text-indigo-500">5次</p>
+          </div>
+          <div class="border border-gray-200 rounded-xl p-3 text-center">
+            <p class="text-gray-500 text-sm">總服事時數</p>
+            <p class="text-2xl font-bold text-indigo-500">87小時</p>
+          </div>
+        </div>
+
+        <!-- 柱状图 -->
+        <div class="h-40 flex items-end space-x-2 mb-2">
+          <div class="flex-1 flex flex-col items-center">
+            <div class="bg-indigo-500 rounded-t-md w-full" style="height: 60%;"></div>
+            <span class="text-xs mt-1">1月</span>
+          </div>
+          <div class="flex-1 flex flex-col items-center">
+            <div class="bg-indigo-500 rounded-t-md w-full" style="height: 40%;"></div>
+            <span class="text-xs mt-1">2月</span>
+          </div>
+          <div class="flex-1 flex flex-col items-center">
+            <div class="bg-indigo-500 rounded-t-md w-full" style="height: 70%;"></div>
+            <span class="text-xs mt-1">3月</span>
+          </div>
+          <div class="flex-1 flex flex-col items-center">
+            <div class="bg-indigo-500 rounded-t-md w-full" style="height: 50%;"></div>
+            <span class="text-xs mt-1">4月</span>
+          </div>
+          <div class="flex-1 flex flex-col items-center">
+            <div class="bg-indigo-500 rounded-t-md w-full" style="height: 65%;"></div>
+            <span class="text-xs mt-1">5月</span>
+          </div>
+          <div class="flex-1 flex flex-col items-center">
+            <div class="bg-indigo-500 rounded-t-md w-full" style="height: 80%;"></div>
+            <span class="text-xs mt-1">6月</span>
+          </div>
+          <div class="flex-1 flex flex-col items-center">
+            <div class="bg-indigo-500 rounded-t-md w-full" style="height: 55%;"></div>
+            <span class="text-xs mt-1">7月</span>
+          </div>
+          <div class="flex-1 flex flex-col items-center">
+            <div class="bg-indigo-500 rounded-t-md w-full" style="height: 75%;"></div>
+            <span class="text-xs mt-1">8月</span>
+          </div>
+          <div class="flex-1 flex flex-col items-center">
+            <div class="bg-indigo-500 rounded-t-md w-full" style="height: 90%;"></div>
+            <span class="text-xs mt-1">9月</span>
+          </div>
+          <div class="flex-1 flex flex-col items-center">
+            <div class="bg-indigo-500 rounded-t-md w-full" style="height: 85%;"></div>
+            <span class="text-xs mt-1">10月</span>
+          </div>
+          <div class="flex-1 flex flex-col items-center">
+            <div class="bg-indigo-500 rounded-t-md w-full" style="height: 60%;"></div>
+            <span class="text-xs mt-1">11月</span>
+          </div>
+        </div>
+        <p class="text-xs text-gray-500 text-center">2023年每月服事次數</p>
+      </div>
+    </div>
+
+    <!-- 请假申请模态窗口 -->
+    <div id="leave-modal" class="modal">
+      <div class="modal-content">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-medium">申請休假</h3>
+          <button class="text-gray-500" onclick="closeModal('leave-modal')">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">休假日期</label>
+          <input type="date" class="w-full p-2 border border-gray-300 rounded-lg">
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">休假時段</label>
+          <select class="w-full p-2 border border-gray-300 rounded-lg">
+            <option>整天</option>
+            <option>上午</option>
+            <option>下午</option>
+            <option>晚上</option>
+          </select>
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">原因 (選填)</label>
+          <textarea class="w-full p-2 border border-gray-300 rounded-lg h-20" placeholder="請簡單描述休假原因..."></textarea>
+        </div>
+        <div class="flex justify-end space-x-2">
+          <button class="btn-secondary" onclick="closeModal('leave-modal')">取消</button>
+          <button class="btn-primary">提交申請</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 换服事申请模态窗口 -->
+    <div id="swap-modal" class="modal">
+      <div class="modal-content">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-medium">換服事申請</h3>
+          <button class="text-gray-500" onclick="closeModal('swap-modal')">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">要調換的服事</label>
+          <select class="w-full p-2 border border-gray-300 rounded-lg">
+            <option>11月5日 - 敬拜團吉他手</option>
+            <option>11月8日 - 禱告會主領</option>
+          </select>
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">希望調換給</label>
+          <select class="w-full p-2 border border-gray-300 rounded-lg">
+            <option>自動尋找可用的人</option>
+            <option>小美 (同組)</option>
+            <option>小華 (同組)</option>
+            <option>小陳 (同組)</option>
+          </select>
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">原因 (選填)</label>
+          <textarea class="w-full p-2 border border-gray-300 rounded-lg h-20" placeholder="請簡單描述調換原因..."></textarea>
+        </div>
+        <div class="flex justify-end space-x-2">
+          <button class="btn-secondary" onclick="closeModal('swap-modal')">取消</button>
+          <button class="btn-primary">提交申請</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 通知详情模态窗口 -->
+    <div id="notification-modal" class="modal">
+      <div class="modal-content">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-medium">換服事邀請</h3>
+          <button class="text-gray-500" onclick="closeModal('notification-modal')">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="mb-4 border-l-4 border-indigo-500 pl-3 py-2">
+          <p class="mb-2">小美希望與你交換以下服事：</p>
+          <div class="bg-gray-50 p-3 rounded-lg mb-2">
+            <p class="font-medium">你的服事：</p>
+            <p>11 月5日 - 主日敬拜 - 吉他手</p>
+          </div>
+          <div class="bg-gray-50 p-3 rounded-lg mb-2">
+            <p class="font-medium">她的服事：</p>
+            <p>11月12日 - 主日敬拜 - 吉他手</p>
+          </div>
+          <p class="text-sm text-gray-500">原因：我11月5日有重要的家庭活動要參加。</p>
+        </div>
+        <div class="flex justify-end space-x-2">
+          <button class="btn-secondary" onclick="closeModal('notification-modal')">拒絕</button>
+          <button class="btn-primary">同意互換</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 成就解锁模态窗口 -->
+    <div id="achievement-modal" class="modal">
+      <div class="modal-content text-center p-6">
+        <div class="mb-6">
+          <div class="badge mx-auto pulse-animation" style="width: 80px; height: 80px;">
+            <i class="fas fa-star text-white text-3xl"></i>
+          </div>
+        </div>
+        <h3 class="text-xl font-bold mb-2">恭喜您解鎖新成就！</h3>
+        <p class="text-gray-600 mb-4">「敬拜多面手」</p>
+        <p class="text-sm text-gray-500 mb-6">你已經完成了5種不同的敬拜服事崗位，真是多才多藝！</p>
+        <div class="flex justify-center">
+          <button class="btn-primary px-8" onclick="closeModal('achievement-modal')">太棒了！</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 底部导航 -->
+    <nav
+      class="nav-pill fixed bottom-6 left-1/2 transform -translate-x-1/2 flex justify-around items-center w-11/12 py-3 px-6 z-30">
+      <a href="#" class="flex flex-col items-center" onclick="changeView('home-view')">
+        <i class="fas fa-home text-indigo-500"></i>
+        <span class="text-xs mt-1 text-indigo-500 font-medium">首頁</span>
+      </a>
+      <a href="#" class="flex flex-col items-center" onclick="changeView('calendar-view')">
+        <i class="fas fa-calendar-alt text-gray-500"></i>
+        <span class="text-xs mt-1 text-gray-500">日曆</span>
+      </a>
+      <a href="#" class="flex flex-col items-center relative">
+        <div class="w-12 h-12 bg-indigo-500 rounded-full flex items-center justify-center text-white -mt-5 shadow-lg">
+          <i class="fas fa-exchange-alt text-xl"></i>
+        </div>
+        <span class="text-xs mt-1 text-gray-500">換服事</span>
+      </a>
+      <a href="#" class="flex flex-col items-center" onclick="changeView('team-view')">
+        <i class="fas fa-users text-gray-500"></i>
+        <span class="text-xs mt-1 text-gray-500">團隊</span>
+      </a>
+      <a href="#" class="flex flex-col items-center" onclick="changeView('profile-view')">
+        <i class="fas fa-user text-gray-500"></i>
+        <span class="text-xs mt-1 text-gray-500">我的</span>
+      </a>
+    </nav>
+  </div>
+
+  <script>
+    function changeView(viewId) {
+      // 隐藏所有视图
+      document.getElementById('home-view').classList.add('hidden');
+      document.getElementById('calendar-view').classList.add('hidden');
+      document.getElementById('team-view').classList.add('hidden');
+      document.getElementById('profile-view').classList.add('hidden');
+
+      // 显示选择的视图
+      document.getElementById(viewId).classList.remove('hidden');
+
+      // 更新底部导航激活状态
+      updateNavActiveState(viewId);
+    }
+
+    function updateNavActiveState(activeViewId) {
+      // 重置所有导航项为非激活状态
+      const navItems = document.querySelectorAll('nav a');
+      navItems.forEach(item => {
+        const icon = item.querySelector('i');
+        const text = item.querySelector('span');
+
+        if (icon) icon.className = icon.className.replace('text-indigo-500', 'text-gray-500');
+        if (text) text.className = text.className.replace('text-indigo-500', 'text-gray-500');
+        if (text) text.classList.remove('font-medium');
+      });
+
+      // 设置激活导航项
+      let activeNavItem;
+      switch (activeViewId) {
+        case 'home-view':
+          activeNavItem = document.querySelector('nav a:nth-child(1)');
+          break;
+        case 'calendar-view':
+          activeNavItem = document.querySelector('nav a:nth-child(2)');
+          break;
+        case 'team-view':
+          activeNavItem = document.querySelector('nav a:nth-child(4)');
+          break;
+        case 'profile-view':
+          activeNavItem = document.querySelector('nav a:nth-child(5)');
+          break;
+      }
+
+      if (activeNavItem) {
+        const icon = activeNavItem.querySelector('i');
+        const text = activeNavItem.querySelector('span');
+
+        if (icon) icon.className = icon.className.replace('text-gray-500', 'text-indigo-500');
+        if (text) {
+          text.className = text.className.replace('text-gray-500', 'text-indigo-500');
+          text.classList.add('font-medium');
+        }
+      }
+    }
+
+    function openModal(modalId) {
+      document.getElementById(modalId).style.display = 'flex';
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).style.display = 'none';
+    }
+
+    // 为中间的换服事按钮添加点击事件
+    document.querySelector('nav a:nth-child(3)').addEventListener('click', function (e) {
+      e.preventDefault();
+      openModal('swap-modal');
+    });
+
+    // 为快速操作中的申请休假添加点击事件
+    document.querySelector('.grid-cols-2 > div:first-child').addEventListener('click', function () {
+      openModal('leave-modal');
+    });
+
+    // 为通知中的"查看详情"按钮添加点击事件
+    document.querySelector('.border-l-4.border-red-500 button').addEventListener('click', function () {
+      openModal('notification-modal');
+    });
+
+    // 首次加载默认显示首页
+    document.addEventListener('DOMContentLoaded', function () {
+      changeView('home-view');
+
+      // 模拟3秒后显示成就解锁
+      setTimeout(function () {
+        openModal('achievement-modal');
+      }, 3000);
+    });
+  </script>
+</body>
+
+</html>

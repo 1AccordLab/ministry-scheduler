@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>教會服事表管理系統 (Mockup)</title>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <!-- Font Awesome for icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Noto+Sans+TC:wght@300;400;700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #6a1b9a;
+      /* Deep Purple */
+      --secondary-color: #ffab00;
+      /* Amber/Gold */
+      --accent-color: #00bfa5;
+      /* Teal */
+      --background-color: #f3e5f5;
+      /* Light Purple */
+      --card-bg-color: #ffffff;
+      --text-color: #333;
+      --light-text-color: #f1f1f1;
+      --danger-color: #e53935;
+      /* Red */
+      --success-color: #43a047;
+      /* Green */
+      --font-display: 'Orbitron', sans-serif;
+      /* Game-like display font */
+      --font-body: 'Noto Sans TC', sans-serif;
+      /* Readable body font */
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--background-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      padding-bottom: 80px;
+      /* Space for bottom nav */
+      max-width: 480px;
+      /* Simulating Mobile Width */
+      margin: 0 auto;
+      /* Center on larger screens for demo */
+      border-left: 1px solid #ddd;
+      /* Demo purpose */
+      border-right: 1px solid #ddd;
+      /* Demo purpose */
+      min-height: 100vh;
+      position: relative;
+      /* Needed for footer */
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      font-family: var(--font-display);
+      color: var(--primary-color);
+      margin-bottom: 0.8em;
+      font-weight: 700;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .screen {
+      padding: 20px;
+      margin-bottom: 30px;
+      /* Space between screen sections */
+      background-color: rgba(255, 255, 255, 0.6);
+      /* Slightly transparent white */
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(106, 27, 154, 0.1);
+      border: 1px solid var(--primary-color-light);
+      /* Light purple border */
+    }
+
+    .screen-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--secondary-color);
+    }
+
+    .screen-header h2 {
+      margin-bottom: 0;
+      font-size: 1.8em;
+      color: var(--primary-color);
+    }
+
+    .icon-button {
+      background: none;
+      border: none;
+      color: var(--primary-color);
+      font-size: 1.5em;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+
+    .icon-button:hover {
+      color: var(--secondary-color);
+    }
+
+    .card {
+      background-color: var(--card-bg-color);
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border-left: 5px solid var(--secondary-color);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      /* Decorative element */
+      content: '';
+      position: absolute;
+      top: -20px;
+      right: -20px;
+      width: 60px;
+      height: 60px;
+      background-color: var(--primary-color);
+      opacity: 0.1;
+      border-radius: 50%;
+    }
+
+    .card-header {
+      font-weight: bold;
+      color: var(--primary-color);
+      margin-bottom: 8px;
+      font-size: 1.1em;
+      display: flex;
+      align-items: center;
+    }
+
+    .card-header i {
+      margin-right: 8px;
+      color: var(--secondary-color);
+    }
+
+    .card-content p {
+      margin-bottom: 5px;
+      font-size: 0.95em;
+    }
+
+    .card-actions {
+      margin-top: 15px;
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 20px;
+      /* Rounded game-like buttons */
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-weight: bold;
+      font-size: 0.9em;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .btn-primary {
+      background-color: var(--primary-color);
+      color: var(--light-text-color);
+      box-shadow: 0 3px 5px rgba(106, 27, 154, 0.4);
+    }
+
+    .btn-primary:hover {
+      background-color: #4a148c;
+      /* Darker purple */
+      box-shadow: 0 4px 8px rgba(106, 27, 154, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background-color: var(--secondary-color);
+      color: #333;
+      /* Dark text on gold */
+      box-shadow: 0 3px 5px rgba(255, 171, 0, 0.4);
+    }
+
+    .btn-secondary:hover {
+      background-color: #ff8f00;
+      /* Darker gold */
+      box-shadow: 0 4px 8px rgba(255, 171, 0, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .btn-accent {
+      background-color: var(--accent-color);
+      color: var(--light-text-color);
+      box-shadow: 0 3px 5px rgba(0, 191, 165, 0.4);
+    }
+
+    .btn-accent:hover {
+      background-color: #00897b;
+      /* Darker Teal */
+      box-shadow: 0 4px 8px rgba(0, 191, 165, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .btn-danger {
+      background-color: var(--danger-color);
+      color: var(--light-text-color);
+      box-shadow: 0 3px 5px rgba(229, 57, 53, 0.4);
+    }
+
+    .btn-danger:hover {
+      background-color: #c62828;
+      /* Darker Red */
+      box-shadow: 0 4px 8px rgba(229, 57, 53, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .btn-success {
+      background-color: var(--success-color);
+      color: var(--light-text-color);
+      box-shadow: 0 3px 5px rgba(67, 160, 71, 0.4);
+    }
+
+    .btn-success:hover {
+      background-color: #2e7d32;
+      /* Darker Green */
+      box-shadow: 0 4px 8px rgba(67, 160, 71, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      color: var(--primary-color);
+      border: 2px solid var(--primary-color);
+      box-shadow: none;
+    }
+
+    .btn-outline:hover {
+      background-color: rgba(106, 27, 154, 0.1);
+      transform: translateY(-1px);
+    }
+
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      max-width: 480px;
+      /* Match body width */
+      margin: 0 auto;
+      /* Center */
+      display: flex;
+      justify-content: space-around;
+      background-color: var(--primary-color);
+      padding: 10px 0;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--light-text-color);
+      text-decoration: none;
+      font-size: 0.75em;
+      opacity: 0.7;
+      transition: opacity 0.3s ease;
+    }
+
+    .nav-item.active,
+    .nav-item:hover {
+      opacity: 1;
+      font-weight: bold;
+    }
+
+    .nav-item i {
+      font-size: 1.6em;
+      margin-bottom: 3px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: var(--primary-color);
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="date"],
+    .form-group input[type="password"],
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #fff;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--secondary-color);
+      box-shadow: 0 0 0 3px rgba(255, 171, 0, 0.3);
+    }
+
+    .form-group textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .badge-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+    }
+
+    .badge {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      width: 80px;
+    }
+
+    .badge i {
+      font-size: 2.5em;
+      color: var(--secondary-color);
+      background-color: var(--primary-color);
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      line-height: 60px;
+      /* Center icon vertically */
+      margin-bottom: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .badge span {
+      font-size: 0.8em;
+      color: var(--primary-color);
+      font-weight: bold;
+    }
+
+    .notification-dot {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      width: 10px;
+      height: 10px;
+      background-color: var(--danger-color);
+      border-radius: 50%;
+      border: 1px solid white;
+    }
+
+    .pending-approval {
+      border-left-color: var(--accent-color);
+    }
+
+    .request-incoming {
+      border-left-color: var(--danger-color);
+    }
+
+    .schedule-conflict {
+      background-color: #fff3e0;
+      /* Light orange background */
+      border-left-color: var(--danger-color);
+    }
+
+    .locked-indicator {
+      color: var(--danger-color);
+      margin-left: 5px;
+    }
+
+    /* Calendar Basic Styles */
+    .calendar {
+      margin-top: 20px;
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .calendar-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+      text-align: center;
+    }
+
+    .calendar-day-name {
+      font-weight: bold;
+      font-size: 0.8em;
+      color: var(--primary-color);
+    }
+
+    .calendar-date {
+      padding: 8px 5px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      position: relative;
+    }
+
+    .calendar-date.other-month {
+      color: #ccc;
+    }
+
+    .calendar-date.today {
+      background-color: var(--secondary-color);
+      color: #333;
+      font-weight: bold;
+    }
+
+    .calendar-date.has-event::after {
+      content: '';
+      position: absolute;
+      bottom: 4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 5px;
+      height: 5px;
+      background-color: var(--primary-color);
+      border-radius: 50%;
+    }
+
+    .calendar-date:hover {
+      background-color: var(--background-color);
+    }
+
+    /* Login Screen specific styles */
+    .login-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 80vh;
+      /* Make login take more space */
+      text-align: center;
+    }
+
+    .login-logo {
+      font-family: var(--font-display);
+      font-size: 3em;
+      color: var(--primary-color);
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .login-logo i {
+      margin-right: 10px;
+      color: var(--secondary-color);
+    }
+
+    .login-tagline {
+      font-size: 1.1em;
+      color: var(--primary-color);
+      opacity: 0.8;
+      margin-bottom: 30px;
+    }
+
+    .login-form {
+      width: 100%;
+      max-width: 350px;
+    }
+
+    /* Scheduling Interface styles */
+    .schedule-grid {
+      /* In a real app, this would be more complex, maybe a grid or kanban */
+      margin-top: 20px;
+    }
+
+    .schedule-slot {
+      border: 1px dashed #ccc;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      background-color: rgba(255, 255, 255, 0.7);
+    }
+
+    .schedule-slot.assigned {
+      border-style: solid;
+      border-color: var(--primary-color);
+      background-color: #e8eaf6;
+      /* Indigo lighten 5 */
+    }
+
+    .slot-header {
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: var(--primary-color);
+    }
+
+    .user-chip {
+      display: inline-block;
+      background-color: var(--secondary-color);
+      color: #333;
+      padding: 3px 8px;
+      border-radius: 15px;
+      font-size: 0.8em;
+      margin-right: 5px;
+      margin-bottom: 5px;
+    }
+
+    .user-chip.locked {
+      background-color: #bdbdbd;
+      /* Grey */
+      text-decoration: line-through;
+    }
+
+    .constraint-info {
+      font-size: 0.8em;
+      color: var(--danger-color);
+      margin-top: 5px;
+    }
+
+    /* Helper classes */
+    .text-center {
+      text-align: center;
+    }
+
+    .mt-1 {
+      margin-top: 1rem;
+    }
+
+    .mb-0 {
+      margin-bottom: 0;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Screen: Login -->
+  <div class="screen" id="login-screen">
+    <div class="login-container">
+      <div class="login-logo"><i class="fas fa-shield-alt"></i>MinistryLink</div>
+      <p class="login-tagline">連結服事．點燃熱情</p>
+      <div class="login-form">
+        <div class="form-group">
+          <input type="text" placeholder="帳號 / Username" aria-label="Username">
+        </div>
+        <div class="form-group">
+          <input type="password" placeholder="密碼 / Password" aria-label="Password">
+        </div>
+        <button class="btn btn-primary btn-block mt-1"><i class="fas fa-sign-in-alt"></i> 登入</button>
+        <p class="mt-1"><a href="#" style="color: var(--primary-color); font-size: 0.9em;">忘記密碼?</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen: User Dashboard -->
+  <div class="screen" id="user-dashboard" style="display: none;">
+    <div class="screen-header">
+      <h2><i class="fas fa-user-circle" style="color: var(--secondary-color); margin-right: 10px;"></i>我的主頁</h2>
+      <button class="icon-button" title="通知">
+        <i class="fas fa-bell"></i>
+        <span class="notification-dot"></span> <!-- Show if there are notifications -->
+      </button>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><i class="fas fa-calendar-check"></i> 近期服事</div>
+      <div class="card-content">
+        <p><strong>日期:</strong> 2023/10/28 (六)</p>
+        <p><strong>時間:</strong> 09:00 - 12:00</p>
+        <p><strong>服事:</strong> 主日敬拜 - 小提琴</p>
+      </div>
+      <div class="card-content" style="border-top: 1px dashed #eee; margin-top:10px; padding-top: 10px;">
+        <p><strong>日期:</strong> 2023/11/04 (六)</p>
+        <p><strong>時間:</strong> 14:00 - 16:00</p>
+        <p><strong>服事:</strong> 成長班 - 助教</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><i class="fas fa-tasks"></i> 快速操作</div>
+      <div class="card-actions" style="justify-content: space-around;">
+        <button class="btn btn-secondary"><i class="fas fa-calendar-times"></i> 申請休假</button>
+        <button class="btn btn-accent"><i class="fas fa-exchange-alt"></i> 申請換班</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><i class="fas fa-trophy"></i> 我的成就</div>
+      <div class="badge-list" style="justify-content: flex-start; gap: 20px; padding-top: 10px;">
+        <div class="badge" title="首次服事">
+          <i class="fas fa-star"></i>
+          <span>新手上路</span>
+        </div>
+        <div class="badge" title="協助換班 3 次">
+          <i class="fas fa-hands-helping"></i>
+          <span>好隊友</span>
+        </div>
+        <div class="badge" title="主日服事 10 次">
+          <i class="fas fa-music"></i>
+          <span>敬拜核心</span>
+        </div>
+      </div>
+      <div class="text-center mt-1">
+        <a href="#achievements" style="color: var(--primary-color); font-size: 0.9em;">查看所有成就 >></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen: Schedule View (Personal Mode) -->
+  <div class="screen" id="personal-schedule" style="display: none;">
+    <div class="screen-header">
+      <h2><i class="fas fa-calendar-alt" style="color: var(--secondary-color); margin-right: 10px;"></i>服事時間表</h2>
+      <select
+        style="border: none; background: transparent; font-family: var(--font-body); font-weight: bold; color: var(--primary-color);">
+        <option value="personal" selected>個人模式</option>
+        <option value="team">團隊模式</option>
+        <option value="ministry">服事項目</option>
+      </select>
+    </div>
+    <div style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+      <button class="btn btn-outline" style="font-size: 0.8em;"><i class="fas fa-chevron-left"></i> 上個月</button>
+      <span style="font-weight: bold; color: var(--primary-color);">2023 年 10 月</span>
+      <button class="btn btn-outline" style="font-size: 0.8em;">下個月 <i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- Can switch between List and Calendar view -->
+    <div class="text-center mb-1">
+      <button class="btn btn-primary btn-sm"><i class="fas fa-list"></i> 列表檢視</button>
+      <button class="btn btn-outline btn-sm"><i class="fas fa-calendar-day"></i> 月曆檢視</button>
+    </div>
+
+    <!-- List View -->
+    <div id="schedule-list-view">
+      <div class="card">
+        <div class="card-header"><i class="fas fa-church"></i> 主日敬拜</div>
+        <div class="card-content">
+          <p><strong>日期:</strong> 2023/10/28 (六) 09:00</p>
+          <p><strong>角色:</strong> <span class="user-chip">小提琴</span></p>
+          <p><strong>團隊成員:</strong> 大衛(吉他), 馬利亞(主領), 約翰(鼓手)</p>
+        </div>
+      </div>
+      <div class="card schedule-conflict">
+        <div class="card-header"><i class="fas fa-exclamation-triangle"></i> SC 服事</div>
+        <div class="card-content">
+          <p><strong>日期:</strong> 2023/10/29 (日) 10:00</p>
+          <p><strong>角色:</strong> <span class="user-chip">音控</span></p>
+          <p style="color: var(--danger-color); font-size: 0.9em;"><i class="fas fa-times-circle"></i> 衝突：您已安排主日服事</p>
+          <!-- Example conflict -->
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><i class="fas fa-pray"></i> 禱告會</div>
+        <div class="card-content">
+          <p><strong>日期:</strong> 2023/11/01 (三) 19:30</p>
+          <p><strong>角色:</strong> <span class="user-chip">司會</span></p>
+        </div>
+      </div>
+    </div>
+    <!-- Calendar View (Simplified Representation) -->
+    <div id="schedule-calendar-view" style="display: none;">
+      <div class="calendar">
+        <div class="calendar-header">
+          <button class="icon-button btn-sm"><i class="fas fa-angle-left"></i></button>
+          <span style="font-weight: bold;">2023年 10月</span>
+          <button class="icon-button btn-sm"><i class="fas fa-angle-right"></i></button>
+        </div>
+        <div class="calendar-days">
+          <span class="calendar-day-name">日</span>
+          <span class="calendar-day-name">一</span>
+          <span class="calendar-day-name">二</span>
+          <span class="calendar-day-name">三</span>
+          <span class="calendar-day-name">四</span>
+          <span class="calendar-day-name">五</span>
+          <span class="calendar-day-name">六</span>
+          <!-- Dates -->
+          <span class="calendar-date other-month">24</span>
+          <span class="calendar-date other-month">25</span>
+          <span class="calendar-date other-month">26</span>
+          <span class="calendar-date other-month">27</span>
+          <span class="calendar-date other-month">28</span>
+          <span class="calendar-date other-month">29</span>
+          <span class="calendar-date other-month">30</span>
+          <span class="calendar-date">1</span>
+          <span class="calendar-date">2</span>
+          <span class="calendar-date">3</span>
+          <span class="calendar-date">4</span>
+          <span class="calendar-date">5</span>
+          <span class="calendar-date">6</span>
+          <span class="calendar-date has-event">7</span>
+          <span class="calendar-date">8</span>
+          <span class="calendar-date">9</span>
+          <span class="calendar-date">10</span>
+          <span class="calendar-date has-event">11</span>
+          <span class="calendar-date">12</span>
+          <span class="calendar-date">13</span>
+          <span class="calendar-date has-event">14</span>
+          <span class="calendar-date">15</span>
+          <span class="calendar-date">16</span>
+          <span class="calendar-date">17</span>
+          <span class="calendar-date">18</span>
+          <span class="calendar-date">19</span>
+          <span class="calendar-date">20</span>
+          <span class="calendar-date has-event">21</span>
+          <span class="calendar-date">22</span>
+          <span class="calendar-date">23</span>
+          <span class="calendar-date">24</span>
+          <span class="calendar-date">25</span>
+          <span class="calendar-date">26</span>
+          <span class="calendar-date">27</span>
+          <span class="calendar-date today has-event">28</span>
+          <span class="calendar-date has-event">29</span>
+          <span class="calendar-date">30</span>
+          <span class="calendar-date">31</span>
+          <span class="calendar-date other-month">1</span>
+          <span class="calendar-date other-month">2</span>
+          <span class="calendar-date other-month">3</span>
+          <span class="calendar-date other-month">4</span>
+        </div>
+      </div>
+      <div class="mt-1">
+        <p style="font-size: 0.9em;"><i class="fas fa-circle"
+            style="color: var(--primary-color); font-size: 0.7em;"></i> 表示當天有服事</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Screen: Leave Request -->
+  <div class="screen" id="leave-request" style="display: none;">
+    <div class="screen-header">
+      <h2><i class="fas fa-plane-departure" style="color: var(--secondary-color); margin-right: 10px;"></i>申請休假</h2>
+      <button class="icon-button" title="返回"><i class="fas fa-arrow-left"></i></button>
+    </div>
+    <form>
+      <div class="form-group">
+        <label for="leave-date-start">開始日期:</label>
+        <input type="date" id="leave-date-start" name="leave-date-start">
+      </div>
+      <div class="form-group">
+        <label for="leave-date-end">結束日期:</label>
+        <input type="date" id="leave-date-end" name="leave-date-end">
+      </div>
+      <div class="form-group">
+        <label for="leave-reason">事由 (選填):</label>
+        <textarea id="leave-reason" name="leave-reason" rows="3" placeholder="例如：家庭旅遊"></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> 送出申請</button>
+    </form>
+  </div>
+
+  <!-- Screen: Swap Request (Initiate) -->
+  <div class="screen" id="swap-request-initiate" style="display: none;">
+    <div class="screen-header">
+      <h2><i class="fas fa-sync-alt" style="color: var(--secondary-color); margin-right: 10px;"></i>申請換班</h2>
+      <button class="icon-button" title="返回"><i class="fas fa-arrow-left"></i></button>
+    </div>
+    <p>請選擇您想換掉的服事:</p>
+    <div class="card selected-swap"> <!-- Add a class to highlight selection -->
+      <div class="card-header"><i class="fas fa-church"></i> 主日敬拜 - 小提琴</div>
+      <div class="card-content">
+        <p><strong>日期:</strong> 2023/10/28 (六) 09:00</p>
+      </div>
+      <i class="fas fa-check-circle"
+        style="position: absolute; top: 10px; right: 10px; color: var(--success-color); font-size: 1.5em;"></i>
+    </div>
+
+    <form>
+      <div class="form-group">
+        <label for="swap-reason">換班原因 (選填):</label>
+        <textarea id="swap-reason" name="swap-reason" rows="2" placeholder="例如：臨時有事"></textarea>
+      </div>
+      <div class="form-group">
+        <label>尋找替代人選:</label>
+        <div
+          style="max-height: 150px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; border-radius: 8px; background: #f9f9f9;">
+          <p style="font-size:0.9em; margin-bottom: 10px; color: #555;">系統將會通知以下符合資格的人員:</p>
+          <span class="user-chip">以斯帖</span>
+          <span class="user-chip">路得</span>
+          <span class="user-chip locked">保羅<i class="fas fa-lock locked-indicator" title="當月服事已達上限"></i></span>
+          <span class="user-chip">彼得</span>
+          <span class="user-chip locked">雅各<i class="fas fa-ban locked-indicator" title="與同場 A 衝突"></i></span>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> 發出換班請求</button>
+    </form>
+    <p style="font-size: 0.8em; color: #555; margin-top: 15px;"><i class="fab fa-line" style="color: #00B900;"></i> 將透過
+      Line 自動詢問可代班人員，有人接受後將通知主責審核。</p>
+  </div>
+
+  <!-- Screen: Swap Request (Receive Notification/Card) -->
+  <div class="screen" id="swap-request-receive" style="display: none;">
+    <div class="screen-header">
+      <h2><i class="fas fa-bell" style="color: var(--secondary-color); margin-right: 10px;"></i>換班請求</h2>
+    </div>
+    <div class="card request-incoming"> <!-- Use different border color for incoming requests -->
+      <div class="card-header"><i class="fas fa-question-circle"></i> 來自 [雅各] 的換班請求</div>
+      <div class="card-content">
+        <p><strong>請求代班服事:</strong></p>
+        <p style="margin-left: 15px;"><strong>服事:</strong> 主日敬拜 - 吉他</p>
+        <p style="margin-left: 15px;"><strong>日期:</strong> 2023/11/11 (六) 09:00</p>
+        <p><strong>原因:</strong> 臨時家中有事</p>
+        <p style="margin-top: 10px; font-weight:bold; color: var(--primary-color);">您當天有空且符合資格，是否願意協助?</p>
+      </div>
+      <div class="card-actions">
+        <button class="btn btn-danger"><i class="fas fa-times"></i> 抱歉無法</button>
+        <button class="btn btn-success"><i class="fas fa-check"></i> 我來幫忙!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen: Leader Dashboard -->
+  <div class="screen" id="leader-dashboard" style="display: none;">
+    <div class="screen-header">
+      <h2><i class="fas fa-crown" style="color: var(--secondary-color); margin-right: 10px;"></i>主責管理區</h2>
+      <button class="icon-button" title="通知"><i class="fas fa-bell"></i><span class="notification-dot"></span></button>
+    </div>
+
+    <div class="card pending-approval"> <!-- Different border for pending items -->
+      <div class="card-header"><i class="fas fa-exclamation-circle"></i> 待審核事項 (3)</div>
+      <div class="card-content">
+        <p><strong>類型:</strong> 換班申請 <span style="font-size: 0.9em;">(彼得 <i class="fas fa-arrow-right"></i> 以斯帖)</span>
+        </p>
+        <p><strong>服事:</strong> 主日敬拜-主領 (2023/11/04)</p>
+        <div class="card-actions" style="justify-content: flex-start; margin-top: 5px;">
+          <button class="btn btn-success btn-sm"><i class="fas fa-check"></i> 核准</button>
+          <button class="btn btn-danger btn-sm"><i class="fas fa-times"></i> 拒絕</button>
+        </div>
+      </div>
+      <div class="card-content" style="border-top: 1px dashed #eee; margin-top:10px; padding-top: 10px;">
+        <p><strong>類型:</strong> 休假申請 <span style="font-size: 0.9em;">(馬利亞)</span></p>
+        <p><strong>日期:</strong> 2023/11/18 - 2023/11/19</p>
+        <div class="card-actions" style="justify-content: flex-start; margin-top: 5px;">
+          <button class="btn btn-success btn-sm"><i class="fas fa-check"></i> 核准</button>
+          <button class="btn btn-danger btn-sm"><i class="fas fa-times"></i> 拒絕</button>
+        </div>
+      </div>
+      <!-- More pending items... -->
+    </div>
+
+    <div class="card">
+      <div class="card-header"><i class="fas fa-calendar-plus"></i> 快速排班</div>
+      <div class="card-actions" style="justify-content: space-around;">
+        <button class="btn btn-primary"><i class="fas fa-users"></i> 查看/編輯團隊服事</button>
+        <!-- <button class="btn btn-secondary"><i class="fas fa-chart-bar"></i> 查看統計</button> -->
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><i class="fas fa-bell"></i> 服事提醒</div>
+      <div class="card-content">
+        <p>本週服事 (10/28 - 10/29):</p>
+        <p><span class="user-chip">大衛</span> <span class="user-chip">馬利亞</span> <span class="user-chip">約翰</span> ...等 5
+          人</p>
+      </div>
+      <div class="card-actions">
+        <button class="btn btn-accent"><i class="fab fa-line" style="color: white;"></i> 一鍵提醒 (Line)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen: Leader Scheduling Interface (Conceptual) -->
+  <div class="screen" id="leader-scheduling" style="display: none;">
+    <div class="screen-header">
+      <h2><i class="fas fa-edit" style="color: var(--secondary-color); margin-right: 10px;"></i>排班作業 - 主日敬拜</h2>
+      <button class="icon-button" title="儲存"><i class="fas fa-save"></i></button>
+    </div>
+    <p><strong>日期:</strong> 2023 年 11 月份</p>
+    <!-- Simplified representation of a scheduling grid/interface -->
+    <div class="schedule-grid">
+      <h4><i class="fas fa-calendar-day"></i> 2023/11/04 (六) 09:00 - A 樂團 <button class="icon-button btn-sm"
+          title="團隊規則衝突"><i class="fas fa-exclamation-triangle" style="color:var(--danger-color)"></i></button></h4>
+      <div class="schedule-slot">
+        <div class="slot-header">主領 (1/1)</div>
+        <span class="user-chip">馬利亞</span>
+      </div>
+      <div class="schedule-slot assigned">
+        <div class="slot-header">吉他 (1/1)</div>
+        <span class="user-chip">大衛</span>
+        <button class="btn btn-outline btn-sm" style="margin-left: 10px; padding: 2px 6px;">+</button>
+        <div class="constraint-info"><i class="fas fa-info-circle"></i> A樂團 - 大衛 已排, 無法排 B 樂團服事</div>
+      </div>
+      <div class="schedule-slot">
+        <div class="slot-header">鼓手 (0/1)</div>
+        <span class="user-chip available">約翰</span>
+        <span class="user-chip locked">安得烈<i class="fas fa-lock locked-indicator" title="個人休假"></i></span>
+        <button class="btn btn-outline btn-sm" style="margin-left: 10px; padding: 2px 6px;">+</button>
+      </div>
+      <div class="schedule-slot">
+        <div class="slot-header">小提琴 (0/1)</div>
+        <span class="user-chip locked">我<i class="fas fa-user-slash locked-indicator" title="最多 2 次/月 (已達)"></i></span>
+        <span class="user-chip available">以斯帖</span>
+        <button class="btn btn-outline btn-sm" style="margin-left: 10px; padding: 2px 6px;">+</button>
+      </div>
+
+      <h4 class="mt-1"><i class="fas fa-calendar-day"></i> 2023/11/11 (六) 09:00 - B 樂團</h4>
+      <!-- More slots -->
+      <div class="schedule-slot">
+        <div class="slot-header">主領 (0/1)</div>
+        <span class="user-chip available">路加</span>
+        <span class="user-chip locked">馬利亞<i class="fas fa-ban locked-indicator" title="不能與路加同台"></i></span>
+        <button class="btn btn-outline btn-sm" style="margin-left: 10px; padding: 2px 6px;">+</button>
+      </div>
+    </div>
+    <div class="text-center mt-1">
+      <button class="btn btn-danger"><i class="fas fa-undo"></i> 重置本月</button>
+      <button class="btn btn-success"><i class="fas fa-magic"></i> 自動排班建議</button>
+    </div>
+  </div>
+
+  <!-- Screen: Achievements -->
+  <div class="screen" id="achievements" style="display: none;">
+    <div class="screen-header">
+      <h2><i class="fas fa-trophy" style="color: var(--secondary-color); margin-right: 10px;"></i>成就殿堂</h2>
+      <button class="icon-button" title="返回"><i class="fas fa-arrow-left"></i></button>
+    </div>
+    <p class="text-center" style="margin-bottom: 20px;">展現您在服事旅程中的閃耀徽章！</p>
+    <div class="badge-list">
+      <div class="badge" title="完成首次服事">
+        <i class="fas fa-star"></i>
+        <span>新手上路</span>
+      </div>
+      <div class="badge" title="主日服事達 10 次">
+        <i class="fas fa-music"></i>
+        <span>敬拜核心</span>
+      </div>
+      <div class="badge" title="禱告會服事達 5 次">
+        <i class="fas fa-fire"></i>
+        <span>禱告守望者</span>
+      </div>
+      <div class="badge" title="協助換班 3 次">
+        <i class="fas fa-hands-helping"></i>
+        <span>好隊友</span>
+      </div>
+      <div class="badge" title="連續 3 個月全勤服事 (未請假/換班)">
+        <i class="fas fa-medal"></i>
+        <span>服事模範生</span>
+      </div>
+      <div class="badge" title="參與特殊活動服事 (聖誕/復活節)">
+        <i class="fas fa-gifts"></i>
+        <span>節慶同工</span>
+      </div>
+      <div class="badge" title="主動承接代班 5 次">
+        <i class="fas fa-heart"></i>
+        <span>即刻救援</span>
+      </div>
+      <div class="badge" style="opacity: 0.4;" title="主責經驗 (未解鎖)">
+        <i class="fas fa-crown"></i>
+        <span>領導之星</span>
+      </div>
+      <div class="badge" style="opacity: 0.4;" title="累積服事 100 小時 (未解鎖)">
+        <i class="fas fa-hourglass-half"></i>
+        <span>百時奉獻</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen: Admin Panel (Conceptual) -->
+  <div class="screen" id="admin-panel" style="display: none;">
+    <div class="screen-header">
+      <h2><i class="fas fa-user-shield" style="color: var(--secondary-color); margin-right: 10px;"></i>系統管理</h2>
+    </div>
+    <div class="card">
+      <div class="card-header"><i class="fas fa-users-cog"></i> 人員與權限</div>
+      <div class="card-actions" style="justify-content: space-around;">
+        <button class="btn btn-primary btn-sm"><i class="fas fa-user-plus"></i> 新增人員</button>
+        <button class="btn btn-secondary btn-sm"><i class="fas fa-search"></i> 搜尋/管理</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><i class="fas fa-cogs"></i> 系統設定</div>
+      <ul style="list-style: none; padding-left: 10px; font-size: 0.95em;">
+        <li style="margin-bottom: 8px;"><a href="#" style="color: var(--primary-color);"><i class="fas fa-stream"
+              style="margin-right: 5px; color: var(--accent-color);"></i> 管理服事項目</a></li>
+        <li style="margin-bottom: 8px;"><a href="#" style="color: var(--primary-color);"><i class="fas fa-object-group"
+              style="margin-right: 5px; color: var(--accent-color);"></i> 設定團隊/群組</a></li>
+        <li style="margin-bottom: 8px;"><a href="#" style="color: var(--primary-color);"><i class="fas fa-bell"
+              style="margin-right: 5px; color: var(--accent-color);"></i> 通知與整合 (Line/Google Cal)</a></li>
+        <li style="margin-bottom: 8px;"><a href="#" style="color: var(--primary-color);"><i class="fas fa-history"
+              style="margin-right: 5px; color: var(--accent-color);"></i> 查看編輯紀錄</a></li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-header"><i class="fas fa-lock"></i> 規則與限制</div>
+      <div class="card-content">
+        <p style="font-size:0.9em;">設定全域或特定服事的排班限制規則。</p>
+        <button class="btn btn-accent btn-sm mt-1"><i class="fas fa-plus-circle"></i> 新增規則</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <a href="#user-dashboard" class="nav-item active"> <!-- Add 'active' class to current screen -->
+      <i class="fas fa-home"></i>
+      <span>主頁</span>
+    </a>
+    <a href="#personal-schedule" class="nav-item">
+      <i class="fas fa-calendar-alt"></i>
+      <span>服事表</span>
+    </a>
+    <a href="#swap-request-initiate" class="nav-item">
+      <i class="fas fa-exchange-alt"></i>
+      <span>換班</span>
+    </a>
+    <a href="#leave-request" class="nav-item">
+      <i class="fas fa-plane"></i>
+      <span>休假</span>
+    </a>
+    <a href="#achievements" class="nav-item">
+      <i class="fas fa-trophy"></i>
+      <span>成就</span>
+    </a>
+    <!-- Leader/Admin might see different icons -->
+    <!--
+         <a href="#leader-dashboard" class="nav-item">
+             <i class="fas fa-tasks"></i>
+             <span>管理</span>
+         </a>
+          <a href="#admin-panel" class="nav-item">
+             <i class="fas fa-cog"></i>
+             <span>設定</span>
+         </a>
+          -->
+  </nav>
+
+  <script>
+    // Basic Mock Navigation (for demo purposes)
+    document.querySelectorAll('.bottom-nav a, a[href^="#"]').forEach(link => {
+      link.addEventListener('click', function (e) {
+        const href = this.getAttribute('href');
+        if (href && href.startsWith('#')) {
+          e.preventDefault();
+          const targetId = href.substring(1);
+          const targetScreen = document.getElementById(targetId);
+
+          if (targetScreen) {
+            // Hide all screens
+            document.querySelectorAll('.screen').forEach(screen => {
+              screen.style.display = 'none';
+            });
+            // Show target screen
+            targetScreen.style.display = 'block';
+
+            // Update active state in bottom nav
+            document.querySelectorAll('.bottom-nav .nav-item').forEach(item => {
+              item.classList.remove('active');
+            });
+            const activeNavItem = document.querySelector(`.bottom-nav a[href="${href}"]`);
+            if (activeNavItem) {
+              activeNavItem.classList.add('active');
+            }
+
+            // Scroll to top
+            window.scrollTo(0, 0);
+          }
+        }
+      });
+    });
+
+    // Initially show the login screen (or dashboard if logged in conceptually)
+    // For demo, let's show login first. Comment out the login screen display=none and uncomment the next line to start at dashboard
+    document.getElementById('login-screen').style.display = 'block';
+    // document.getElementById('user-dashboard').style.display = 'block'; // Start with dashboard instead
+
+  </script>
+
+</body>
+
+</html>

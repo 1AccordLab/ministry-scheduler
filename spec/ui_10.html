@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>星光草甸 - 服事協調</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&family=Klee+One:wght@400;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Nunito', 'Klee One', sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      color: #e0e0e0;
+      overflow-x: hidden;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #1a1a2e;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #537895;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #86a8c4;
+    }
+
+    /* Game-like elements */
+    .glowing-text {
+      text-shadow: 0 0 5px rgba(255, 255, 180, 0.7), 0 0 10px rgba(255, 255, 180, 0.5);
+      color: #fffacd;
+      /* Light Yellow */
+    }
+
+    .soft-button {
+      background-color: rgba(83, 120, 149, 0.6);
+      /* Semi-transparent teal-blue */
+      border: 1px solid rgba(134, 168, 196, 0.4);
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    }
+
+    .soft-button:hover {
+      background-color: rgba(134, 168, 196, 0.8);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4), 0 0 15px rgba(173, 216, 230, 0.3);
+      /* Light blue glow */
+      transform: translateY(-1px);
+    }
+
+    .soft-button-secondary {
+      background-color: rgba(60, 60, 80, 0.6);
+      border: 1px solid rgba(100, 100, 120, 0.4);
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    }
+
+    .soft-button-secondary:hover {
+      background-color: rgba(100, 100, 120, 0.8);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .nav-item {
+      position: relative;
+      transition: all 0.3s ease;
+      padding: 10px 15px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+      /* Add space between items */
+      cursor: pointer;
+    }
+
+    .nav-item:hover {
+      background-color: rgba(134, 168, 196, 0.2);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(90deg, rgba(83, 120, 149, 0.5) 0%, rgba(83, 120, 149, 0.1) 100%);
+      border-left: 4px solid #86a8c4;
+      padding-left: 11px;
+      /* Adjust padding to account for border */
+    }
+
+    .nav-item .icon {
+      width: 20px;
+      text-align: center;
+      margin-right: 12px;
+      display: inline-block;
+    }
+
+    .nav-item .icon i {
+      transition: transform 0.3s ease;
+    }
+
+    .nav-item:hover .icon i {
+      transform: scale(1.1);
+    }
+
+    /* Content Area Style */
+    .content-area {
+      background-color: rgba(22, 33, 62, 0.5);
+      /* Slightly transparent dark blue */
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(5px);
+      /* Frosted glass effect */
+      border: 1px solid rgba(83, 120, 149, 0.2);
+    }
+
+    /* Schedule Visual */
+    .schedule-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 20px;
+    }
+
+    .schedule-item {
+      background: rgba(83, 120, 149, 0.1);
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+      border: 1px solid rgba(83, 120, 149, 0.3);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: default;
+    }
+
+    .schedule-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3), 0 0 10px rgba(173, 216, 230, 0.2);
+    }
+
+    .schedule-item .ministry-icon {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      color: #f7d96f;
+      /* Gold-ish yellow */
+      text-shadow: 0 0 8px rgba(247, 217, 111, 0.6);
+    }
+
+    .schedule-item .ministry-name {
+      font-weight: 600;
+      color: #c0d6e8;
+      margin-bottom: 5px;
+    }
+
+    .schedule-item .ministry-date {
+      font-size: 0.85rem;
+      color: #9ab8d0;
+    }
+
+    /* Achievement / Badge Style */
+    .achievement-badge {
+      display: inline-block;
+      text-align: center;
+      margin: 10px;
+      opacity: 0.7;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .achievement-badge:hover {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+
+    .badge-icon {
+      width: 60px;
+      height: 60px;
+      background: radial-gradient(circle, rgba(247, 217, 111, 0.3) 0%, rgba(83, 120, 149, 0.2) 70%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 5px auto;
+      border: 1px solid rgba(247, 217, 111, 0.5);
+      box-shadow: 0 0 10px rgba(247, 217, 111, 0.2);
+    }
+
+    .badge-icon i {
+      font-size: 1.8rem;
+      color: #fffacd;
+      text-shadow: 0 0 5px rgba(255, 255, 180, 0.7);
+    }
+
+    .badge-name {
+      font-size: 0.8rem;
+      color: #b0c8dd;
+      max-width: 80px;
+    }
+
+    /* Custom Profile Avatar */
+    .profile-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, #537895, #86a8c4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      color: #1a1a2e;
+      font-weight: bold;
+      margin-bottom: 15px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      position: relative;
+      /* For potential status indicator */
+    }
+
+    .profile-avatar::before {
+      /* Simple initial display */
+      content: attr(data-initial);
+    }
+
+    /* Possible avatar variation - image background */
+    .profile-avatar.sprite-meadow-guardian {
+      background-image: url('placeholder-sprite1.png');
+      /* Replace with actual image */
+      background-size: cover;
+      background-position: center;
+      color: transparent;
+      /* Hide initial if image loads */
+    }
+
+    .profile-avatar.sprite-starlight-weaver {
+      background-image: url('placeholder-sprite2.png');
+      /* Replace with actual image */
+      background-size: cover;
+      background-position: center;
+      color: transparent;
+      /* Hide initial if image loads */
+    }
+
+    /* Scheduler specific styles */
+    .scheduler-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 10px;
+      /* Vertical spacing */
+      margin-top: 20px;
+    }
+
+    .scheduler-table th {
+      text-align: left;
+      padding: 10px 15px;
+      color: #c0d6e8;
+      font-weight: 600;
+      border-bottom: 1px solid rgba(83, 120, 149, 0.3);
+      position: sticky;
+      top: 0;
+      /* Make header sticky */
+      background: #1a1a2e;
+      /* Match body bg */
+      z-index: 10;
+    }
+
+    .scheduler-table td {
+      background: rgba(83, 120, 149, 0.15);
+      padding: 12px 15px;
+      vertical-align: middle;
+    }
+
+    /* Rounded corners for rows */
+    .scheduler-table tr td:first-child {
+      border-top-left-radius: 8px;
+      border-bottom-left-radius: 8px;
+    }
+
+    .scheduler-table tr td:last-child {
+      border-top-right-radius: 8px;
+      border-bottom-right-radius: 8px;
+    }
+
+    .user-cell {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: grab;
+      /* Indicate draggable */
+      transition: background-color 0.2s ease;
+    }
+
+    .user-cell:active {
+      background-color: rgba(134, 168, 196, 0.3);
+      cursor: grabbing;
+    }
+
+    .user-avatar-small {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #86a8c4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      color: #1a1a2e;
+      font-weight: bold;
+      flex-shrink: 0;
+      /* Prevent shrinking */
+    }
+
+    .user-name {
+      color: #e0e0e0;
+      font-weight: 500;
+    }
+
+    .user-status-icon {
+      font-size: 0.9rem;
+      margin-left: 5px;
+    }
+
+    .status-locked {
+      color: #ff7b7b;
+      /* Reddish */
+    }
+
+    .status-limited {
+      color: #ffd700;
+      /* Gold */
+    }
+
+    .status-incompatible {
+      color: #ffae42;
+      /* Orange */
+    }
+
+    .status-on-leave {
+      color: #a0a0a0;
+      /* Grey */
+    }
+
+    /* Slot for dropping users */
+    .schedule-slot {
+      min-height: 50px;
+      border: 2px dashed rgba(134, 168, 196, 0.3);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #9ab8d0;
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+      padding: 5px;
+      flex-wrap: wrap;
+      /* Allow multiple users per slot */
+      gap: 5px;
+    }
+
+    .schedule-slot.drag-over {
+      background-color: rgba(134, 168, 196, 0.1);
+      border-color: #86a8c4;
+    }
+
+    .schedule-slot .assigned-user {
+      background-color: rgba(83, 120, 149, 0.8);
+      color: #e0e0e0;
+      padding: 4px 8px;
+      border-radius: 15px;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+      cursor: pointer;
+      /* To potentially remove or view details */
+    }
+
+    .schedule-slot .assigned-user .user-avatar-tiny {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #c0d6e8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      color: #1a1a2e;
+      font-weight: bold;
+    }
+
+    /* Subtle Animations */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.5s ease-out forwards;
+    }
+
+    @keyframes pulse-glow {
+
+      0%,
+      100% {
+        box-shadow: 0 0 5px rgba(173, 216, 230, 0.2);
+      }
+
+      50% {
+        box-shadow: 0 0 15px rgba(173, 216, 230, 0.5);
+      }
+    }
+
+    .pulsing-notification {
+      animation: pulse-glow 2s infinite ease-in-out;
+    }
+
+    /* Modal Style */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+      backdrop-filter: blur(3px);
+    }
+
+    .modal-content {
+      background: linear-gradient(135deg, #16213e, #0f3460);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(83, 120, 149, 0.3);
+      max-width: 500px;
+      width: 90%;
+    }
+  </style>
+</head>
+
+<body class="text-sm">
+
+  <!-- Main Layout -->
+  <div class="flex h-screen">
+
+    <!-- Sidebar Navigation -->
+    <aside
+      class="w-64 h-full p-4 flex flex-col flex-shrink-0 bg-gradient-to-b from-[#1a1a2e]/80 to-[#16213e]/80 backdrop-blur-sm border-r border-gray-700/30">
+      <div class="text-center mb-8 mt-4">
+        <h1 class="text-2xl font-semibold glowing-text tracking-wider">星光草甸</h1>
+        <p class="text-xs text-cyan-200/70">服事協調的小天地</p>
+      </div>
+
+      <!-- Profile Snippet -->
+      <div class="mb-8 text-center flex flex-col items-center">
+        <div class="profile-avatar sprite-meadow-guardian mb-2" data-initial="光">
+          <!-- Status indicator example -->
+          <span class="absolute bottom-0 right-0 w-4 h-4 bg-green-400 border-2 border-[#1a1a2e] rounded-full"></span>
+        </div>
+        <span class="font-semibold text-lg text-gray-200">小光</span>
+        <span class="text-xs text-gray-400">草甸守護者 (User)</span>
+        <!-- <span class="text-xs text-gray-400">星光編織者 (Leader)</span> -->
+        <!-- <span class="text-xs text-gray-400">蒼穹觀察者 (Admin)</span> -->
+      </div>
+
+      <nav class="flex-grow overflow-y-auto pr-2">
+        <a href="#dashboard" class="nav-item active flex items-center" onclick="showSection('dashboard', this)">
+          <span class="icon"><i class="fas fa-home"></i></span>我的草甸 (儀表板)
+        </a>
+        <a href="#schedule" class="nav-item flex items-center" onclick="showSection('schedule', this)">
+          <span class="icon"><i class="fas fa-calendar-alt"></i></span>服事星圖 (時間表)
+        </a>
+        <a href="#requests" class="nav-item flex items-center" onclick="showSection('requests', this)">
+          <span class="icon"><i class="fas fa-seedling"></i></span>心願種子 (請求)
+          <!-- Notification Indicator -->
+          <span class="ml-auto w-3 h-3 bg-yellow-400 rounded-full pulsing-notification"></span>
+        </a>
+        <a href="#achievements" class="nav-item flex items-center" onclick="showSection('achievements', this)">
+          <span class="icon"><i class="fas fa-star"></i></span>星光成就 (徽章)
+        </a>
+        <a href="#team" class="nav-item flex items-center" onclick="showSection('team', this)">
+          <span class="icon"><i class="fas fa-users"></i></span>夥伴星群 (團隊)
+        </a>
+        <!-- Leader/Admin Only Sections -->
+        <a href="#scheduler" class="nav-item flex items-center" onclick="showSection('scheduler', this)">
+          <span class="icon"><i class="fas fa-magic"></i></span>星圖繪製 (排班)
+        </a>
+        <a href="#admin-settings" class="nav-item flex items-center" onclick="showSection('admin-settings', this)">
+          <span class="icon"><i class="fas fa-cogs"></i></span>蒼穹設定 (管理)
+        </a>
+        <!-- End Leader/Admin Only -->
+      </nav>
+
+      <div class="mt-auto text-center text-xs text-gray-500">
+        <button class="soft-button-secondary text-gray-300 py-2 px-4 rounded-full w-full text-sm mb-2 hover:text-white">
+          <i class="fas fa-sign-out-alt mr-2"></i>登出星域
+        </button>
+        版本 v0.1.alpha
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow p-6 overflow-y-auto">
+
+      <!-- Section: Dashboard (Default View for User) -->
+      <section id="dashboard" class="content-section fade-in">
+        <h2 class="text-2xl font-semibold mb-6 glowing-text">我的草甸概覽</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <!-- Upcoming Service -->
+          <div class="content-area">
+            <h3 class="text-lg font-semibold mb-4 text-cyan-200/90 flex items-center">
+              <i class="fas fa-bell mr-3 text-yellow-400 animate-pulse"></i>即將到來的服事
+            </h3>
+            <div class="space-y-3">
+              <div class="schedule-item !p-3 !text-left flex items-center gap-4">
+                <div class="ministry-icon !text-xl !mb-0"><i class="fas fa-guitar"></i></div>
+                <div>
+                  <div class="ministry-name !text-base">主日敬拜 - 吉他手</div>
+                  <div class="ministry-date">本週六 (10/28) 上午 09:00</div>
+                </div>
+              </div>
+              <p class="text-sm text-gray-400 text-center">目前沒有其他已安排的服事。</p>
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="content-area">
+            <h3 class="text-lg font-semibold mb-4 text-cyan-200/90"><i class="fas fa-paper-plane mr-2"></i>快速行動</h3>
+            <div class="flex flex-col space-y-3">
+              <button
+                class="soft-button text-white py-3 px-5 rounded-lg text-base flex items-center justify-center gap-2"
+                onclick="showModal('request-leave-modal')">
+                <i class="fas fa-leaf"></i>申請休假 / 無法服事
+              </button>
+              <button
+                class="soft-button text-white py-3 px-5 rounded-lg text-base flex items-center justify-center gap-2"
+                onclick="showModal('request-swap-modal')">
+                <i class="fas fa-sync-alt"></i>尋找代班 / 換班
+              </button>
+              <button
+                class="soft-button-secondary text-gray-300 py-2 px-4 rounded-lg text-sm flex items-center justify-center gap-2"
+                onclick="navigateToSection('schedule')">
+                <i class="fas fa-calendar-check"></i>查看完整星圖
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activity / Notifications -->
+        <div class="content-area">
+          <h3 class="text-lg font-semibold mb-4 text-cyan-200/90"><i class="fas fa-history mr-2"></i>近期動態與提醒</h3>
+          <div class="space-y-3 text-sm">
+            <div class="p-3 bg-purple-900/30 rounded-lg flex justify-between items-center border border-purple-700/50">
+              <span><i class="fas fa-check-circle text-green-400 mr-2"></i> 小美 已接受你的換班請求 (10/28 主日敬拜)。</span>
+              <span class="text-xs text-gray-400">2小時前</span>
+            </div>
+            <div class="p-3 bg-blue-900/30 rounded-lg flex justify-between items-center border border-blue-700/50">
+              <span><i class="fas fa-star text-yellow-400 mr-2"></i> 你獲得了新的徽章：<span
+                  class="font-semibold text-yellow-300">晨曦之音</span>！</span>
+              <span class="text-xs text-gray-400">昨天</span>
+            </div>
+            <div class="p-3 bg-gray-800/30 rounded-lg flex justify-between items-center border border-gray-700/50">
+              <span><i class="fas fa-info-circle text-cyan-400 mr-2"></i> 聖誕節特別活動服事開始登記囉！</span>
+              <span class="text-xs text-gray-400">3天前</span>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Section: Schedule View -->
+      <section id="schedule" class="content-section hidden fade-in">
+        <h2 class="text-2xl font-semibold mb-2 glowing-text">服事星圖</h2>
+        <p class="text-sm text-gray-400 mb-6">這裡可以看到大家閃耀的時刻。</p>
+
+        <div class="flex justify-between items-center mb-6 gap-4 flex-wrap">
+          <!-- Filters -->
+          <div class="flex gap-3 items-center flex-wrap">
+            <span class="text-gray-400">檢視：</span>
+            <button class="soft-button-secondary text-xs px-3 py-1 rounded-full">本月</button>
+            <button
+              class="soft-button-secondary text-xs px-3 py-1 rounded-full opacity-70 hover:opacity-100">本週</button>
+            <button
+              class="soft-button-secondary text-xs px-3 py-1 rounded-full opacity-70 hover:opacity-100">主日聚會</button>
+            <button
+              class="soft-button-secondary text-xs px-3 py-1 rounded-full opacity-70 hover:opacity-100">禱告會</button>
+            <input type="text" placeholder="搜尋人員或服事..."
+              class="bg-[#1a1a2e]/50 border border-gray-600/50 rounded-full px-3 py-1 text-xs focus:outline-none focus:border-cyan-400/50 focus:ring-1 focus:ring-cyan-400/30 transition">
+          </div>
+          <!-- View Mode -->
+          <div class="flex gap-2 items-center">
+            <span class="text-gray-400 text-xs">模式：</span>
+            <button class="soft-button text-xs px-3 py-1 rounded-full"><i class="fas fa-th-large mr-1"></i>圖塊</button>
+            <button class="soft-button-secondary text-xs px-3 py-1 rounded-full opacity-70 hover:opacity-100"><i
+                class="fas fa-list mr-1"></i>列表</button>
+          </div>
+        </div>
+
+        <!-- Schedule Grid/List -->
+        <div class="schedule-grid">
+          <!-- Example Item 1 -->
+          <div class="schedule-item">
+            <div class="ministry-icon"><i class="fas fa-music"></i></div>
+            <div class="ministry-name">主日敬拜 - 樂團A</div>
+            <div class="ministry-date">10/28 (六) 09:00</div>
+            <div class="text-xs text-gray-400 mt-2">小光, 小美, 大華</div>
+          </div>
+          <!-- Example Item 2 -->
+          <div class="schedule-item">
+            <div class="ministry-icon"><i class="fas fa-child"></i></div>
+            <div class="ministry-name">兒童主日學</div>
+            <div class="ministry-date">10/29 (日) 10:00</div>
+            <div class="text-xs text-gray-400 mt-2">志明, 春嬌</div>
+          </div>
+          <!-- Example Item 3 -->
+          <div class="schedule-item">
+            <div class="ministry-icon"><i class="fas fa-pray"></i></div>
+            <div class="ministry-name">禱告會帶領</div>
+            <div class="ministry-date">11/01 (三) 19:30</div>
+            <div class="text-xs text-gray-400 mt-2">長老</div>
+          </div>
+          <!-- Example Item 4 -->
+          <div class="schedule-item">
+            <div class="ministry-icon"><i class="fas fa-microphone-alt"></i></div>
+            <div class="ministry-name">主日敬拜 - 主領</div>
+            <div class="ministry-date">11/04 (六) 09:00</div>
+            <div class="text-xs text-gray-400 mt-2">小雅</div>
+          </div>
+          <!-- Add more items as needed -->
+          <div class="schedule-item opacity-60">
+            <div class="ministry-icon"><i class="fas fa-coffee"></i></div>
+            <div class="ministry-name">招待與茶水</div>
+            <div class="ministry-date">11/04 (六) 08:30</div>
+            <div class="text-xs text-gray-400 mt-2">待安排</div>
+          </div>
+        </div>
+        <div class="text-center mt-8">
+          <button class="soft-button-secondary text-gray-300 py-2 px-5 rounded-full text-sm hover:text-white">
+            <i class="fab fa-google mr-2"></i>同步到 Google 行事曆
+          </button>
+        </div>
+      </section>
+
+      <!-- Section: Requests -->
+      <section id="requests" class="content-section hidden fade-in">
+        <h2 class="text-2xl font-semibold mb-6 glowing-text">心願種子 - 請求管理</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- My Requests -->
+          <div class="content-area">
+            <h3 class="text-lg font-semibold mb-4 text-cyan-200/90"><i class="fas fa-paper-plane mr-2"></i>我發出的請求</h3>
+            <div class="space-y-3">
+              <div class="p-3 bg-blue-900/40 rounded-lg border border-blue-700/50">
+                <div class="flex justify-between items-center mb-1">
+                  <span class="font-semibold">換班請求: 11/11 主日音控</span>
+                  <span class="text-xs px-2 py-0.5 bg-yellow-600/70 text-yellow-100 rounded-full">待處理</span>
+                </div>
+                <p class="text-xs text-gray-400 mb-2">原因：家庭聚會</p>
+                <p class="text-xs text-gray-400">已發送給：小美, 大華, 志明 (等待回應中...)</p>
+                <div class="text-right mt-2">
+                  <button class="text-red-400 hover:text-red-300 text-xs">取消請求</button>
+                </div>
+              </div>
+              <div class="p-3 bg-gray-800/50 rounded-lg border border-gray-700/50 opacity-80">
+                <div class="flex justify-between items-center mb-1">
+                  <span class="font-semibold">休假請求: 10/20-10/22</span>
+                  <span class="text-xs px-2 py-0.5 bg-green-600/70 text-green-100 rounded-full">已核准</span>
+                </div>
+                <p class="text-xs text-gray-400">原因：個人旅遊</p>
+              </div>
+            </div>
+            <button class="soft-button w-full mt-6 py-2 rounded-lg" onclick="showModal('request-leave-modal')">
+              <i class="fas fa-plus-circle mr-1"></i> 發起新的休假請求
+            </button>
+          </div>
+
+          <!-- Requests for Me -->
+          <div class="content-area">
+            <h3 class="text-lg font-semibold mb-4 text-cyan-200/90"><i class="fas fa-inbox mr-2"></i>需要我回應的請求</h3>
+            <div class="space-y-3">
+              <div class="p-3 bg-purple-900/40 rounded-lg border border-purple-600/50 pulsing-notification">
+                <div class="flex justify-between items-center mb-1">
+                  <span class="font-semibold">來自 小雅 的換班邀請</span>
+                  <span class="text-xs text-gray-400">30分鐘前</span>
+                </div>
+                <p class="text-sm text-gray-300 mb-2">服事：11/18 主日簡報 (PPT)</p>
+                <p class="text-xs text-gray-400 mb-3">訊息：「那天臨時有事，可以幫忙代一下嗎？感恩！」</p>
+                <div class="flex justify-end gap-3">
+                  <button class="soft-button text-white px-4 py-1 rounded-full text-xs hover:bg-green-500/50">
+                    <i class="fas fa-check mr-1"></i>接受
+                  </button>
+                  <button
+                    class="soft-button-secondary text-gray-300 px-4 py-1 rounded-full text-xs hover:bg-red-500/50">
+                    <i class="fas fa-times mr-1"></i>拒絕
+                  </button>
+                </div>
+              </div>
+              <p class="text-sm text-gray-400 text-center mt-4">目前沒有其他待回應的請求。</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section: Achievements -->
+      <section id="achievements" class="content-section hidden fade-in">
+        <h2 class="text-2xl font-semibold mb-1 glowing-text">星光成就殿堂</h2>
+        <p class="text-sm text-gray-400 mb-6">每一次服事，都在點亮星空。</p>
+
+        <div class="content-area mb-6">
+          <h3 class="text-lg font-semibold mb-4 text-cyan-200/90"><i class="fas fa-user-astronaut mr-2"></i>我的星光旅程</h3>
+          <div class="flex items-center gap-6">
+            <div class="profile-avatar sprite-starlight-weaver !w-20 !h-20 !text-4xl" data-initial="雅"></div>
+            <div>
+              <p class="text-xl font-semibold text-gray-100">小雅</p>
+              <p class="text-sm text-cyan-300/80">星光編織者 (Leader)</p>
+              <p class="text-xs text-gray-400 mt-1">已點亮 <span class="font-bold text-yellow-300">15</span> 個服事時刻</p>
+              <p class="text-xs text-gray-400">獲得 <span class="font-bold text-yellow-300">3</span> 個成就徽章</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-area">
+          <h3 class="text-lg font-semibold mb-4 text-cyan-200/90"><i class="fas fa-medal mr-2"></i>已解鎖的徽章</h3>
+          <div class="flex flex-wrap justify-center">
+            <div class="achievement-badge">
+              <div class="badge-icon"><i class="fas fa-seedling"></i></div>
+              <div class="badge-name">初次服事的嫩芽</div>
+            </div>
+            <div class="achievement-badge" style="opacity: 1; transform: scale(1.05);"> <!-- Example of unlocked -->
+              <div class="badge-icon"><i class="fas fa-music"></i></div>
+              <div class="badge-name">晨曦之音 (主日敬拜x5)</div>
+            </div>
+            <div class="achievement-badge" style="opacity: 1; transform: scale(1.05);">
+              <div class="badge-icon"><i class="fas fa-handshake"></i></div>
+              <div class="badge-name">互助的光芒 (完成換班x1)</div>
+            </div>
+            <div class="achievement-badge">
+              <div class="badge-icon"><i class="fas fa-users"></i></div>
+              <div class="badge-name">團隊協作之星</div>
+            </div>
+            <div class="achievement-badge">
+              <div class="badge-icon"><i class="fas fa-book-open"></i></div>
+              <div class="badge-name">知識傳遞者 (成長班服事)</div>
+            </div>
+            <div class="achievement-badge">
+              <div class="badge-icon"><i class="fas fa-praying-hands"></i></div>
+              <div class="badge-name">守望燈塔 (禱告會x3)</div>
+            </div>
+            <!-- Add more badges -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Section: Team View -->
+      <section id="team" class="content-section hidden fade-in">
+        <h2 class="text-2xl font-semibold mb-6 glowing-text">夥伴星群</h2>
+        <input type="text" placeholder="搜尋夥伴姓名或角色..."
+          class="w-full bg-[#1a1a2e]/50 border border-gray-600/50 rounded-full px-4 py-2 mb-6 text-sm focus:outline-none focus:border-cyan-400/50 focus:ring-1 focus:ring-cyan-400/30 transition">
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+          <!-- Team Member Card (Non-Card Style) -->
+          <div
+            class="bg-gradient-to-br from-purple-900/20 to-blue-900/20 p-4 rounded-xl border border-gray-700/40 text-center transition duration-300 hover:border-cyan-400/50 hover:shadow-xl hover:shadow-cyan-500/10">
+            <div class="flex flex-col items-center">
+              <div class="profile-avatar !w-16 !h-16 !text-2xl mb-3" data-initial="光"></div>
+              <p class="font-semibold text-lg text-gray-100">小光</p>
+              <p class="text-xs text-cyan-300/80 mb-2">草甸守護者 (User)</p>
+              <div class="flex gap-2 text-xs text-gray-400">
+                <span><i class="fas fa-guitar text-yellow-400"></i> 吉他</span>
+                <span><i class="fas fa-child text-green-400"></i> 兒主</span>
+              </div>
+              <button
+                class="soft-button-secondary text-xs px-3 py-1 rounded-full mt-3 text-gray-300 hover:text-white">查看星圖</button>
+            </div>
+          </div>
+          <div
+            class="bg-gradient-to-br from-purple-900/20 to-blue-900/20 p-4 rounded-xl border border-gray-700/40 text-center transition duration-300 hover:border-cyan-400/50 hover:shadow-xl hover:shadow-cyan-500/10">
+            <div class="flex flex-col items-center">
+              <div class="profile-avatar !w-16 !h-16 !text-2xl mb-3 sprite-starlight-weaver" data-initial="雅"></div>
+              <p class="font-semibold text-lg text-gray-100">小雅</p>
+              <p class="text-xs text-cyan-300/80 mb-2">星光編織者 (Leader)</p>
+              <div class="flex gap-2 text-xs text-gray-400">
+                <span><i class="fas fa-microphone-alt text-red-400"></i> 主領</span>
+                <span><i class="fas fa-desktop text-blue-400"></i> PPT</span>
+              </div>
+              <button
+                class="soft-button-secondary text-xs px-3 py-1 rounded-full mt-3 text-gray-300 hover:text-white">查看星圖</button>
+            </div>
+          </div>
+          <div
+            class="bg-gradient-to-br from-purple-900/20 to-blue-900/20 p-4 rounded-xl border border-gray-700/40 text-center transition duration-300 hover:border-cyan-400/50 hover:shadow-xl hover:shadow-cyan-500/10">
+            <div class="flex flex-col items-center">
+              <div class="profile-avatar !w-16 !h-16 !text-2xl mb-3" data-initial="美"></div>
+              <p class="font-semibold text-lg text-gray-100">小美</p>
+              <p class="text-xs text-cyan-300/80 mb-2">草甸守護者 (User)</p>
+              <div class="flex gap-2 text-xs text-gray-400">
+                <span><i class="fas fa-volume-up text-purple-400"></i> 音控</span>
+                <span><i class="fas fa-coffee text-orange-400"></i> 招待</span>
+              </div>
+              <button
+                class="soft-button-secondary text-xs px-3 py-1 rounded-full mt-3 text-gray-300 hover:text-white">查看星圖</button>
+            </div>
+          </div>
+          <!-- Add more team members -->
+          <div
+            class="bg-gradient-to-br from-purple-900/20 to-blue-900/20 p-4 rounded-xl border border-gray-700/40 text-center transition duration-300 hover:border-cyan-400/50 hover:shadow-xl hover:shadow-cyan-500/10 opacity-50 cursor-not-allowed">
+            <div class="flex flex-col items-center">
+              <div class="profile-avatar !w-16 !h-16 !text-2xl mb-3 bg-gray-600 border-gray-500" data-initial="華"></div>
+              <p class="font-semibold text-lg text-gray-400">大華</p>
+              <p class="text-xs text-gray-500 mb-2">休假中</p>
+              <div class="flex gap-2 text-xs text-gray-500">
+                <span><i class="fas fa-leaf"></i> 10/25 - 11/05</span>
+              </div>
+              <button class="soft-button-secondary text-xs px-3 py-1 rounded-full mt-3 text-gray-500"
+                disabled>查看星圖</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section: Scheduler (Leader/Admin Only) -->
+      <section id="scheduler" class="content-section hidden fade-in">
+        <h2 class="text-2xl font-semibold mb-1 glowing-text">星圖繪製儀</h2>
+        <p class="text-sm text-gray-400 mb-6">拖曳夥伴的光芒，照亮服事的崗位。</p>
+
+        <div class="flex justify-between items-center mb-6 gap-4 flex-wrap">
+          <!-- Controls -->
+          <div class="flex gap-3 items-center flex-wrap">
+            <select
+              class="bg-[#1a1a2e]/50 border border-gray-600/50 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-cyan-400/50 focus:ring-1 focus:ring-cyan-400/30 transition">
+              <option>選擇月份：2023年11月</option>
+              <option>2023年12月</option>
+            </select>
+            <select
+              class="bg-[#1a1a2e]/50 border border-gray-600/50 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-cyan-400/50 focus:ring-1 focus:ring-cyan-400/30 transition">
+              <option>選擇服事：主日聚會</option>
+              <option>禱告會</option>
+              <option>聖誕節慶典</option>
+            </select>
+            <button class="soft-button text-white py-1.5 px-4 rounded-lg text-xs"><i
+                class="fas fa-history mr-1"></i>查看歷史</button>
+          </div>
+          <!-- Legend -->
+          <div class="flex gap-3 text-xs text-gray-400 items-center flex-wrap">
+            <span>圖例：</span>
+            <span class="flex items-center gap-1"><i class="fas fa-lock status-locked"></i>無法排</span>
+            <span class="flex items-center gap-1"><i class="fas fa-exclamation-triangle status-limited"></i>次數限制</span>
+            <span class="flex items-center gap-1"><i class="fas fa-users-slash status-incompatible"></i>衝突</span>
+            <span class="flex items-center gap-1"><i class="fas fa-leaf status-on-leave"></i>休假</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          <!-- Available Users Panel -->
+          <div class="lg:col-span-1 h-[calc(100vh-200px)] overflow-y-auto pr-2 content-area !p-4">
+            <h3 class="text-lg font-semibold mb-4 text-cyan-200/90 sticky top-0 bg-[#16213e] py-2 z-10"><i
+                class="fas fa-users mr-2"></i>可選夥伴星光</h3>
+            <input type="text" placeholder="搜尋夥伴..."
+              class="w-full bg-[#1a1a2e]/50 border border-gray-600/50 rounded-full px-3 py-1 text-xs mb-4 focus:outline-none focus:border-cyan-400/50 focus:ring-1 focus:ring-cyan-400/30 transition sticky top-10 z-10">
+            <div class="space-y-3 mt-12">
+              <!-- User Draggable Item -->
+              <div class="user-cell p-2 rounded-lg bg-opacity-50 hover:bg-purple-800/30" draggable="true"
+                ondragstart="drag(event)" id="user1">
+                <div class="user-avatar-small" data-initial="光">光</div>
+                <span class="user-name">小光</span>
+                <i class="fas fa-exclamation-triangle status-limited ml-auto" title="本月最多2次 (已排1次)"></i>
+              </div>
+              <div class="user-cell p-2 rounded-lg bg-opacity-50 hover:bg-purple-800/30" draggable="true"
+                ondragstart="drag(event)" id="user2">
+                <div class="user-avatar-small" data-initial="美">美</div>
+                <span class="user-name">小美</span>
+              </div>
+              <div class="user-cell p-2 rounded-lg bg-opacity-50 hover:bg-purple-800/30 cursor-not-allowed opacity-50"
+                draggable="false" id="user3">
+                <div class="user-avatar-small bg-gray-600" data-initial="華">華</div>
+                <span class="user-name">大華</span>
+                <i class="fas fa-leaf status-on-leave ml-auto" title="休假中"></i>
+              </div>
+              <div class="user-cell p-2 rounded-lg bg-opacity-50 hover:bg-purple-800/30" draggable="true"
+                ondragstart="drag(event)" id="user4">
+                <div class="user-avatar-small" data-initial="明">明</div>
+                <span class="user-name">志明</span>
+                <i class="fas fa-lock status-locked ml-auto" title="本月不可排主日"></i>
+              </div>
+              <div class="user-cell p-2 rounded-lg bg-opacity-50 hover:bg-purple-800/30" draggable="true"
+                ondragstart="drag(event)" id="user5">
+                <div class="user-avatar-small" data-initial="嬌">嬌</div>
+                <span class="user-name">春嬌</span>
+                <i class="fas fa-users-slash status-incompatible ml-auto" title="不能與小光同時"></i>
+              </div>
+              <!-- Add more users -->
+            </div>
+          </div>
+
+          <!-- Schedule Area -->
+          <div class="lg:col-span-3 h-[calc(100vh-200px)] overflow-y-auto">
+            <table class="scheduler-table">
+              <thead>
+                <tr>
+                  <th>日期 / 時間</th>
+                  <th>主領</th>
+                  <th>樂團 (吉他/琴/鼓)</th>
+                  <th>音控</th>
+                  <th>PPT</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Row 1: Nov 4 -->
+                <tr>
+                  <td class="font-semibold text-gray-300 w-32">
+                    11/04 (六)<br><span class="text-xs font-normal text-gray-400">09:00 AM</span>
+                  </td>
+                  <td>
+                    <div class="schedule-slot" ondrop="drop(event)" ondragover="allowDrop(event)">
+                      <div class="assigned-user" id="assigned-user-4-1">
+                        <span class="user-avatar-tiny" data-initial="雅">雅</span> 小雅
+                        <i class="fas fa-times text-red-400/70 ml-1 cursor-pointer text-xs hover:text-red-400"></i>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="schedule-slot" ondrop="drop(event)" ondragover="allowDrop(event)">
+                      <div class="assigned-user" id="assigned-user-1-2">
+                        <span class="user-avatar-tiny" data-initial="光">光</span> 小光
+                        <i class="fas fa-times text-red-400/70 ml-1 cursor-pointer text-xs hover:text-red-400"></i>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="schedule-slot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                  </td>
+                  <td>
+                    <div class="schedule-slot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                  </td>
+                </tr>
+                <!-- Row 2: Nov 11 -->
+                <tr>
+                  <td class="font-semibold text-gray-300 w-32">
+                    11/11 (六)<br><span class="text-xs font-normal text-gray-400">09:00 AM</span>
+                  </td>
+                  <td>
+                    <div class="schedule-slot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                  </td>
+                  <td>
+                    <div class="schedule-slot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                  </td>
+                  <td>
+                    <div class="schedule-slot drag-over" ondrop="drop(event)" ondragover="allowDrop(event)">
+                      <!-- Example drag over state -->
+                      <div class="assigned-user" id="assigned-user-2-3" title="請求換班中...">
+                        <span class="user-avatar-tiny" data-initial="美">美</span> 小美
+                        <i class="fas fa-sync-alt text-yellow-400/80 ml-1 text-xs animate-spin"></i>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="schedule-slot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                  </td>
+                </tr>
+                <!-- Row 3: Nov 18 -->
+                <tr>
+                  <td class="font-semibold text-gray-300 w-32">
+                    11/18 (六)<br><span class="text-xs font-normal text-gray-400">09:00 AM</span>
+                  </td>
+                  <td>
+                    <div class="schedule-slot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                  </td>
+                  <td>
+                    <div class="schedule-slot !border-red-500/50 !bg-red-900/20" ondrop="drop(event)"
+                      ondragover="allowDrop(event)"> <!-- Example conflict state -->
+                      <span class="text-red-400 text-xs">樂團 A <i class="fas fa-exclamation-triangle"></i> (成員衝突)</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="schedule-slot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                  </td>
+                  <td>
+                    <div class="schedule-slot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                  </td>
+                </tr>
+                <!-- Add more rows -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="mt-6 text-right">
+          <button class="soft-button-secondary text-gray-300 py-2 px-5 rounded-lg text-sm mr-3">
+            <i class="fas fa-undo mr-1"></i> 重置變更
+          </button>
+          <button class="soft-button text-white py-2 px-6 rounded-lg text-sm">
+            <i class="fas fa-save mr-1"></i> 儲存並發佈星圖
+          </button>
+        </div>
+      </section>
+
+      <!-- Section: Admin Settings (Admin Only) -->
+      <section id="admin-settings" class="content-section hidden fade-in">
+        <h2 class="text-2xl font-semibold mb-6 glowing-text">蒼穹設定中心</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- User Management -->
+          <div class="content-area">
+            <h3 class="text-lg font-semibold mb-4 text-cyan-200/90"><i class="fas fa-user-cog mr-2"></i>夥伴與權限</h3>
+            <button class="soft-button w-full mb-4 py-2 rounded-lg"><i class="fas fa-user-plus mr-1"></i> 新增夥伴</button>
+            <div class="space-y-2 max-h-60 overflow-y-auto pr-2">
+              <div class="flex justify-between items-center p-2 bg-purple-900/20 rounded hover:bg-purple-900/40">
+                <span>小光 (User)</span>
+                <div class="space-x-2">
+                  <button class="text-cyan-300 hover:text-cyan-100 text-xs">編輯</button>
+                  <button class="text-red-400 hover:text-red-300 text-xs">停用</button>
+                </div>
+              </div>
+              <div class="flex justify-between items-center p-2 bg-purple-900/20 rounded hover:bg-purple-900/40">
+                <span>小雅 (Leader)</span>
+                <div class="space-x-2">
+                  <button class="text-cyan-300 hover:text-cyan-100 text-xs">編輯</button>
+                  <button class="text-red-400 hover:text-red-300 text-xs">停用</button>
+                </div>
+              </div>
+              <!-- More users -->
+            </div>
+          </div>
+          <!-- Ministry Management -->
+          <div class="content-area">
+            <h3 class="text-lg font-semibold mb-4 text-cyan-200/90"><i class="fas fa-stream mr-2"></i>服事項目與規則</h3>
+            <button class="soft-button w-full mb-4 py-2 rounded-lg"><i class="fas fa-plus mr-1"></i> 新增服事類型</button>
+            <div class="space-y-2 max-h-60 overflow-y-auto pr-2">
+              <div class="flex justify-between items-center p-2 bg-blue-900/20 rounded hover:bg-blue-900/40">
+                <span>主日敬拜 (主領, 樂團, 音控, PPT)</span>
+                <div class="space-x-2">
+                  <button class="text-cyan-300 hover:text-cyan-100 text-xs">設定規則</button>
+                  <button class="text-orange-400 hover:text-orange-300 text-xs">編輯</button>
+                </div>
+              </div>
+              <div class="flex justify-between items-center p-2 bg-blue-900/20 rounded hover:bg-blue-900/40">
+                <span>兒童主日學</span>
+                <div class="space-x-2">
+                  <button class="text-cyan-300 hover:text-cyan-100 text-xs">設定規則</button>
+                  <button class="text-orange-400 hover:text-orange-300 text-xs">編輯</button>
+                </div>
+              </div>
+              <!-- More ministries -->
+            </div>
+          </div>
+          <!-- System Settings -->
+          <div class="content-area md:col-span-2">
+            <h3 class="text-lg font-semibold mb-4 text-cyan-200/90"><i class="fas fa-sliders-h mr-2"></i>系統整合與設定</h3>
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-300 mb-1">Google Calendar 整合</label>
+                <button
+                  class="soft-button-secondary text-sm px-4 py-1 rounded-lg text-gray-300 hover:text-white">連結帳號</button>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-300 mb-1">Line Notify 整合</label>
+                <button class="soft-button-secondary text-sm px-4 py-1 rounded-lg text-gray-300 hover:text-white">設定
+                  Token</button>
+                <p class="text-xs text-gray-400 mt-1">用於發送服事提醒、審核通知等。</p>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-300 mb-1">成就與徽章系統</label>
+                <button
+                  class="soft-button-secondary text-sm px-4 py-1 rounded-lg text-gray-300 hover:text-white">管理徽章</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Modals -->
+  <!-- Request Leave Modal -->
+  <div id="request-leave-modal" class="modal-backdrop hidden" onclick="closeModal('request-leave-modal')">
+    <div class="modal-content fade-in" onclick="event.stopPropagation();">
+      <h3 class="text-xl font-semibold mb-5 glowing-text text-center"><i class="fas fa-leaf mr-2"></i>申請休假 / 無法服事</h3>
+      <form>
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-cyan-200/90 mb-1">選擇日期範圍</label>
+          <div class="flex gap-2">
+            <input type="date"
+              class="w-full bg-[#1a1a2e]/70 border border-gray-600/50 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-cyan-400/50 focus:ring-1 focus:ring-cyan-400/30 transition appearance-none"
+              style="color-scheme: dark;">
+            <span class="self-center text-gray-400">-</span>
+            <input type="date"
+              class="w-full bg-[#1a1a2e]/70 border border-gray-600/50 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-cyan-400/50 focus:ring-1 focus:ring-cyan-400/30 transition appearance-none"
+              style="color-scheme: dark;">
+          </div>
+        </div>
+        <div class="mb-6">
+          <label for="leave-reason" class="block text-sm font-medium text-cyan-200/90 mb-1">原因 (選填)</label>
+          <textarea id="leave-reason" rows="3"
+            class="w-full bg-[#1a1a2e]/70 border border-gray-600/50 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-cyan-400/50 focus:ring-1 focus:ring-cyan-400/30 transition"
+            placeholder="例如：家庭旅遊、身體不適..."></textarea>
+        </div>
+        <div class="flex justify-end gap-3">
+          <button type="button" class="soft-button-secondary text-gray-300 py-2 px-5 rounded-lg text-sm"
+            onclick="closeModal('request-leave-modal')">取消</button>
+          <button type="submit" class="soft-button text-white py-2 px-6 rounded-lg text-sm">送出申請</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Request Swap Modal -->
+  <div id="request-swap-modal" class="modal-backdrop hidden" onclick="closeModal('request-swap-modal')">
+    <div class="modal-content fade-in" onclick="event.stopPropagation();">
+      <h3 class="text-xl font-semibold mb-5 glowing-text text-center"><i class="fas fa-sync-alt mr-2"></i>請求換班 / 尋找代班
+      </h3>
+      <form>
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-cyan-200/90 mb-1">選擇你無法服事的項目</label>
+          <select
+            class="w-full bg-[#1a1a2e]/70 border border-gray-600/50 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-cyan-400/50 focus:ring-1 focus:ring-cyan-400/30 transition">
+            <option>選擇已排定的服事...</option>
+            <option>10/28 (六) 09:00 - 主日敬拜 - 吉他手</option>
+            <option>11/11 (六) 09:00 - 主日敬拜 - 音控 (來自模擬資料)</option>
+          </select>
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-cyan-200/90 mb-1">你想？</label>
+          <div class="flex gap-4">
+            <label
+              class="flex items-center gap-2 p-2 rounded-lg bg-purple-900/30 border border-transparent hover:border-cyan-400/50 transition cursor-pointer">
+              <input type="radio" name="swap_type" value="find_sub"
+                class="form-radio text-cyan-400 bg-gray-700 border-gray-600 focus:ring-cyan-500/50" checked> 找人<span
+                class="font-semibold text-yellow-300">代班</span> (自動發送請求給合適者)
+            </label>
+            <label
+              class="flex items-center gap-2 p-2 rounded-lg bg-purple-900/30 border border-transparent hover:border-cyan-400/50 transition cursor-pointer">
+              <input type="radio" name="swap_type" value="swap_direct"
+                class="form-radio text-cyan-400 bg-gray-700 border-gray-600 focus:ring-cyan-500/50"> 與特定對象<span
+                class="font-semibold text-yellow-300">換班</span> (需自行協調)
+            </label>
+          </div>
+        </div>
+        <div class="mb-6">
+          <label for="swap-reason" class="block text-sm font-medium text-cyan-200/90 mb-1">留言給夥伴 / 主責 (選填)</label>
+          <textarea id="swap-reason" rows="2"
+            class="w-full bg-[#1a1a2e]/70 border border-gray-600/50 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-cyan-400/50 focus:ring-1 focus:ring-cyan-400/30 transition"
+            placeholder="例如：臨時加班，拜託大家幫忙了！"></textarea>
+        </div>
+        <div class="flex justify-end gap-3">
+          <button type="button" class="soft-button-secondary text-gray-300 py-2 px-5 rounded-lg text-sm"
+            onclick="closeModal('request-swap-modal')">取消</button>
+          <button type="submit" class="soft-button text-white py-2 px-6 rounded-lg text-sm">發送請求</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <script>
+    // Simple Navigation
+    const sections = document.querySelectorAll('.content-section');
+    const navItems = document.querySelectorAll('.nav-item');
+
+    function showSection(id, clickedNavItem) {
+      sections.forEach(section => {
+        if (section.id === id) {
+          section.classList.remove('hidden');
+          // Trigger reflow for animation
+          void section.offsetWidth;
+          section.classList.add('fade-in');
+
+        } else {
+          section.classList.add('hidden');
+          section.classList.remove('fade-in');
+        }
+      });
+      navItems.forEach(item => item.classList.remove('active'));
+      if (clickedNavItem) {
+        clickedNavItem.classList.add('active');
+      }
+    }
+
+    function navigateToSection(id) {
+      const targetNavItem = document.querySelector(`.nav-item[href="#${id}"]`);
+      showSection(id, targetNavItem);
+      // Scroll main area to top might be helpful
+      document.querySelector('main').scrollTop = 0;
+    }
+
+
+    // Initial section load (optional, could default to first or based on role)
+    showSection('dashboard', document.querySelector('.nav-item.active'));
+
+    // Sidebar item click handler
+    navItems.forEach(item => {
+      item.addEventListener('click', (e) => {
+        // Prevent default if it's an anchor link, handle navigation ourselves
+        if (item.tagName === 'A' && item.getAttribute('href').startsWith('#')) {
+          e.preventDefault();
+          const sectionId = item.getAttribute('href').substring(1);
+          showSection(sectionId, item);
+        }
+      });
+    });
+
+    // Modal Handling
+    function showModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) {
+        modal.classList.remove('hidden');
+        // Trigger reflow for animation if modal has fade-in
+        const modalContent = modal.querySelector('.modal-content');
+        if (modalContent) {
+          void modalContent.offsetWidth; // Reflow
+        }
+
+      }
+    }
+
+    function closeModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) {
+        modal.classList.add('hidden');
+      }
+    }
+
+    // Close modal if backdrop is clicked
+    document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+      backdrop.addEventListener('click', function (event) {
+        // Only close if the backdrop itself was clicked, not the content
+        if (event.target === this) {
+          closeModal(this.id);
+        }
+      });
+    });
+
+
+    // Simple Drag and Drop for Scheduler Demo
+    function allowDrop(ev) {
+      ev.preventDefault();
+      if (ev.target.classList.contains('schedule-slot')) {
+        ev.target.classList.add('drag-over');
+      }
+    }
+
+    function drag(ev) {
+      ev.dataTransfer.setData("text", ev.target.id);
+      ev.dataTransfer.effectAllowed = "move";
+    }
+
+    function drop(ev) {
+      ev.preventDefault();
+      const targetSlot = ev.target.closest('.schedule-slot');
+      if (!targetSlot) return; // Dropped outside a slot
+
+      targetSlot.classList.remove('drag-over');
+      const data = ev.dataTransfer.getData("text");
+      const draggedElement = document.getElementById(data);
+
+      if (draggedElement && targetSlot) {
+        // Basic check: Does the slot already have someone? (Simplistic: allow multiple for demo)
+        // In real app: Check constraints, conflicts, user limits here!
+
+        // Clone user info to place in slot (simple representation)
+        const userName = draggedElement.querySelector('.user-name').textContent;
+        const userInitial = draggedElement.querySelector('.user-avatar-small').dataset.initial;
+
+        const assignedUserDiv = document.createElement('div');
+        assignedUserDiv.className = 'assigned-user';
+        assignedUserDiv.id = `assigned-${data}-${Date.now()}`; // Unique ID
+        assignedUserDiv.innerHTML = `
+                     <span class="user-avatar-tiny" data-initial="${userInitial}">${userInitial}</span> ${userName}
+                     <i class="fas fa-times text-red-400/70 ml-1 cursor-pointer text-xs hover:text-red-400" onclick="removeUser(this)"></i>
+                 `;
+        targetSlot.appendChild(assignedUserDiv);
+
+        // Optional: Visually update the dragged user (e.g., grey out, indicate assigned)
+        // draggedElement.style.opacity = '0.5';
+        // draggedElement.draggable = false; // Prevent re-dragging for now
+      }
+    }
+
+    function removeUser(removeButton) {
+      const assignedUserDiv = removeButton.closest('.assigned-user');
+      if (assignedUserDiv) {
+        // Optional: Find the original user in the list and make them available again
+        // const originalUserId = ... // Need logic to link back if needed
+        // document.getElementById(originalUserId).style.opacity = '1';
+        // document.getElementById(originalUserId).draggable = true;
+        assignedUserDiv.remove();
+      }
+    }
+
+    // Remove drag-over class when dragging leaves a slot
+    document.querySelectorAll('.schedule-slot').forEach(slot => {
+      slot.addEventListener('dragleave', (ev) => {
+        if (ev.target === slot) { // Ensure it's leaving the slot itself
+          slot.classList.remove('drag-over');
+        }
+      });
+      // Also remove if drop happens elsewhere
+      slot.addEventListener('drop', (ev) => {
+        slot.classList.remove('drag-over');
+      });
+    });
+
+  </script>
+
+</body>
+
+</html>

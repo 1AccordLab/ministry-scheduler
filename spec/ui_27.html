@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>教會服事表管理系統 (Ministry Scheduler) - UI Mockups</title>
+  <!-- Using a more playful font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&family=ZCOOL+KuaiLe&display=swap"
+    rel="stylesheet">
+  <!-- Basic Icons Placeholder (replace with actual game-like icons later) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root {
+      --primary-bg: #3a2e39;
+      /* Deep purple/brown */
+      --secondary-bg: #4f384a;
+      /* Slightly lighter shade */
+      --card-bg: #6a4f65;
+      /* Card background */
+      --accent-color: #ffc857;
+      /* Bright gold/yellow accent */
+      --accent-secondary: #a1e8af;
+      /* Mint green for positive actions */
+      --accent-tertiary: #f97171;
+      /* Soft red for negative/alerts */
+      --text-color: #f5e9e2;
+      /* Creamy white text */
+      --text-muted: #bcaea8;
+      /* Muted text */
+      --border-color: #896a82;
+      /* Border color */
+      --locked-color: #9e8a9a;
+      /* Locked state */
+
+      --font-primary: 'Pixelify Sans', sans-serif;
+      /* Pixelated/Game font */
+      --font-secondary: 'ZCOOL KuaiLe', sans-serif;
+      /* More rounded CJK font */
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      font-family: var(--font-secondary), sans-serif;
+      background-color: var(--primary-bg);
+      color: var(--text-color);
+      overscroll-behavior: none;
+      /* Prevent pull-to-refresh */
+    }
+
+    .app-container {
+      max-width: 480px;
+      /* Simulate mobile viewport */
+      margin: 0 auto;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-color: var(--secondary-bg);
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+      position: relative;
+      /* For fixed elements */
+    }
+
+    .screen {
+      flex-grow: 1;
+      padding: 20px 15px 80px 15px;
+      /* Add padding bottom for nav */
+      overflow-y: auto;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><path fill="%233a2e39" fill-opacity="0.1" d="M0 40 L40 0 L40 5 L5 40 Z M0 0 L0 5 L35 40 L40 40 Z"></path></svg>'), var(--primary-bg);
+      /* Subtle pattern */
+    }
+
+    /* --- Game UI Elements --- */
+    .game-button {
+      font-family: var(--font-primary);
+      background-color: var(--accent-color);
+      color: var(--primary-bg);
+      border: 2px solid darken(var(--accent-color), 10%);
+      border-bottom-width: 4px;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-transform: uppercase;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.1s ease-in-out;
+      display: inline-block;
+      text-decoration: none;
+      box-shadow: 0 4px 0 darken(var(--accent-color), 15%);
+    }
+
+    .game-button:hover {
+      background-color: lighten(var(--accent-color), 5%);
+    }
+
+    .game-button:active {
+      transform: translateY(2px);
+      border-bottom-width: 2px;
+      box-shadow: 0 2px 0 darken(var(--accent-color), 15%);
+    }
+
+    .game-button.secondary {
+      background-color: var(--accent-secondary);
+      border-color: darken(var(--accent-secondary), 10%);
+      box-shadow: 0 4px 0 darken(var(--accent-secondary), 15%);
+      color: var(--primary-bg);
+    }
+
+    .game-button.tertiary {
+      background-color: var(--accent-tertiary);
+      border-color: darken(var(--accent-tertiary), 10%);
+      box-shadow: 0 4px 0 darken(var(--accent-tertiary), 15%);
+      color: #fff;
+    }
+
+    .game-button i {
+      margin-right: 8px;
+    }
+
+    .game-card {
+      background-color: var(--card-bg);
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2), inset 0 0 10px rgba(255, 255, 255, 0.05);
+      position: relative;
+      /* For potential pseudo elements */
+    }
+
+    .game-card::before {
+      /* Subtle top bevel */
+      /* content: '';
+            position: absolute;
+            top: 1px; left: 1px; right: 1px;
+            height: 3px;
+            background: linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0));
+            border-radius: 10px 10px 0 0; */
+    }
+
+    .game-header {
+      font-family: var(--font-primary);
+      font-size: 1.8rem;
+      color: var(--accent-color);
+      text-align: center;
+      margin-bottom: 25px;
+      text-shadow: 2px 2px 0px var(--primary-bg);
+      letter-spacing: 1px;
+    }
+
+    .game-input,
+    .game-select {
+      width: 100%;
+      padding: 12px 15px;
+      background-color: var(--secondary-bg);
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-color);
+      font-family: var(--font-secondary);
+      font-size: 1rem;
+      margin-bottom: 10px;
+    }
+
+    .game-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      max-width: 480px;
+      /* Match app container */
+      margin: 0 auto;
+      background-color: var(--secondary-bg);
+      border-top: 3px solid var(--border-color);
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+
+    .nav-item i {
+      font-size: 1.5rem;
+      margin-bottom: 3px;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      /* Placeholder for icons */
+      border: 1px dashed var(--text-muted);
+      border-radius: 5px;
+    }
+
+    .nav-item.active {
+      color: var(--accent-color);
+    }
+
+    .nav-item.active i {
+      color: var(--accent-color);
+      border-color: var(--accent-color);
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: var(--accent-color);
+      color: var(--primary-bg);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-family: var(--font-primary);
+      margin-right: 10px;
+      border: 2px solid var(--text-color);
+      flex-shrink: 0;
+    }
+
+    .locked {
+      opacity: 0.6;
+      pointer-events: none;
+      /* Make non-interactive */
+      filter: grayscale(50%);
+      position: relative;
+    }
+
+    .locked::after {
+      content: "\f023";
+      /* Font Awesome lock icon */
+      font-family: "Font Awesome 6 Free";
+      font-weight: 900;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2rem;
+      color: rgba(0, 0, 0, 0.5);
+      z-index: 10;
+    }
+
+    .schedule-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+      margin-bottom: 15px;
+    }
+
+    .day-header {
+      font-family: var(--font-primary);
+      font-size: 0.8rem;
+      text-align: center;
+      color: var(--text-muted);
+      padding-bottom: 5px;
+    }
+
+    .date-cell {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      min-height: 80px;
+      padding: 5px;
+      font-size: 0.7rem;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .date-cell .date-number {
+      font-family: var(--font-primary);
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: var(--accent-color);
+      margin-bottom: 3px;
+      text-align: right;
+    }
+
+    .date-cell.other-month {
+      background-color: var(--secondary-bg);
+      opacity: 0.5;
+    }
+
+    .date-cell.today {
+      border-color: var(--accent-color);
+      box-shadow: 0 0 8px var(--accent-color);
+    }
+
+    .schedule-item {
+      background-color: rgba(255, 200, 87, 0.2);
+      /* accent-color with alpha */
+      border-left: 3px solid var(--accent-color);
+      padding: 3px 5px;
+      border-radius: 3px;
+      margin-bottom: 3px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      cursor: pointer;
+      /* Indicate clickability */
+      font-size: 0.65rem;
+    }
+
+    .schedule-item.mine {
+      background-color: rgba(161, 232, 175, 0.3);
+      /* accent-secondary */
+      border-left-color: var(--accent-secondary);
+    }
+
+    .list-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .list-item-content {
+      flex-grow: 1;
+    }
+
+    .list-item-actions {
+      flex-shrink: 0;
+      margin-left: 10px;
+    }
+
+    .achievement-badge {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background-color: var(--locked-color);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin: 5px;
+      border: 3px solid var(--border-color);
+      color: var(--primary-bg);
+      font-size: 1.5rem;
+    }
+
+    .achievement-badge.unlocked {
+      background-color: var(--accent-color);
+      border-color: lighten(var(--accent-color), 10%);
+      box-shadow: 0 0 10px var(--accent-color);
+    }
+
+    .achievement-badge.unlocked i {
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.1);
+      }
+    }
+
+    .modal {
+      display: none;
+      /* Hidden by default */
+      position: fixed;
+      z-index: 100;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-content {
+      background-color: var(--secondary-bg);
+      border: 3px solid var(--accent-color);
+      border-radius: 15px;
+      padding: 25px;
+      max-width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      font-family: var(--font-secondary);
+    }
+
+    .modal-header {
+      font-family: var(--font-primary);
+      font-size: 1.5rem;
+      color: var(--accent-color);
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .modal-actions {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-around;
+    }
+
+    /* Specific Styling for Scheduler */
+    .assign-person-item {
+      display: flex;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border-color);
+      cursor: pointer;
+    }
+
+    .assign-person-item:last-child {
+      border-bottom: none;
+    }
+
+    .assign-person-item.unavailable {
+      color: var(--text-muted);
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    .assign-person-item.unavailable .assign-info {
+      text-decoration: line-through;
+    }
+
+    .assign-person-item .assign-info {
+      margin-left: 10px;
+      font-size: 0.9rem;
+      flex-grow: 1;
+    }
+
+    .assign-person-item .assign-status {
+      font-size: 0.8rem;
+      color: var(--accent-tertiary);
+    }
+
+    .assign-person-item.assignable:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app-container">
+
+    <!-- Screen: Login -->
+    <div class="screen" id="login-screen"
+      style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+      <i class="fas fa-church"
+        style="font-size: 4rem; color: var(--accent-color); margin-bottom: 20px; text-shadow: 3px 3px 0px var(--primary-bg);"></i>
+      <h1 class="game-header" style="font-size: 2.5rem; margin-bottom: 40px;">服事大廳</h1>
+      <div style="width: 80%;">
+        <input type="text" class="game-input" placeholder="帳號 / Account">
+        <input type="password" class="game-input" placeholder="密碼 / Password">
+        <button class="game-button" style="width: 100%; margin-top: 20px;"><i class="fas fa-dungeon"></i> 登入 /
+          Login</button>
+        <p style="text-align: center; margin-top: 15px; font-size: 0.9rem; color: var(--text-muted);">忘記密碼？</p>
+      </div>
+    </div>
+
+    <!-- Screen: Dashboard (Personal View) -->
+    <div class="screen" id="dashboard-screen" style="display: none;">
+      <h1 class="game-header">我的儀表板</h1>
+
+      <div class="game-card" style="background-color: var(--accent-secondary); color: var(--primary-bg);">
+        <h2 style="font-family: var(--font-primary); margin-bottom: 10px; font-size: 1.2rem;"><i
+            class="fas fa-star"></i> 下次服事 / Next Service</h2>
+        <p style="font-size: 1.1rem; font-weight: bold;">2024/08/10 (六) 10:00 AM</p>
+        <p style="font-size: 1rem;">主日敬拜 - 司琴</p>
+      </div>
+
+      <h3 style="font-family: var(--font-primary); color: var(--accent-color); margin: 20px 0 10px 0;">近期服事 / Upcoming
+      </h3>
+      <div class="game-card">
+        <div style="margin-bottom: 10px;">
+          <p style="font-weight: bold; color: var(--text-color);">2024/08/17 (六) 10:00 AM</p>
+          <p style="color: var(--text-muted);">主日敬拜 - 吉他手</p>
+        </div>
+        <div>
+          <p style="font-weight: bold; color: var(--text-color);">2024/08/21 (三) 19:30 PM</p>
+          <p style="color: var(--text-muted);">禱告會 - 領會</p>
+        </div>
+      </div>
+
+      <h3 style="font-family: var(--font-primary); color: var(--accent-color); margin: 20px 0 10px 0;">快速行動 / Quick
+        Actions</h3>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <button class="game-button"><i class="fas fa-calendar-times"></i> 申請休假</button>
+        <button class="game-button"><i class="fas fa-exchange-alt"></i> 請求換班</button>
+        <button class="game-button secondary" style="grid-column: span 2;"><i class="fas fa-hands-helping"></i>
+          尋找代班</button>
+      </div>
+
+      <h3 style="font-family: var(--font-primary); color: var(--accent-color); margin: 20px 0 10px 0;">我的成就 /
+        Achievements</h3>
+      <div class="game-card">
+        <div class="achievement-badge unlocked"><i class="fas fa-guitar"></i></div>
+        <div class="achievement-badge unlocked"><i class="fas fa-praying-hands"></i></div>
+        <div class="achievement-badge"><i class="fas fa-question"></i></div>
+        <span style="color: var(--text-muted); font-size: 0.9rem; margin-left: 10px;">...更多徽章等你解鎖!</span>
+      </div>
+    </div>
+
+    <!-- Screen: Weekly/Monthly Schedule -->
+    <div class="screen" id="schedule-screen" style="display: none;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <button class="game-button tertiary" style="padding: 5px 10px; font-size: 0.8rem;"><i
+            class="fas fa-chevron-left"></i></button>
+        <h1 class="game-header" style="margin-bottom: 0; font-size: 1.6rem;">2024 / August</h1>
+        <button class="game-button tertiary" style="padding: 5px 10px; font-size: 0.8rem;"><i
+            class="fas fa-chevron-right"></i></button>
+      </div>
+      <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+        <select class="game-select" style="width: 30%;">
+          <option>週</option>
+          <option selected>月</option>
+        </select>
+        <select class="game-select" style="width: 65%;">
+          <option>顯示全部</option>
+          <option>主日敬拜</option>
+          <option>我的服事</option>
+          <option>A樂團</option>
+        </select>
+      </div>
+
+      <div class="schedule-grid">
+        <!-- Day Headers -->
+        <div class="day-header">日</div>
+        <div class="day-header">一</div>
+        <div class="day-header">二</div>
+        <div class="day-header">三</div>
+        <div class="day-header">四</div>
+        <div class="day-header">五</div>
+        <div class="day-header">六</div>
+        <!-- Dates (Example structure) -->
+        <div class="date-cell other-month"><span class="date-number">28</span></div>
+        <div class="date-cell other-month"><span class="date-number">29</span></div>
+        <div class="date-cell other-month"><span class="date-number">30</span></div>
+        <div class="date-cell other-month"><span class="date-number">31</span></div>
+        <div class="date-cell"><span class="date-number">1</span></div>
+        <div class="date-cell"><span class="date-number">2</span></div>
+        <div class="date-cell"><span class="date-number">3</span>
+          <div class="schedule-item">主日-司琴(王小明)</div>
+          <div class="schedule-item">主日-招待(李大華)</div>
+        </div>
+        <div class="date-cell"><span class="date-number">4</span></div>
+        <div class="date-cell"><span class="date-number">5</span></div>
+        <div class="date-cell"><span class="date-number">6</span>
+          <div class="schedule-item">禱告會(陳老師)</div>
+        </div>
+        <div class="date-cell"><span class="date-number">7</span></div>
+        <div class="date-cell"><span class="date-number">8</span></div>
+        <div class="date-cell"><span class="date-number">9</span></div>
+        <div class="date-cell today"><span class="date-number">10</span>
+          <div class="schedule-item mine">主日-司琴(你)</div>
+          <div class="schedule-item">主日-吉他(張三)</div>
+        </div>
+        <div class="date-cell"><span class="date-number">11</span></div>
+        <div class="date-cell"><span class="date-number">12</span></div>
+        <div class="date-cell"><span class="date-number">13</span>
+          <div class="schedule-item">禱告會(林姐妹)</div>
+        </div>
+        <div class="date-cell"><span class="date-number">14</span></div>
+        <div class="date-cell"><span class="date-number">15</span></div>
+        <div class="date-cell"><span class="date-number">16</span></div>
+        <div class="date-cell"><span class="date-number">17</span>
+          <div class="schedule-item mine">主日-吉他手(你)</div>
+          <div class="schedule-item">主日-招待(李大華)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen: Leave/Swap Request -->
+  <div class="screen" id="request-screen" style="display: none;">
+    <h1 class="game-header">任務請求版</h1>
+
+    <h3 style="font-family: var(--font-primary); color: var(--accent-color); margin: 20px 0 10px 0;">我的申請 / My Requests
+    </h3>
+    <div class="game-card">
+      <p><b>請求類型:</b> 休假</p>
+      <p><b>日期:</b> 2024/09/07</p>
+      <p><b>狀態:</b> <span style="color: var(--accent-color);">審核中 <i class="fas fa-spinner fa-spin"></i></span></p>
+    </div>
+    <div class="game-card">
+      <p><b>請求類型:</b> 換班 (與 王小明)</p>
+      <p><b>我的服事:</b> 2024/08/17 主日-吉他手</p>
+      <p><b>對方服事:</b> 2024/08/24 主日-貝斯手</p>
+      <p><b>狀態:</b> <span style="color: var(--accent-secondary);">已核准 <i class="fas fa-check-circle"></i></span></p>
+    </div>
+
+    <h3 style="font-family: var(--font-primary); color: var(--accent-color); margin: 20px 0 10px 0;">待我回應 / Pending My
+      Response</h3>
+    <div class="game-card">
+      <p><b>來自:</b> 陳好心</p>
+      <p><b>請求類型:</b> 換班邀請</p>
+      <p><b>希望交換你的:</b> 2024/08/31 主日-PPT</p>
+      <p><b>用他的交換:</b> 2024/09/14 主日-音控</p>
+      <div style="margin-top: 10px; text-align: right;">
+        <button class="game-button secondary" style="margin-right: 5px;"><i class="fas fa-thumbs-up"></i> 接受</button>
+        <button class="game-button tertiary"><i class="fas fa-thumbs-down"></i> 拒絕</button>
+      </div>
+    </div>
+    <div style="text-align: center; margin-top: 20px;">
+      <button class="game-button"><i class="fas fa-plus-circle"></i> 發起新的請求</button>
+    </div>
+  </div>
+
+  <!-- Screen: Profile & Achievements -->
+  <div class="screen" id="profile-screen" style="display: none;">
+    <h1 class="game-header">冒險者檔案</h1>
+    <div style="text-align: center; margin-bottom: 20px;">
+      <div class="avatar" style="width: 80px; height: 80px; font-size: 2rem; margin: 0 auto 10px auto;">你</div>
+      <p style="font-size: 1.2rem; font-weight: bold;">[你的名字]</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem;">一般服事人員 / User</p>
+    </div>
+
+    <h3
+      style="font-family: var(--font-primary); color: var(--accent-color); margin: 20px 0 10px 0; text-align: center;">
+      服事徽章牆 / Badge Wall</h3>
+    <div class="game-card" style="text-align: center;">
+      <div class="achievement-badge unlocked" title="敬拜主領 LV.1"><i class="fas fa-microphone-alt"></i></div>
+      <div class="achievement-badge unlocked" title="吉他手"><i class="fas fa-guitar"></i></div>
+      <div class="achievement-badge unlocked" title="司琴手"><i class="fas fa-piano-keyboard"></i></div>
+      <div class="achievement-badge unlocked" title="禱告勇士"><i class="fas fa-praying-hands"></i></div>
+      <div class="achievement-badge unlocked" title="招待之星"><i class="fas fa-concierge-bell"></i></div>
+      <div class="achievement-badge" title="???"><i class="fas fa-question"></i></div>
+      <div class="achievement-badge" title="???"><i class="fas fa-question"></i></div>
+      <div class="achievement-badge" title="???"><i class="fas fa-question"></i></div>
+    </div>
+
+    <div style="text-align: center; margin-top: 30px;">
+      <button class="game-button tertiary"><i class="fas fa-sign-out-alt"></i> 登出 / Logout</button>
+    </div>
+  </div>
+
+  <!-- Screen: Scheduling (Admin/Leader - Simplified Example) -->
+  <div class="screen" id="admin-schedule-screen" style="display: none;">
+    <h1 class="game-header">指揮中心</h1>
+    <!-- Use the same calendar view as schedule-screen but with interaction -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+      <button class="game-button tertiary" style="padding: 5px 10px; font-size: 0.8rem;"><i
+          class="fas fa-chevron-left"></i></button>
+      <h2 style="font-family: var(--font-primary); color: var(--accent-color); font-size: 1.6rem;">2024 / August</h2>
+      <button class="game-button tertiary" style="padding: 5px 10px; font-size: 0.8rem;"><i
+          class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- Simplified: List view for assigning specific date/ministry -->
+    <h3 style="font-family: var(--font-primary); color: var(--accent-color); margin: 10px 0;">指派任務: 2024/08/24 主日敬拜</h3>
+
+    <div class="game-card">
+      <h4 style="color: var(--accent-color); margin-bottom: 10px;">司琴 (需要 1 位) <button class="game-button secondary"
+          style="float: right; padding: 3px 8px; font-size: 0.7rem;" onclick="showAssignModal('司琴')"><i
+            class="fas fa-user-plus"></i> 指派</button></h4>
+      <div class="list-item">
+        <div class="avatar">?</div>
+        <div class="list-item-content">待指派...</div>
+      </div>
+    </div>
+    <div class="game-card">
+      <h4 style="color: var(--accent-color); margin-bottom: 10px;">吉他手 (需要 1 位) <button class="game-button secondary"
+          style="float: right; padding: 3px 8px; font-size: 0.7rem;" onclick="showAssignModal('吉他手')"><i
+            class="fas fa-user-plus"></i> 指派</button></h4>
+      <div class="list-item">
+        <div class="avatar">張</div>
+        <div class="list-item-content">張三 <span style="color: var(--text-muted; font-size: 0.8rem;">(已達本月上限 1 次)</span>
+        </div>
+        <div class="list-item-actions"><button class="game-button tertiary"
+            style="padding: 2px 6px; font-size: 0.6rem;"><i class="fas fa-times"></i></button></div>
+      </div>
+    </div>
+    <div class="game-card locked"> <!-- Example of locked group -->
+      <h4 style="color: var(--accent-color); margin-bottom: 10px;">A 樂團 (需要 完整樂團)</h4>
+      <p style="color: var(--text-muted); font-size: 0.9rem;">因 [王小明] 已排其他服事，無法安排 A 樂團。</p>
+    </div>
+
+  </div>
+
+
+  <!-- Modal for Assigning Person -->
+  <div id="assign-modal" class="modal" onclick="closeModal('assign-modal', event)">
+    <div class="modal-content">
+      <h3 class="modal-header">指派 <span id="assign-role-name">[角色]</span></h3>
+      <input type="text" class="game-input" placeholder="搜尋人員..." style="margin-bottom: 15px;">
+      <div style="max-height: 40vh; overflow-y: auto; padding-right: 10px;">
+        <!-- List of people to assign -->
+        <div class="assign-person-item assignable" onclick="assignPerson('王小明')">
+          <div class="avatar">王</div>
+          <div class="assign-info">王小明</div>
+        </div>
+        <div class="assign-person-item assignable" onclick="assignPerson('李大華')">
+          <div class="avatar">李</div>
+          <div class="assign-info">李大華 <span style="color: var(--accent-secondary); font-size: 0.8rem;">(可排 1 次)</span>
+          </div>
+        </div>
+        <div class="assign-person-item unavailable">
+          <div class="avatar">陳</div>
+          <div class="assign-info">陳老師</div>
+          <div class="assign-status"><i class="fas fa-calendar-times"></i> 已請假</div>
+        </div>
+        <div class="assign-person-item unavailable">
+          <div class="avatar">張</div>
+          <div class="assign-info">張三</div>
+          <div class="assign-status"><i class="fas fa-ban"></i> 本月已達上限</div>
+        </div>
+        <div class="assign-person-item unavailable">
+          <div class="avatar">林</div>
+          <div class="assign-info">林小美</div>
+          <div class="assign-status"><i class="fas fa-exclamation-triangle"></i> 與 [王小明] 衝突</div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="game-button tertiary" onclick="closeModal('assign-modal')">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <div class="nav-item active" onclick="showScreen('dashboard-screen')"> <!-- Active state -->
+      <i class="fas fa-home"></i> <!-- Placeholder icon -->
+      <span>儀表板</span>
+    </div>
+    <div class="nav-item" onclick="showScreen('schedule-screen')">
+      <i class="fas fa-calendar-alt"></i> <!-- Placeholder icon -->
+      <span>服事表</span>
+    </div>
+    <div class="nav-item" onclick="showScreen('request-screen')">
+      <i class="fas fa-envelope-open-text"></i> <!-- Placeholder icon -->
+      <span>請求</span>
+    </div>
+    <div class="nav-item" onclick="showScreen('profile-screen')">
+      <i class="fas fa-user-circle"></i> <!-- Placeholder icon -->
+      <span>檔案</span>
+    </div>
+    <!-- Admin/Leader only items could be conditionally shown -->
+    <div class="nav-item" onclick="showScreen('admin-schedule-screen')" style="/* display: none; */">
+      <!-- Example admin item -->
+      <i class="fas fa-tasks"></i> <!-- Placeholder icon -->
+      <span>排班</span>
+    </div>
+  </nav>
+  </div>
+
+  <script>
+    // Basic Screen Navigation Logic
+    const screens = document.querySelectorAll('.screen');
+    const navItems = document.querySelectorAll('.nav-item');
+
+    function showScreen(screenId) {
+      screens.forEach(screen => {
+        screen.style.display = screen.id === screenId ? 'block' : 'none'; // Or 'flex' if needed
+      });
+      // Handle special display types like login
+      if (screenId === 'login-screen') {
+        document.getElementById('login-screen').style.display = 'flex';
+      }
+
+      navItems.forEach(item => {
+        // Basic check: if the item's onclick contains the screenId, mark active
+        item.classList.toggle('active', item.getAttribute('onclick')?.includes(screenId));
+      });
+      window.scrollTo(0, 0); // Scroll to top on screen change
+    }
+
+    // Modal Logic
+    function showModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) {
+        modal.style.display = 'flex'; // Show modal
+      }
+    }
+
+    function closeModal(modalId, event) {
+      // Close if clicking outside the modal content or specific close button
+      const modal = document.getElementById(modalId);
+      if (modal && (event?.target === modal || event?.target.classList.contains('game-button'))) {
+        modal.style.display = 'none';
+      } else if (modal && event === undefined) { // Allow closing without event (e.g., from button)
+        modal.style.display = 'none';
+      }
+    }
+
+
+    // --- Placeholder Functions for Interaction ---
+
+    function showAssignModal(roleName) {
+      document.getElementById('assign-role-name').textContent = roleName;
+      showModal('assign-modal');
+    }
+
+    function assignPerson(personName) {
+      console.log(`Assigning ${personName} to the role.`);
+      // Add logic here to update the UI or send data
+      closeModal('assign-modal');
+      // Example: Update the card (replace the '?' avatar)
+      // This needs more robust logic based on which card triggered the modal
+    }
+
+
+    // Initial Screen Load (Show Login first, then dashboard after "login")
+    document.addEventListener('DOMContentLoaded', () => {
+      // Normally you'd check auth status here
+      // For mockup, start with login
+      showScreen('login-screen');
+      // Add dummy login button action
+      const loginButton = document.querySelector('#login-screen .game-button');
+      if (loginButton) {
+        loginButton.onclick = () => showScreen('dashboard-screen');
+      }
+    });
+
+  </script>
+</body>
+
+</html>

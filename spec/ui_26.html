@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>教會服事表管理系統 - Ministry Scheduler</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    /* Custom Styles for Gamified Feel */
+    body {
+      font-family: 'Nunito', sans-serif;
+      /* Softer, rounded font */
+      background-color: #f0f4f8;
+      /* Light, cheerful background */
+    }
+
+    @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap');
+
+    .card {
+      background-color: white;
+      border-radius: 16px;
+      /* More rounded corners */
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+      overflow: hidden;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    }
+
+    .btn-primary {
+      background-image: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
+      color: white;
+      border: none;
+      border-radius: 20px;
+      /* Pill shape */
+      padding: 10px 20px;
+      font-weight: bold;
+      box-shadow: 0 2px 6px rgba(79, 172, 254, 0.5);
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 4px 12px rgba(79, 172, 254, 0.7);
+      transform: scale(1.03);
+    }
+
+    .btn-secondary {
+      background-color: #e2e8f0;
+      color: #4a5568;
+      border: 1px solid #cbd5e1;
+      border-radius: 20px;
+      padding: 8px 16px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+      background-color: #cbd5e1;
+    }
+
+    .btn-accent {
+      background-image: linear-gradient(to right, #ff8177 0%, #ff867a 0%, #ff8c7f 21%, #f99185 52%, #cf556c 78%, #b12a5b 100%);
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 10px 20px;
+      font-weight: bold;
+      box-shadow: 0 2px 6px rgba(255, 134, 122, 0.5);
+      transition: all 0.3s ease;
+    }
+
+    .btn-accent:hover {
+      box-shadow: 0 4px 12px rgba(255, 134, 122, 0.7);
+      transform: scale(1.03);
+    }
+
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: white;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+      z-index: 1000;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 0.75rem;
+      color: #718096;
+      cursor: pointer;
+      padding: 5px;
+    }
+
+    .nav-item.active {
+      color: #4facfe;
+      /* Match primary button gradient */
+      font-weight: bold;
+    }
+
+    .nav-item i {
+      font-size: 1.4rem;
+      /* Larger icons */
+      margin-bottom: 2px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .badge-gold {
+      background-color: #fffbeb;
+      color: #f59e0b;
+      border: 1px solid #fde68a;
+    }
+
+    .badge-silver {
+      background-color: #f8fafc;
+      color: #64748b;
+      border: 1px solid #e2e8f0;
+    }
+
+    .badge-bronze {
+      background-color: #fff7ed;
+      color: #f97316;
+      border: 1px solid #fed7aa;
+    }
+
+    .progress-bar-container {
+      background-color: #e2e8f0;
+      border-radius: 9999px;
+      height: 10px;
+      overflow: hidden;
+      width: 100%;
+    }
+
+    .progress-bar {
+      background-image: linear-gradient(to right, #a1c4fd 0%, #c2e9fb 100%);
+      height: 100%;
+      border-radius: 9999px;
+      transition: width 0.5s ease-in-out;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      /* Hidden by default */
+      position: fixed;
+      /* Stay in place */
+      z-index: 1001;
+      /* Sit on top */
+      left: 0;
+      top: 0;
+      width: 100%;
+      /* Full width */
+      height: 100%;
+      /* Full height */
+      overflow: auto;
+      /* Enable scroll if needed */
+      background-color: rgba(0, 0, 0, 0.5);
+      /* Black w/ opacity */
+      padding-top: 50px;
+      /* Location of the box */
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: auto;
+      /* 15% from the top and centered */
+      padding: 25px;
+      border: none;
+      border-radius: 15px;
+      width: 90%;
+      /* Could be more or less, depending on screen size */
+      max-width: 500px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .modal-close:hover,
+    .modal-close:focus {
+      color: black;
+      text-decoration: none;
+    }
+  </style>
+</head>
+
+<body class="pb-20"> <!-- Add padding-bottom to avoid overlap with bottom nav -->
+
+  <!-- App Container (Simulates Mobile View) -->
+  <div id="app-container" class="max-w-md mx-auto bg-white min-h-screen shadow-lg">
+
+    <!-- View: Login (Example) -->
+    <div id="login-view"
+      class="p-6 flex flex-col items-center justify-center h-screen bg-gradient-to-br from-blue-400 to-purple-500 text-white">
+      <i class="fas fa-church fa-4x mb-6 animate-pulse"></i>
+      <h1 class="text-3xl font-bold mb-2 text-center">Ministry Scheduler</h1>
+      <p class="text-lg mb-8 opacity-80 text-center">輕鬆管理，喜樂服事</p>
+      <input type="text" placeholder="帳號 (Username)"
+        class="w-full p-3 mb-4 rounded-lg border border-gray-300 text-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+      <input type="password" placeholder="密碼 (Password)"
+        class="w-full p-3 mb-6 rounded-lg border border-gray-300 text-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+      <button class="btn-primary w-full" onclick="showView('dashboard-view')">
+        <i class="fas fa-sign-in-alt mr-2"></i> 登入 (Login)
+      </button>
+      <p class="mt-6 text-sm opacity-70">忘記密碼? | 需要幫助?</p>
+    </div>
+
+    <!-- View: Dashboard (User) -->
+    <div id="dashboard-view" class="p-4 space-y-5 hidden">
+      <header class="flex justify-between items-center mb-4">
+        <div>
+          <h2 class="text-xl font-semibold text-gray-600">歡迎回來,</h2>
+          <h1 class="text-3xl font-bold text-gray-800">王大明 (User)!</h1>
+        </div>
+        <i class="fas fa-bell text-2xl text-yellow-500 cursor-pointer hover:animate-shake"></i>
+        <!-- Notification Icon -->
+      </header>
+
+      <!-- Quick Stats / Gamification Snippet -->
+      <div class="card p-4 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white">
+        <h3 class="text-lg font-semibold mb-2">本月服事進度</h3>
+        <div class="flex items-center justify-between mb-1">
+          <span>服事次數: 3/5</span>
+          <span class="text-xs font-medium">等級 2 <i class="fas fa-star text-yellow-300"></i></span>
+        </div>
+        <div class="progress-bar-container mb-2 !bg-white/30">
+          <div class="progress-bar !bg-gradient-to-r !from-yellow-300 !to-orange-400" style="width: 60%;"></div>
+        </div>
+        <p class="text-sm opacity-90">再服事 2 次即可獲得「熱心服事」徽章！</p>
+      </div>
+
+
+      <!-- Upcoming Ministry Card -->
+      <div class="card">
+        <div class="p-4 border-b border-gray-100 flex justify-between items-center">
+          <h3 class="font-bold text-lg text-gray-700"><i class="fas fa-calendar-alt text-blue-500 mr-2"></i> 近期服事</h3>
+          <span class="text-sm text-blue-500 font-semibold cursor-pointer hover:underline"
+            onclick="showView('schedule-personal-view')">查看全部</span>
+        </div>
+        <div class="p-4 space-y-3">
+          <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+            <div>
+              <p class="font-semibold text-blue-800">主日敬拜 - 吉他手</p>
+              <p class="text-sm text-gray-600">2023/10/28 (六) 10:00 AM</p>
+            </div>
+            <i class="fas fa-guitar text-blue-500 text-xl"></i>
+          </div>
+          <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+            <div>
+              <p class="font-semibold text-green-800">禱告會 - 領會</p>
+              <p class="text-sm text-gray-600">2023/11/01 (三) 07:30 PM</p>
+            </div>
+            <i class="fas fa-praying-hands text-green-500 text-xl"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="grid grid-cols-2 gap-3">
+        <button class="btn-secondary p-4 flex flex-col items-center justify-center rounded-xl"
+          onclick="openModal('leave-request-modal')">
+          <i class="fas fa-calendar-times text-2xl text-red-500 mb-1"></i>
+          <span class="font-semibold text-sm">申請休假</span>
+        </button>
+        <button class="btn-secondary p-4 flex flex-col items-center justify-center rounded-xl"
+          onclick="openModal('swap-request-modal')">
+          <i class="fas fa-exchange-alt text-2xl text-green-500 mb-1"></i>
+          <span class="font-semibold text-sm">申請換班</span>
+        </button>
+      </div>
+
+      <!-- Pending Requests / Notifications -->
+      <div class="card">
+        <div class="p-4 border-b border-gray-100">
+          <h3 class="font-bold text-lg text-gray-700"><i class="fas fa-exclamation-circle text-orange-500 mr-2"></i>
+            待處理事項</h3>
+        </div>
+        <div class="p-4 space-y-3">
+          <div class="flex items-center justify-between p-3 bg-orange-50 rounded-lg">
+            <div>
+              <p class="font-semibold text-orange-800">換班請求: 小明 想與您交換 主日吉他手 (10/28)</p>
+              <p class="text-sm text-gray-600">收到時間: 昨天 15:30</p>
+            </div>
+            <div class="space-x-1">
+              <button class="bg-green-500 text-white rounded-full p-1 w-7 h-7 text-xs"><i
+                  class="fas fa-check"></i></button>
+              <button class="bg-red-500 text-white rounded-full p-1 w-7 h-7 text-xs"><i
+                  class="fas fa-times"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- View: Schedule (Example: Monthly View) -->
+    <div id="schedule-general-view" class="p-4 hidden space-y-4">
+      <header class="flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-gray-800">服事行事曆</h1>
+        <!-- Filter/View Options -->
+        <div class="flex space-x-2">
+          <button class="text-gray-500 hover:text-blue-500"><i class="fas fa-filter"></i></button>
+          <select class="text-sm border rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-400">
+            <option>每月</option>
+            <option>每週</option>
+            <option>列表</option>
+          </select>
+        </div>
+      </header>
+
+      <!-- Calendar Controls -->
+      <div class="flex justify-between items-center mb-3">
+        <button class="text-blue-500"><i class="fas fa-chevron-left"></i></button>
+        <h2 class="text-lg font-semibold">2023年 10月</h2>
+        <button class="text-blue-500"><i class="fas fa-chevron-right"></i></button>
+      </div>
+
+      <!-- Calendar Grid (Simplified) -->
+      <div class="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-gray-500 mb-2">
+        <div>日</div>
+        <div>一</div>
+        <div>二</div>
+        <div>三</div>
+        <div>四</div>
+        <div>五</div>
+        <div>六</div>
+      </div>
+      <div class="grid grid-cols-7 gap-2">
+        <!-- Example Day Cell (Needs JS for population) -->
+        <div
+          class="aspect-square border border-gray-200 rounded-lg p-1 flex flex-col items-center justify-start hover:bg-gray-50 cursor-pointer relative">
+          <span class="font-bold text-gray-700">20</span>
+          <div class="text-[9px] mt-1 space-y-0.5 w-full overflow-hidden text-ellipsis">
+            <span class="block bg-blue-100 text-blue-700 px-1 rounded truncate">敬拜 吉他:大明</span>
+            <span class="block bg-green-100 text-green-700 px-1 rounded truncate">音控:小華</span>
+          </div>
+          <!-- Indicator for conflict or lock -->
+          <i class="fas fa-lock text-red-500 text-xs absolute top-1 right-1 opacity-70"></i>
+        </div>
+        <div
+          class="aspect-square border border-gray-200 rounded-lg p-1 flex flex-col items-center justify-start hover:bg-gray-50 cursor-pointer">
+          <span class="font-bold text-gray-700">21</span>
+        </div>
+        <div
+          class="aspect-square border border-gray-200 rounded-lg p-1 flex flex-col items-center justify-start hover:bg-gray-50 cursor-pointer">
+          <span class="font-bold text-gray-700">22</span>
+        </div>
+        <!-- ... more day cells ... -->
+        <div
+          class="aspect-square border border-gray-200 rounded-lg p-1 flex flex-col items-center justify-start bg-gray-50 text-gray-400">
+          <span class="font-bold">27</span>
+        </div>
+        <div
+          class="aspect-square border border-blue-300 ring-2 ring-blue-200 rounded-lg p-1 flex flex-col items-center justify-start hover:bg-gray-50 cursor-pointer">
+          <span class="font-bold text-blue-600">28</span>
+          <div class="text-[9px] mt-1 space-y-0.5 w-full overflow-hidden text-ellipsis">
+            <span class="block bg-yellow-100 text-yellow-700 px-1 rounded truncate font-semibold">敬拜 Vocal:小美</span>
+            <span class="block bg-blue-100 text-blue-700 px-1 rounded truncate font-semibold">敬拜 吉他:王大明</span>
+            <span class="block bg-purple-100 text-purple-700 px-1 rounded truncate">招待:陳阿姨</span>
+          </div>
+        </div>
+        <div
+          class="aspect-square border border-gray-200 rounded-lg p-1 flex flex-col items-center justify-start hover:bg-gray-50 cursor-pointer">
+          <span class="font-bold text-gray-700">29</span>
+        </div>
+        <div
+          class="aspect-square border border-gray-200 rounded-lg p-1 flex flex-col items-center justify-start hover:bg-gray-50 cursor-pointer">
+          <span class="font-bold text-gray-700">30</span>
+        </div>
+        <div
+          class="aspect-square border border-gray-200 rounded-lg p-1 flex flex-col items-center justify-start hover:bg-gray-50 cursor-pointer">
+          <span class="font-bold text-gray-700">31</span>
+        </div>
+      </div>
+
+      <!-- Floating Action Button for Leaders/Admins -->
+      <button
+        class="fixed bottom-24 right-6 btn-primary rounded-full w-14 h-14 flex items-center justify-center shadow-xl"
+        onclick="openModal('schedule-event-modal')">
+        <i class="fas fa-plus text-2xl"></i>
+      </button>
+
+    </div>
+
+    <!-- View: Personal Schedule List -->
+    <div id="schedule-personal-view" class="p-4 hidden space-y-4">
+      <header class="flex items-center space-x-3 mb-4">
+        <button class="text-gray-600 text-xl" onclick="showView('dashboard-view')"><i
+            class="fas fa-arrow-left"></i></button>
+        <h1 class="text-2xl font-bold text-gray-800">我的服事</h1>
+      </header>
+      <div class="space-y-3">
+        <!-- Example schedule item -->
+        <div class="card flex items-center justify-between p-4">
+          <div class="flex items-center space-x-3">
+            <i class="fas fa-guitar text-3xl text-blue-500"></i>
+            <div>
+              <p class="font-semibold text-lg text-gray-800">主日敬拜 - 吉他手</p>
+              <p class="text-sm text-gray-600">2023/10/28 (六) 10:00 AM</p>
+              <p class="text-xs text-gray-500 mt-1">團隊: A樂團</p>
+            </div>
+          </div>
+          <div class="flex flex-col items-end space-y-1">
+            <button class="btn-secondary text-xs !px-3 !py-1" onclick="openModal('swap-request-modal')"><i
+                class="fas fa-exchange-alt mr-1"></i> 換班</button>
+            <span class="text-xs text-gray-400">狀態: 已確認</span>
+          </div>
+        </div>
+        <div class="card flex items-center justify-between p-4">
+          <div class="flex items-center space-x-3">
+            <i class="fas fa-praying-hands text-3xl text-green-500"></i>
+            <div>
+              <p class="font-semibold text-lg text-gray-800">禱告會 - 領會</p>
+              <p class="text-sm text-gray-600">2023/11/01 (三) 07:30 PM</p>
+              <p class="text-xs text-gray-500 mt-1">地點: 副堂</p>
+            </div>
+          </div>
+          <div class="flex flex-col items-end space-y-1">
+            <button class="btn-secondary text-xs !px-3 !py-1 disabled:opacity-50" disabled><i
+                class="fas fa-exchange-alt mr-1"></i> 換班</button>
+            <span class="text-xs text-gray-400">狀態: 已確認</span>
+          </div>
+        </div>
+        <!-- Add more items -->
+      </div>
+    </div>
+
+
+    <!-- View: Profile & Achievements -->
+    <div id="profile-achievements-view" class="p-4 hidden space-y-5">
+      <header class="flex items-center space-x-3 mb-4">
+        <button class="text-gray-600 text-xl" onclick="showView('dashboard-view')"><i
+            class="fas fa-arrow-left"></i></button>
+        <h1 class="text-2xl font-bold text-gray-800">個人檔案 & 成就</h1>
+      </header>
+
+      <!-- Profile Card -->
+      <div class="card p-5 flex items-center space-x-4">
+        <img src="https://via.placeholder.com/80/A7C5FF/FFFFFF?text=User" alt="User Avatar"
+          class="w-20 h-20 rounded-full border-4 border-blue-200">
+        <div>
+          <h2 class="text-xl font-bold text-gray-800">王大明</h2>
+          <p class="text-gray-600">一般服事同工 (User)</p>
+          <p class="text-sm text-blue-600 mt-1">小組: 喜樂小組</p>
+          <button class="text-xs text-gray-500 mt-2 hover:underline">編輯個人資料 <i class="fas fa-edit"></i></button>
+        </div>
+      </div>
+
+      <!-- Gamification/Stats Section -->
+      <div class="card p-4">
+        <h3 class="font-bold text-lg text-gray-700 mb-3">我的服事旅程 <i class="fas fa-route text-purple-500"></i></h3>
+        <div class="space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="font-semibold text-gray-600">服事等級</span>
+            <span class="font-bold text-purple-600 text-lg">等級 3 - 服事達人 <i
+                class="fas fa-medal text-yellow-500"></i></span>
+          </div>
+          <div class="progress-bar-container">
+            <div class="progress-bar !bg-gradient-to-r !from-purple-400 !to-pink-500" style="width: 40%;"></div>
+          </div>
+          <p class="text-sm text-gray-500 text-center">再累積 150 服事積分升級！</p>
+
+          <div class="flex justify-around text-center pt-3 border-t border-gray-100">
+            <div>
+              <p class="text-2xl font-bold text-blue-600">25</p>
+              <p class="text-xs text-gray-500">總服事次數</p>
+            </div>
+            <div>
+              <p class="text-2xl font-bold text-green-600">12</p>
+              <p class="text-xs text-gray-500">本年度服事</p>
+            </div>
+            <div>
+              <p class="text-2xl font-bold text-orange-600">5</p>
+              <p class="text-xs text-gray-500">獲得徽章</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Achievements/Badges Section -->
+      <div class="card p-4">
+        <h3 class="font-bold text-lg text-gray-700 mb-3">我的徽章牆 <i class="fas fa-trophy text-yellow-600"></i></h3>
+        <div class="grid grid-cols-3 gap-4 text-center">
+          <!-- Example Badge (Earned) -->
+          <div class="flex flex-col items-center">
+            <div
+              class="w-16 h-16 rounded-full bg-gradient-to-br from-yellow-300 to-orange-400 flex items-center justify-center text-white text-3xl shadow-md mb-1">
+              <i class="fas fa-star"></i>
+            </div>
+            <span class="text-xs font-semibold text-gray-700">首次服事</span>
+            <span class="badge badge-gold mt-1">已獲得</span>
+          </div>
+          <!-- Example Badge (Earned) -->
+          <div class="flex flex-col items-center">
+            <div
+              class="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-cyan-400 flex items-center justify-center text-white text-3xl shadow-md mb-1">
+              <i class="fas fa-music"></i>
+            </div>
+            <span class="text-xs font-semibold text-gray-700">敬拜達人</span>
+            <span class="badge badge-silver mt-1">已獲得</span>
+          </div>
+          <!-- Example Badge (Locked) -->
+          <div class="flex flex-col items-center opacity-50">
+            <div
+              class="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center text-gray-500 text-3xl mb-1">
+              <i class="fas fa-users"></i>
+            </div>
+            <span class="text-xs font-semibold text-gray-500">團隊之星</span>
+            <span class="badge badge-bronze mt-1">未解鎖</span>
+          </div>
+          <!-- More badges -->
+        </div>
+      </div>
+
+      <!-- Settings Links -->
+      <div class="card p-4 space-y-2">
+        <h3 class="font-bold text-lg text-gray-700 mb-2">設定 <i class="fas fa-cog text-gray-500"></i></h3>
+        <a href="#" class="block p-2 rounded-lg hover:bg-gray-100 text-gray-700"><i
+            class="fas fa-bell w-5 mr-2 text-blue-500"></i> 通知設定</a>
+        <a href="#" class="block p-2 rounded-lg hover:bg-gray-100 text-gray-700"><i
+            class="fab fa-google w-5 mr-2 text-red-500"></i> 連結 Google 行事曆</a>
+        <a href="#" class="block p-2 rounded-lg hover:bg-gray-100 text-gray-700"><i
+            class="fab fa-line w-5 mr-2 text-green-500"></i> 連結 Line 通知</a>
+        <a href="#" class="block p-2 rounded-lg hover:bg-gray-100 text-gray-700"><i
+            class="fas fa-user-shield w-5 mr-2 text-gray-500"></i> 帳號與安全</a>
+        <a href="#" class="block p-2 rounded-lg hover:bg-red-50 text-red-600"><i
+            class="fas fa-sign-out-alt w-5 mr-2"></i> 登出</a>
+      </div>
+    </div>
+
+    <!-- View: Admin/Leader - Constraint Management (Conceptual) -->
+    <div id="constraint-management-view" class="p-4 hidden space-y-5">
+      <header class="flex items-center space-x-3 mb-4">
+        <button class="text-gray-600 text-xl" onclick="goBack()"><i class="fas fa-arrow-left"></i></button>
+        <!-- Need JS for back function -->
+        <h1 class="text-2xl font-bold text-gray-800">服事規則設定</h1>
+      </header>
+
+      <div class="card p-4">
+        <h3 class="font-bold text-lg text-gray-700 mb-3 flex justify-between items-center">
+          <span><i class="fas fa-user-clock text-orange-500 mr-2"></i> 個人頻率限制</span>
+          <button class="btn-secondary text-xs !px-3 !py-1"><i class="fas fa-plus mr-1"></i> 新增</button>
+        </h3>
+        <div class="space-y-2">
+          <div class="p-2 bg-orange-50 rounded-lg flex justify-between items-center">
+            <span>王大明 - 主日敬拜 - 最多 2次 / 月</span>
+            <button class="text-red-500 text-sm"><i class="fas fa-trash-alt"></i></button>
+          </div>
+          <div class="p-2 bg-orange-50 rounded-lg flex justify-between items-center">
+            <span>李小花 - 主日招待 - 最多 1次 / 月</span>
+            <button class="text-red-500 text-sm"><i class="fas fa-trash-alt"></i></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card p-4">
+        <h3 class="font-bold text-lg text-gray-700 mb-3 flex justify-between items-center">
+          <span><i class="fas fa-ban text-red-500 mr-2"></i> 不能同時服事</span>
+          <button class="btn-secondary text-xs !px-3 !py-1"><i class="fas fa-plus mr-1"></i> 新增</button>
+        </h3>
+        <div class="space-y-2">
+          <div class="p-2 bg-red-50 rounded-lg flex justify-between items-center">
+            <span>任何人: 若排 [小提琴]，則不能排 [其他樂器] (同一場次)</span>
+            <button class="text-red-500 text-sm"><i class="fas fa-trash-alt"></i></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card p-4">
+        <h3 class="font-bold text-lg text-gray-700 mb-3 flex justify-between items-center">
+          <span><i class="fas fa-user-friends text-purple-500 mr-2"></i> 人員衝突配對</span>
+          <button class="btn-secondary text-xs !px-3 !py-1"><i class="fas fa-plus mr-1"></i> 新增</button>
+        </h3>
+        <div class="space-y-2">
+          <div class="p-2 bg-purple-50 rounded-lg flex justify-between items-center">
+            <span>若 [王大明] 排服事, 則 [陳小美] 不能排 [特定服事-招待] (同一場次)</span>
+            <button class="text-red-500 text-sm"><i class="fas fa-trash-alt"></i></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card p-4">
+        <h3 class="font-bold text-lg text-gray-700 mb-3 flex justify-between items-center">
+          <span><i class="fas fa-users-slash text-teal-500 mr-2"></i> 團隊限制</span>
+          <button class="btn-secondary text-xs !px-3 !py-1"><i class="fas fa-plus mr-1"></i> 新增</button>
+        </h3>
+        <div class="space-y-2">
+          <div class="p-2 bg-teal-50 rounded-lg flex justify-between items-center">
+            <span>若 [A樂團] 中有成員 (李四, 張三) 已排其他服事，則不能排 [A樂團] (同一場次)</span>
+            <button class="text-red-500 text-sm"><i class="fas fa-trash-alt"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Modal: Request Leave -->
+    <div id="leave-request-modal" class="modal">
+      <div class="modal-content">
+        <span class="modal-close" onclick="closeModal('leave-request-modal')">&times;</span>
+        <h2 class="text-xl font-bold mb-4 text-gray-800">申請休假 <i class="fas fa-calendar-times text-red-500"></i></h2>
+        <form class="space-y-4">
+          <div>
+            <label for="leave-dates" class="block text-sm font-medium text-gray-700 mb-1">選擇日期</label>
+            <input type="date" id="leave-dates" name="leave-dates" multiple
+              class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+            <p class="text-xs text-gray-500 mt-1">可以選擇多個日期</p>
+          </div>
+          <div>
+            <label for="leave-reason" class="block text-sm font-medium text-gray-700 mb-1">原因 (選填)</label>
+            <textarea id="leave-reason" name="leave-reason" rows="3"
+              class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
+          </div>
+          <div class="text-right">
+            <button type="button" class="btn-secondary mr-2" onclick="closeModal('leave-request-modal')">取消</button>
+            <button type="submit" class="btn-primary">送出申請</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal: Request Swap -->
+    <div id="swap-request-modal" class="modal">
+      <div class="modal-content">
+        <span class="modal-close" onclick="closeModal('swap-request-modal')">&times;</span>
+        <h2 class="text-xl font-bold mb-4 text-gray-800">申請換班 <i class="fas fa-exchange-alt text-green-500"></i></h2>
+        <form class="space-y-4">
+          <div>
+            <label for="swap-my-schedule" class="block text-sm font-medium text-gray-700 mb-1">選擇您要換出的服事</label>
+            <select id="swap-my-schedule" name="swap-my-schedule"
+              class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+              <option>主日敬拜 - 吉他手 (2023/10/28 10:00)</option>
+              <option>禱告會 - 領會 (2023/11/01 19:30)</option>
+              <!-- Populate with user's upcoming schedules -->
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">選擇想交換的同工 (可複選)</label>
+            <div class="max-h-40 overflow-y-auto border border-gray-300 rounded-lg p-2 space-y-1">
+              <div class="flex items-center"> <input type="checkbox" id="swap-user-1" class="mr-2"> <label
+                  for="swap-user-1">陳小美 (擅長: Vocal, 鋼琴)</label> </div>
+              <div class="flex items-center"> <input type="checkbox" id="swap-user-2" class="mr-2"> <label
+                  for="swap-user-2">李大同 (擅長: 吉他, Bass)</label> </div>
+              <div class="flex items-center"> <input type="checkbox" id="swap-user-3" class="mr-2"> <label
+                  for="swap-user-3">張三豐 (擅長: 鼓, 音控)</label> </div>
+              <!-- Populate with potential users -->
+            </div>
+          </div>
+          <div class="flex items-center">
+            <input type="checkbox" id="auto-find" class="mr-2">
+            <label for="auto-find" class="text-sm font-medium text-gray-700">找不到人？ 讓系統自動詢問所有可能人選 <i
+                class="fas fa-magic text-purple-500"></i></label>
+          </div>
+          <div>
+            <label for="swap-reason" class="block text-sm font-medium text-gray-700 mb-1">原因 (選填)</label>
+            <textarea id="swap-reason" name="swap-reason" rows="2"
+              class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
+          </div>
+          <div class="text-right">
+            <button type="button" class="btn-secondary mr-2" onclick="closeModal('swap-request-modal')">取消</button>
+            <button type="submit" class="btn-primary">送出申請</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal: Schedule New Event (Leader/Admin) -->
+    <div id="schedule-event-modal" class="modal">
+      <div class="modal-content">
+        <span class="modal-close" onclick="closeModal('schedule-event-modal')">&times;</span>
+        <h2 class="text-xl font-bold mb-4 text-gray-800">安排服事 <i class="fas fa-calendar-plus text-blue-500"></i></h2>
+        <form class="space-y-4">
+          <div>
+            <label for="event-type" class="block text-sm font-medium text-gray-700 mb-1">服事類型</label>
+            <select id="event-type" name="event-type" class="w-full p-2 border border-gray-300 rounded-lg">
+              <option>主日敬拜</option>
+              <option>SC 服事</option>
+              <option>禱告會</option>
+              <option>特殊活動 (聖誕節)</option>
+              <option>特殊活動 (成長班)</option>
+            </select>
+          </div>
+          <div>
+            <label for="event-role" class="block text-sm font-medium text-gray-700 mb-1">服事崗位/角色</label>
+            <input type="text" id="event-role" name="event-role" placeholder="例如: 吉他手, 招待, 領會"
+              class="w-full p-2 border border-gray-300 rounded-lg">
+          </div>
+          <div>
+            <label for="event-date" class="block text-sm font-medium text-gray-700 mb-1">日期與時間</label>
+            <input type="datetime-local" id="event-date" name="event-date"
+              class="w-full p-2 border border-gray-300 rounded-lg">
+          </div>
+          <div>
+            <label for="event-user" class="block text-sm font-medium text-gray-700 mb-1">指派同工</label>
+            <input type="text" id="event-user-search" placeholder="搜尋姓名..."
+              class="w-full p-2 border border-gray-300 rounded-lg mb-1">
+            <!-- Add user suggestion list here dynamically -->
+            <div class="text-xs text-gray-500">提示: 系統會標示出有衝突或不符規則的人選</div>
+            <!-- Example user selection display -->
+            <div id="selected-users" class="mt-2 space-x-1">
+              <span
+                class="inline-flex items-center bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-0.5 rounded-full">
+                王大明 <button type="button" class="ml-1 text-blue-600">&times;</button>
+              </span>
+              <!-- Add more selected users -->
+            </div>
+          </div>
+
+          <!-- Conflict / Lock Indicator (Conceptual) -->
+          <div id="conflict-warning" class="hidden p-3 bg-red-100 text-red-700 rounded-lg text-sm">
+            <i class="fas fa-exclamation-triangle mr-1"></i> <strong>注意:</strong> 選擇的同工 [王大明] 已達本月服事上限。
+          </div>
+
+
+          <div class="text-right">
+            <button type="button" class="btn-secondary mr-2" onclick="closeModal('schedule-event-modal')">取消</button>
+            <button type="submit" class="btn-primary">儲存安排</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+      <div class="nav-item active" onclick="showView('dashboard-view')">
+        <i class="fas fa-home"></i>
+        <span>主頁</span>
+      </div>
+      <div class="nav-item" onclick="showView('schedule-general-view')">
+        <i class="fas fa-calendar-alt"></i>
+        <span>行事曆</span>
+      </div>
+      <div class="nav-item relative" onclick="showView('requests-view')"> <!-- Placeholder for Requests View -->
+        <i class="fas fa-tasks"></i>
+        <!-- Notification Badge -->
+        <span
+          class="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full transform translate-x-1/2 -translate-y-1/4">3</span>
+        <span>待辦</span>
+      </div>
+      <div class="nav-item" onclick="showView('profile-achievements-view')">
+        <i class="fas fa-user-circle"></i>
+        <span>我的</span>
+      </div>
+      <!-- Show Admin Tools for relevant roles -->
+      <div class="nav-item" onclick="showView('constraint-management-view')"> <!-- Example Admin Access -->
+        <i class="fas fa-cog"></i>
+        <span>管理</span>
+      </div>
+    </nav>
+
+  </div> <!-- End App Container -->
+
+
+  <script>
+    let currentView = 'login-view'; // Start with login
+
+    function showView(viewId) {
+      // Hide current view
+      const currentViewElement = document.getElementById(currentView);
+      if (currentViewElement) {
+        currentViewElement.classList.add('hidden');
+      }
+
+      // Deactivate all nav items
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+      });
+
+      // Show new view
+      const newViewElement = document.getElementById(viewId);
+      if (newViewElement) {
+        newViewElement.classList.remove('hidden');
+        currentView = viewId; // Update current view tracker
+
+        // Activate corresponding nav item (if exists)
+        // Simplistic matching based on common keywords
+        let activeNavItem = null;
+        if (viewId.includes('dashboard')) {
+          activeNavItem = document.querySelector('.bottom-nav .nav-item:nth-child(1)');
+        } else if (viewId.includes('schedule')) {
+          activeNavItem = document.querySelector('.bottom-nav .nav-item:nth-child(2)');
+        } else if (viewId.includes('requests')) { // Assuming a 'requests-view' exists
+          activeNavItem = document.querySelector('.bottom-nav .nav-item:nth-child(3)');
+        } else if (viewId.includes('profile') || viewId.includes('achievements')) {
+          activeNavItem = document.querySelector('.bottom-nav .nav-item:nth-child(4)');
+        } else if (viewId.includes('management') || viewId.includes('admin')) {
+          activeNavItem = document.querySelector('.bottom-nav .nav-item:nth-child(5)');
+        }
+
+        if (activeNavItem) {
+          activeNavItem.classList.add('active');
+        }
+
+
+      } else {
+        console.error(`View with ID "${viewId}" not found.`);
+        // Optionally show the dashboard as a fallback if the requested view doesn't exist
+        document.getElementById('dashboard-view')?.classList.remove('hidden');
+        currentView = 'dashboard-view';
+        document.querySelector('.bottom-nav .nav-item:nth-child(1)')?.classList.add('active');
+      }
+
+      window.scrollTo(0, 0); // Scroll to top on view change
+    }
+
+    function openModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) modal.style.display = "block";
+      document.body.style.overflow = 'hidden'; // Prevent background scroll
+    }
+
+    function closeModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) modal.style.display = "none";
+      document.body.style.overflow = 'auto'; // Restore background scroll
+    }
+
+    // Close modal if clicking outside of it
+    window.onclick = function (event) {
+      document.querySelectorAll('.modal').forEach(modal => {
+        if (event.target == modal) {
+          closeModal(modal.id);
+        }
+      })
+    }
+
+    // Initial setup: Hide all views except the starting one (login)
+    document.addEventListener('DOMContentLoaded', () => {
+      const allViews = document.querySelectorAll('#app-container > div[id$="-view"]');
+      allViews.forEach(view => {
+        if (view.id !== currentView) {
+          view.classList.add('hidden');
+        } else {
+          view.classList.remove('hidden'); // Ensure the initial view is shown
+        }
+      });
+
+      // If not starting at login, activate the correct nav item
+      if (currentView !== 'login-view') {
+        showView(currentView); // Re-run showView to set active tab correctly
+      }
+    });
+
+    // Basic goBack functionality (can be improved)
+    function goBack() {
+      // This is very basic, assumes dashboard is the 'home' screen after login
+      // A more robust solution would track view history
+      if (currentView !== 'dashboard-view' && currentView !== 'login-view') {
+        showView('dashboard-view');
+      }
+    }
+
+  </script>
+</body>
+
+</html>

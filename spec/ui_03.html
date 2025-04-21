@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>教會服事表管理系統 - 首頁</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background: linear-gradient(135deg, #F7E7CE 0%, #A0D2DB 100%);
+      /* Soft Sand to Gentle Sky gradient */
+    }
+
+    .card {
+      background-color: rgba(255, 255, 255, 0.85);
+      /* Slightly transparent white */
+      backdrop-filter: blur(10px);
+      border-radius: 1.5rem;
+      /* More rounded */
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+      transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .card:hover {
+      transform: translateY(-5px) scale(1.01);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    .icon-gradient {
+      background: linear-gradient(45deg, #F9A87E, #F7C4A5);
+      /* Coral gradient */
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .badge-notification {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background-color: #EF4444;
+      /* Red-500 */
+      color: white;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      font-size: 0.7rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    /* Custom Scrollbar for Webkit browsers */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #F9A87E;
+      /* Coral accent */
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #e89065;
+    }
+
+    /* Simple pulsing animation for notification icon */
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.7;
+      }
+    }
+
+    .animate-pulse-simple {
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen text-gray-800 p-4 sm:p-8">
+  <!-- Header -->
+  <header class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold text-[#4A4A4A]">服事小幫手</h1>
+    <div class="flex items-center space-x-4">
+      <span class="text-sm text-gray-600 hidden sm:inline">歡迎回來, 以諾！</span>
+      <div class="relative">
+        <svg xmlns="http://www.w3.org/2000/svg"
+          class="h-7 w-7 text-gray-600 hover:text-[#F9A87E] transition duration-200 cursor-pointer" fill="none"
+          viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+        </svg>
+        <span class="badge-notification animate-pulse-simple">3</span> <!-- Notification Indicator -->
+      </div>
+      <img src="https://via.placeholder.com/40/F7E7CE/4A4A4A?text=E" alt="User Avatar"
+        class="w-10 h-10 rounded-full border-2 border-[#F9A87E]">
+    </div>
+  </header>
+
+  <!-- Main Dashboard Grid -->
+  <main class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+
+    <!-- 1. My Upcoming Ministry -->
+    <div class="card p-5 space-y-3 col-span-1 sm:col-span-2 lg:col-span-1">
+      <h2 class="font-semibold text-xl text-[#4A4A4A] flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-[#F9A87E]" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+        近期服事
+      </h2>
+      <div class="space-y-2 text-sm">
+        <p><strong class="text-[#F9A87E] font-medium">本週日 (10/27) 09:30</strong> - 主日敬拜 (小提琴)</p>
+        <p><strong class="text-[#F9A87E] font-medium">下週三 (10/30) 19:30</strong> - 禱告會 (招待)</p>
+        <p class="text-gray-500">一個月內無其他安排...</p>
+      </div>
+      <button class="mt-2 text-sm font-medium text-[#A0D2DB] hover:text-[#79b9c4] transition duration-200">查看完整服事表
+        →</button>
+    </div>
+
+    <!-- 2. Quick Actions -->
+    <div class="card p-5 space-y-4 col-span-1">
+      <h2 class="font-semibold text-xl text-[#4A4A4A] flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-[#F9A87E]" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+        快速操作
+      </h2>
+      <div class="grid grid-cols-2 gap-3">
+        <button
+          class="bg-gradient-to-r from-[#F9A87E] to-[#F7C4A5] text-white py-3 px-2 rounded-xl shadow hover:shadow-md transition duration-200 text-sm font-semibold flex items-center justify-center space-x-1">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+            stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          <span>請假</span>
+        </button>
+        <button
+          class="bg-white border border-[#F9A87E] text-[#F9A87E] py-3 px-2 rounded-xl shadow hover:shadow-md transition duration-200 text-sm font-semibold flex items-center justify-center space-x-1 relative">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+            stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+          </svg>
+          <span>找代班</span>
+          <span class="badge-notification"
+            style="top: -8px; right: -8px; width: 18px; height: 18px; font-size: 0.65rem;">1</span>
+          <!-- Swap request indicator -->
+        </button>
+      </div>
+    </div>
+
+    <!-- 3. Team Status (Visible to Leaders/Admins) -->
+    <div class="card p-5 space-y-3 col-span-1 sm:col-span-1 lg:col-span-2">
+      <h2 class="font-semibold text-xl text-[#4A4A4A] flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-[#F9A87E]" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+        </svg>
+        團隊狀態 (敬拜團 A)
+      </h2>
+      <div class="text-sm space-y-1">
+        <p><strong>下週主日:</strong> 尚缺 1 位吉他手 <span class="text-red-500 font-semibold">(需處理!)</span></p>
+        <p><strong>排班衝突:</strong> 雅各 (11/10 小提琴 vs. 招待)</p>
+        <p><strong>待審核請求:</strong> 2 (換班 x1, 請假 x1)</p>
+      </div>
+      <button class="mt-2 text-sm font-medium text-[#A0D2DB] hover:text-[#79b9c4] transition duration-200">管理團隊排班
+        →</button>
+    </div>
+
+    <!-- 4. Scheduling Hub (Visible to Leaders/Admins) -->
+    <div class="card p-5 space-y-3 col-span-1 sm:col-span-1 lg:col-span-1">
+      <h2 class="font-semibold text-xl text-[#4A4A4A] flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-[#F9A87E]" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+        </svg>
+        排班中心
+      </h2>
+      <p class="text-sm text-gray-600">協作安排所有服事項目。</p>
+      <div class="flex items-center space-x-2 text-xs text-gray-500">
+        <span class="inline-block w-3 h-3 bg-green-400 rounded-full"></span>
+        <span>即時協作模式: 開啟</span>
+        <span class="ml-auto font-semibold text-[#4A4A4A]">2 人正在編輯</span>
+      </div>
+      <button
+        class="w-full mt-3 bg-gradient-to-r from-[#A0D2DB] to-[#88c1cc] text-white py-2 px-4 rounded-xl shadow hover:shadow-md transition duration-200 font-semibold">進入排班</button>
+    </div>
+
+    <!-- 5. Calendar & Line Integration Status -->
+    <div class="card p-5 space-y-3 col-span-1">
+      <h2 class="font-semibold text-xl text-[#4A4A4A] flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-[#F9A87E]" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+        </svg>
+        智慧連結
+      </h2>
+      <div class="space-y-2 text-sm">
+        <div class="flex items-center justify-between">
+          <span class="flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1.5 text-blue-500" fill="currentColor"
+              viewBox="0 0 20 20">
+              <path fill-rule="evenodd"
+                d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                clip-rule="evenodd" />
+            </svg>
+            Google 行事曆
+          </span>
+          <span class="text-green-600 font-medium flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clip-rule="evenodd" />
+            </svg>
+            已同步
+          </span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1.5 text-green-500" fill="currentColor"
+              viewBox="0 0 20 20">
+              <path
+                d="M18 10c0 .791-.23 1.516-.635 2.11L15.47 10.22a.75.75 0 011.06-1.06l1.096.836A4.978 4.978 0 0118 10zm-2.135-.89L17.47 11.78a.75.75 0 11-1.06 1.06l-1.606-1.22A4.98 4.98 0 0114 10c0-.791.23-1.516.635-2.11l1.895.357a.75.75 0 01.58.883zM10 18c.791 0 1.516-.23 2.11-.635L10.22 15.47a.75.75 0 011.06-1.06l.836 1.096c.305-.19.59-.41.85-.657l-1.22-1.605a.75.75 0 111.06-1.06l1.78 1.606c.406-.594.635-1.319.635-2.11h-1.5a.75.75 0 010-1.5h1.5c0-.791-.23-1.516-.635-2.11L15.47 9.78a.75.75 0 111.06-1.06L17.8 9.815A4.984 4.984 0 0014 6.35V8a.75.75 0 01-1.5 0V6.35A4.984 4.984 0 009.815 2.2L8.78 3.806a.75.75 0 11-1.06-1.06L9.185 1.22A4.978 4.978 0 0010 2c.791 0 1.516.23 2.11.635l.357 1.895a.75.75 0 01-.883.58l-2.11-.635A4.98 4.98 0 0010 6c-.791 0-1.516.23-2.11.635L6.35 4.74a.75.75 0 01.58-.883l1.895-.357A4.98 4.98 0 0110 2zm0 16a8 8 0 100-16 8 8 0 000 16z" />
+            </svg> <!-- Simplified Line icon -->
+            Line 通知
+          </span>
+          <span class="text-green-600 font-medium flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clip-rule="evenodd" />
+            </svg>
+            已啟用
+          </span>
+        </div>
+      </div>
+      <button class="mt-2 text-sm font-medium text-[#A0D2DB] hover:text-[#79b9c4] transition duration-200">設定連結
+        →</button>
+    </div>
+
+    <!-- 6. My Achievements / Community Feed -->
+    <div class="card p-5 space-y-3 col-span-1 sm:col-span-1 lg:col-span-2">
+      <h2 class="font-semibold text-xl text-[#4A4A4A] flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-[#F9A87E]" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+        </svg>
+        閃亮成就榜
+      </h2>
+      <div class="flex items-center space-x-4 overflow-x-auto pb-2">
+        <!-- Example Achievement Badges -->
+        <div class="text-center flex-shrink-0">
+          <div
+            class="w-16 h-16 bg-gradient-to-br from-[#F9A87E] to-[#fbc7ae] rounded-full flex items-center justify-center text-3xl shadow-inner">
+            🌟</div>
+          <p class="text-xs mt-1 font-medium text-gray-600">服事新星</p>
+        </div>
+        <div class="text-center flex-shrink-0">
+          <div
+            class="w-16 h-16 bg-gradient-to-br from-[#A0D2DB] to-[#c3e3e8] rounded-full flex items-center justify-center text-3xl shadow-inner">
+            🎶</div>
+          <p class="text-xs mt-1 font-medium text-gray-600">敬拜達人<br />(10次)</p>
+        </div>
+        <div class="text-center flex-shrink-0">
+          <div
+            class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center text-3xl text-gray-400 shadow-inner">
+            🤝</div>
+          <p class="text-xs mt-1 font-medium text-gray-400">代班天使<br />(未解鎖)</p>
+        </div>
+        <div class="text-center flex-shrink-0">
+          <div
+            class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center text-3xl text-gray-400 shadow-inner">
+            🗓️</div>
+          <p class="text-xs mt-1 font-medium text-gray-400">全勤勇士<br />(未解鎖)</p>
+        </div>
+      </div>
+      <button class="mt-2 text-sm font-medium text-[#A0D2DB] hover:text-[#79b9c4] transition duration-200">查看所有成就
+        →</button>
+    </div>
+
+    <!-- 7. Search / View Modes -->
+    <div class="card p-5 space-y-3 col-span-1">
+      <h2 class="font-semibold text-xl text-[#4A4A4A] flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-[#F9A87E]" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+        查詢與檢視
+      </h2>
+      <input type="text" placeholder="搜尋人員、服事、日期..."
+        class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#A0D2DB] text-sm">
+      <div class="flex space-x-2 mt-2">
+        <button
+          class="flex-1 text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 py-1.5 px-2 rounded-md transition duration-200">依人員</button>
+        <button
+          class="flex-1 text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 py-1.5 px-2 rounded-md transition duration-200">依服事</button>
+        <button
+          class="flex-1 text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 py-1.5 px-2 rounded-md transition duration-200">依日期</button>
+      </div>
+    </div>
+
+    <!-- 8. Statistics Snapshot (Visible to Leaders/Admins) -->
+    <div class="card p-5 space-y-3 col-span-1 sm:col-span-1 lg:col-span-1">
+      <h2 class="font-semibold text-xl text-[#4A4A4A] flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-[#F9A87E]" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        </svg>
+        本月統計
+      </h2>
+      <div class="space-y-1 text-sm">
+        <p>總服事時數: <strong class="text-[#4A4A4A]">128 小時</strong></p>
+        <p>參與人數: <strong class="text-[#4A4A4A]">45 人</strong></p>
+        <p>換班次數: <strong class="text-[#4A4A4A]">12 次</strong></p>
+      </div>
+      <button class="mt-2 text-sm font-medium text-[#A0D2DB] hover:text-[#79b9c4] transition duration-200">查看詳細報表
+        →</button>
+    </div>
+
+    <!-- 9. Version History (Placeholder) -->
+    <div class="card p-5 space-y-3 col-span-1 hidden xl:block"> <!-- Hidden on smaller screens -->
+      <h2 class="font-semibold text-xl text-[#4A4A4A] flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-[#F9A87E]" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        編輯紀錄
+      </h2>
+      <ul class="text-xs space-y-1 text-gray-600 list-disc list-inside">
+        <li>約翰 調整了 主日招待 (5分鐘前)</li>
+        <li>系統 自動鎖定 雅各 (1小時前)</li>
+        <li>馬利亞 申請了 11/17 請假 (3小時前)</li>
+      </ul>
+      <button class="mt-2 text-sm font-medium text-[#A0D2DB] hover:text-[#79b9c4] transition duration-200">查看完整歷史
+        →</button>
+    </div>
+
+  </main>
+
+</body>
+
+</html>

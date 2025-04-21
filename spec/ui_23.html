@@ -1,0 +1,1422 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Ministry Scheduler Mockups</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Orbitron:wght@400;700&display=swap');
+
+    :root {
+      --primary-color: #6A1B9A;
+      /* Deep Purple */
+      --secondary-color: #EC407A;
+      /* Vibrant Pink */
+      --accent-color: #FDD835;
+      /* Bright Yellow */
+      --background-color: #121212;
+      /* Dark Background */
+      --surface-color: #1E1E1E;
+      /* Slightly Lighter Dark */
+      --text-color: #E0E0E0;
+      /* Light Grey Text */
+      --text-color-dark: #111;
+      --text-secondary: #BDBDBD;
+      /* Medium Grey Text */
+      --success-color: #4CAF50;
+      /* Green */
+      --error-color: #F44336;
+      /* Red */
+      --warning-color: #FF9800;
+      /* Orange */
+      --font-body: 'Noto Sans TC', sans-serif;
+      --font-display: 'Orbitron', sans-serif;
+      --border-radius: 12px;
+      --shadow-small: 0 2px 4px rgba(0, 0, 0, 0.3);
+      --shadow-medium: 0 4px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--background-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 0;
+      overscroll-behavior-y: contain;
+      /* Prevent pull-to-refresh */
+    }
+
+    .app-container {
+      max-width: 480px;
+      /* Typical mobile width */
+      margin: auto;
+      background-color: var(--background-color);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .screen {
+      flex-grow: 1;
+      padding: 20px 15px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      /* Spacing between elements */
+    }
+
+    /* Common Elements */
+    h1,
+    h2,
+    h3 {
+      font-family: var(--font-display);
+      color: var(--accent-color);
+      margin: 0 0 10px 0;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    h1 {
+      font-size: 1.8em;
+    }
+
+    h2 {
+      font-size: 1.4em;
+      color: var(--secondary-color);
+    }
+
+    h3 {
+      font-size: 1.1em;
+      color: var(--text-color);
+    }
+
+    button,
+    .button-like {
+      font-family: var(--font-display);
+      background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+      color: #fff;
+      border: none;
+      padding: 12px 20px;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-size: 1em;
+      text-align: center;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-small);
+      display: inline-block;
+      text-decoration: none;
+    }
+
+    button:hover,
+    .button-like:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-medium);
+      filter: brightness(1.1);
+    }
+
+    button.secondary,
+    .button-like.secondary {
+      background: linear-gradient(135deg, var(--surface-color), #333);
+      color: var(--accent-color);
+      border: 1px solid var(--accent-color);
+    }
+
+    button.tertiary,
+    .button-like.tertiary {
+      background: none;
+      color: var(--secondary-color);
+      border: 1px solid var(--secondary-color);
+      box-shadow: none;
+    }
+
+    button.tertiary:hover,
+    .button-like.tertiary:hover {
+      background: rgba(236, 64, 122, 0.1);
+      /* secondary color with low opacity */
+    }
+
+    .card {
+      background-color: var(--surface-color);
+      border-radius: var(--border-radius);
+      padding: 15px;
+      box-shadow: var(--shadow-small);
+      border-left: 5px solid var(--primary-color);
+    }
+
+    .input-group {
+      margin-bottom: 15px;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--text-secondary);
+      font-size: 0.9em;
+    }
+
+    .input-group input,
+    .input-group select,
+    .input-group textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #444;
+      background-color: #333;
+      color: var(--text-color);
+      font-size: 1em;
+      box-sizing: border-box;
+      /* Include padding in width */
+    }
+
+    .input-group input:focus,
+    .input-group select:focus,
+    .input-group textarea:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 5px rgba(253, 216, 53, 0.5);
+    }
+
+    .icon {
+      display: inline-block;
+      width: 1.2em;
+      height: 1.2em;
+      margin-right: 8px;
+      vertical-align: middle;
+      /* Use background images or font icons here */
+      background-color: var(--accent-color);
+      /* Placeholder */
+      border-radius: 3px;
+    }
+
+    .icon-calendar {
+      background-color: #FFB74D;
+    }
+
+    /* Orange */
+    .icon-swap {
+      background-color: #4FC3F7;
+    }
+
+    /* Light Blue */
+    .icon-leave {
+      background-color: #AED581;
+    }
+
+    /* Light Green */
+    .icon-person {
+      background-color: #9575CD;
+    }
+
+    /* Deep Purple */
+    .icon-group {
+      background-color: #BA68C8;
+    }
+
+    /* Purple */
+    .icon-ministry {
+      background-color: #FF8A65;
+    }
+
+    /* Deep Orange */
+    .icon-time {
+      background-color: #7986CB;
+    }
+
+    /* Indigo */
+    .icon-approve {
+      background-color: var(--success-color);
+    }
+
+    .icon-deny {
+      background-color: var(--error-color);
+    }
+
+    .icon-pending {
+      background-color: var(--warning-color);
+    }
+
+    .icon-locked {
+      background-color: #78909C;
+    }
+
+    /* Blue Grey */
+    .icon-badge {
+      background-color: gold;
+      border-radius: 50%;
+      width: 1.5em;
+      height: 1.5em;
+    }
+
+    .icon-stats {
+      background-color: #4DB6AC;
+    }
+
+    /* Teal */
+    .icon-settings {
+      background-color: #607D8B;
+    }
+
+    /* Blue Grey */
+    .icon-line {
+      background-color: #00B900;
+    }
+
+    /* Line Green */
+    .icon-google {
+      background-color: #DB4437;
+    }
+
+    /* Google Red */
+
+
+    /* Bottom Navigation */
+    .bottom-nav {
+      display: flex;
+      justify-content: space-around;
+      background-color: var(--surface-color);
+      padding: 10px 0;
+      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.3);
+      position: sticky;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      /* Ensure it spans width within container */
+      z-index: 100;
+      border-top: 1px solid #333;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.75em;
+      flex: 1;
+      /* Equal width */
+      padding: 5px 0;
+      transition: color 0.2s ease;
+    }
+
+    .nav-item.active {
+      color: var(--accent-color);
+    }
+
+    .nav-item .icon {
+      width: 24px;
+      height: 24px;
+      margin-bottom: 4px;
+      margin-right: 0;
+      /* Reset margin */
+    }
+
+    .nav-item:hover {
+      color: var(--accent-color);
+    }
+
+    /* Specific Screen Styles */
+
+    /* Login Screen */
+    .screen#login {
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: linear-gradient(180deg, var(--primary-color) 0%, var(--background-color) 70%);
+    }
+
+    .login-logo {
+      font-family: var(--font-display);
+      font-size: 3em;
+      color: var(--accent-color);
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+      margin-bottom: 10px;
+    }
+
+    .login-tagline {
+      color: var(--text-secondary);
+      margin-bottom: 40px;
+      font-size: 1.1em;
+    }
+
+    /* Dashboard Screen */
+    .dashboard-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .dashboard-header .level-indicator {
+      display: inline-block;
+      background-color: var(--accent-color);
+      color: var(--text-color-dark);
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.8em;
+      font-weight: bold;
+      margin-left: 10px;
+    }
+
+    .quick-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .quick-actions button {
+      width: 100%;
+      padding: 15px 10px;
+      /* More padding for touch */
+      font-size: 0.9em;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .quick-actions .icon {
+      width: 30px;
+      height: 30px;
+      margin: 0 0 5px 0;
+    }
+
+
+    .service-list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #333;
+    }
+
+    .service-list-item:last-child {
+      border-bottom: none;
+    }
+
+    .service-details {
+      flex-grow: 1;
+      margin-right: 10px;
+    }
+
+    .service-details .ministry-name {
+      font-weight: bold;
+      color: var(--secondary-color);
+      font-size: 1.1em;
+    }
+
+    .service-details .role {
+      font-size: 0.9em;
+      color: var(--text-secondary);
+    }
+
+    .service-details .time {
+      font-size: 0.9em;
+      color: var(--accent-color);
+    }
+
+    .service-actions button {
+      padding: 5px 10px;
+      font-size: 0.8em;
+    }
+
+    /* Schedule View Screen */
+    .schedule-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+      /* Allow wrapping on small screens */
+      gap: 10px;
+    }
+
+    .schedule-controls .view-toggle button {
+      padding: 8px 12px;
+      font-size: 0.8em;
+      margin-left: 5px;
+    }
+
+    .schedule-controls .filter-button {
+      background: none;
+      border: 1px solid var(--accent-color);
+      color: var(--accent-color);
+      padding: 8px 12px;
+      font-size: 0.8em;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      /* Weekly view */
+      gap: 5px;
+      text-align: center;
+    }
+
+    .calendar-day-header {
+      font-weight: bold;
+      color: var(--accent-color);
+      padding-bottom: 5px;
+      font-size: 0.8em;
+    }
+
+    .calendar-day {
+      background-color: var(--surface-color);
+      min-height: 80px;
+      border-radius: 8px;
+      padding: 5px;
+      font-size: 0.75em;
+      position: relative;
+      border: 1px solid #333;
+    }
+
+    .calendar-day.other-month {
+      background-color: #2a2a2a;
+      opacity: 0.6;
+    }
+
+    .calendar-day .day-number {
+      font-weight: bold;
+      color: var(--text-secondary);
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    .calendar-entry {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 2px 4px;
+      border-radius: 4px;
+      margin-bottom: 3px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      font-size: 0.9em;
+      cursor: pointer;
+    }
+
+    .calendar-entry.locked {
+      background-color: #555;
+      font-style: italic;
+    }
+
+    .calendar-entry.conflict {
+      border: 2px solid var(--error-color);
+    }
+
+    .calendar-day.schedulable:hover {
+      background-color: #2c2c2c;
+      cursor: pointer;
+      outline: 1px dashed var(--accent-color);
+    }
+
+    /* Scheduling Modal/Panel (conceptual) */
+    .scheduling-panel {
+      background-color: rgba(0, 0, 0, 0.8);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      /* Hidden by default, shown via JS */
+      justify-content: center;
+      align-items: center;
+      z-index: 200;
+      padding: 20px;
+    }
+
+    .scheduling-content {
+      background-color: var(--surface-color);
+      padding: 25px;
+      border-radius: var(--border-radius);
+      width: 90%;
+      max-width: 400px;
+      box-shadow: var(--shadow-medium);
+      border-top: 5px solid var(--secondary-color);
+    }
+
+    .user-availability-list .user-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #333;
+    }
+
+    .user-availability-list .user-item:last-child {
+      border-bottom: none;
+    }
+
+    .user-availability-list .status-indicator {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-left: 10px;
+    }
+
+    .user-availability-list .status-available {
+      background-color: var(--success-color);
+    }
+
+    .user-availability-list .status-limited {
+      background-color: var(--warning-color);
+    }
+
+    .user-availability-list .status-unavailable {
+      background-color: var(--error-color);
+    }
+
+    .user-availability-list .status-locked {
+      background-color: #78909C;
+    }
+
+    .conflict-warning {
+      color: var(--error-color);
+      font-size: 0.9em;
+      margin-top: 10px;
+      padding: 8px;
+      background-color: rgba(244, 67, 54, 0.1);
+      border-radius: 4px;
+      border-left: 3px solid var(--error-color);
+    }
+
+    /* Requests Screen */
+    .request-item {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+
+    .request-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .request-type {
+      font-weight: bold;
+      font-size: 1.1em;
+      color: var(--accent-color);
+    }
+
+    .request-status {
+      padding: 3px 8px;
+      border-radius: 10px;
+      font-size: 0.8em;
+      font-weight: bold;
+    }
+
+    .request-status.pending {
+      background-color: var(--warning-color);
+      color: var(--text-color-dark);
+    }
+
+    .request-status.approved {
+      background-color: var(--success-color);
+      color: white;
+    }
+
+    .request-status.rejected {
+      background-color: var(--error-color);
+      color: white;
+    }
+
+    .request-details p {
+      margin: 4px 0;
+      color: var(--text-secondary);
+      font-size: 0.9em;
+    }
+
+    .request-details strong {
+      color: var(--text-color);
+    }
+
+    .request-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .request-actions button {
+      flex-grow: 1;
+      padding: 8px;
+      font-size: 0.9em;
+    }
+
+    .line-action {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9em;
+      color: var(--text-secondary);
+    }
+
+    .line-action .icon-line {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* Substitute Finder UI (within a modal or separate screen) */
+    .substitute-finder .contact-status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      font-size: 0.9em;
+    }
+
+    .substitute-finder .status-icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+    }
+
+    .substitute-finder .status-contacting {
+      background-color: #4FC3F7;
+    }
+
+    /* Blue */
+    .substitute-finder .status-accepted {
+      background-color: var(--success-color);
+    }
+
+    .substitute-finder .status-declined {
+      background-color: #E57373;
+    }
+
+    /* Light Red */
+    .substitute-finder .status-pending-approval {
+      background-color: var(--warning-color);
+    }
+
+
+    /* Profile/Achievements Screen */
+    .profile-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .profile-pic {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background-color: var(--secondary-color);
+      /* Placeholder */
+      margin: 0 auto 10px auto;
+      border: 3px solid var(--accent-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2em;
+      color: white;
+      /* For initial/placeholder */
+    }
+
+    .profile-name {
+      font-family: var(--font-display);
+      font-size: 1.5em;
+      color: var(--text-color);
+    }
+
+    .profile-level {
+      color: var(--accent-color);
+      font-weight: bold;
+    }
+
+    .stats-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .stat-card {
+      background-color: #2a2a2a;
+      padding: 15px;
+      text-align: center;
+      border-radius: var(--border-radius);
+      border-bottom: 4px solid var(--primary-color);
+    }
+
+    .stat-value {
+      font-family: var(--font-display);
+      font-size: 2em;
+      color: var(--accent-color);
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      font-size: 0.9em;
+      color: var(--text-secondary);
+    }
+
+    .achievements-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      gap: 15px;
+      justify-content: center;
+    }
+
+    .achievement-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .achievement-badge {
+      width: 60px;
+      height: 60px;
+      background-color: gold;
+      /* Placeholder */
+      border-radius: 50%;
+      margin-bottom: 5px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.5em;
+      color: #333;
+      box-shadow: var(--shadow-small);
+      border: 2px solid darkgoldenrod;
+    }
+
+    .achievement-badge.locked {
+      background-color: #555;
+      opacity: 0.6;
+      border-color: #444;
+    }
+
+    .achievement-name {
+      font-size: 0.8em;
+      color: var(--text-secondary);
+    }
+
+    /* Settings Screen (Basic) */
+    .settings-item {
+      background-color: var(--surface-color);
+      padding: 15px;
+      border-radius: var(--border-radius);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .settings-item:hover {
+      background-color: #2a2a2a;
+    }
+
+    .settings-item .label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.1em;
+    }
+
+    .settings-item .icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    .settings-item .arrow {
+      color: var(--text-secondary);
+      font-size: 1.2em;
+    }
+
+    /* e.g., '>' */
+
+    /* Web specific adjustments (example) */
+    @media (min-width: 768px) {
+      .app-container {
+        max-width: 100%;
+        display: flex;
+        flex-direction: row;
+        /* Side nav + content */
+      }
+
+      .side-nav {
+        /* Replace bottom nav on web */
+        width: 220px;
+        background-color: var(--surface-color);
+        padding: 20px 0;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        position: sticky;
+        top: 0;
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
+        border-right: 1px solid #333;
+      }
+
+      .side-nav .nav-item {
+        flex-direction: row;
+        justify-content: flex-start;
+        padding: 15px 20px;
+        font-size: 1em;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      .side-nav .nav-item .icon {
+        margin-right: 15px;
+        margin-bottom: 0;
+      }
+
+      .side-nav .nav-item span {
+        display: inline;
+      }
+
+      /* Show text */
+
+      .bottom-nav {
+        display: none;
+      }
+
+      /* Hide bottom nav on web */
+
+      .screen {
+        flex-grow: 1;
+        height: 100vh;
+        overflow-y: auto;
+        padding: 30px;
+      }
+
+      /* Adjust specific layouts for web */
+      .quick-actions {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      }
+
+      .calendar-grid {
+        gap: 8px;
+      }
+
+      .calendar-day {
+        min-height: 120px;
+        font-size: 0.85em;
+      }
+
+      .profile-section {
+        display: flex;
+        gap: 30px;
+        align-items: flex-start;
+      }
+
+      .profile-header {
+        flex-basis: 200px;
+        flex-shrink: 0;
+      }
+
+      .profile-details {
+        flex-grow: 1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app-container">
+
+    <!-- Side Nav for Web - Hidden on Mobile -->
+    <nav class="side-nav" style="display: none;">
+      <div
+        style="text-align: center; padding: 0 20px 20px 20px; font-family: var(--font-display); font-size: 1.5em; color: var(--accent-color);">
+        MinistryLink</div>
+      <a href="#dashboard" class="nav-item active">
+        <span class="icon icon-home" style="background-color: var(--accent-color);"></span> <!-- Placeholder -->
+        <span>主畫面</span>
+      </a>
+      <a href="#schedule" class="nav-item">
+        <span class="icon icon-calendar"></span>
+        <span>服事總表</span>
+      </a>
+      <a href="#requests" class="nav-item">
+        <span class="icon icon-swap"></span>
+        <span>請求管理</span>
+      </a>
+      <a href="#profile" class="nav-item">
+        <span class="icon icon-person"></span>
+        <span>個人檔案</span>
+      </a>
+      <a href="#settings" class="nav-item">
+        <span class="icon icon-settings"></span>
+        <span>系統設定</span>
+      </a>
+      <!-- Add more nav items as needed -->
+    </nav>
+
+    <!-- Main Content Area -->
+    <main style="flex-grow: 1;">
+
+      <!-- Screen: Login -->
+      <div class="screen" id="login" style="display: none;"> <!-- Initially hidden -->
+        <div class="login-logo">MinistryLink</div>
+        <div class="login-tagline">Level Up Your Service!</div>
+        <div class="input-group" style="max-width: 300px; margin: 0 auto 15px auto;">
+          <label for="username">使用者名稱 / Email</label>
+          <input type="text" id="username" placeholder="輸入您的帳號">
+        </div>
+        <div class="input-group" style="max-width: 300px; margin: 0 auto 25px auto;">
+          <label for="password">密碼</label>
+          <input type="password" id="password" placeholder="輸入您的密碼">
+        </div>
+        <button>登入系統</button>
+        <a href="#" style="color: var(--text-secondary); font-size: 0.9em; margin-top: 20px; display: block;">忘記密碼?</a>
+      </div>
+
+      <!-- Screen: Dashboard (Personal View) -->
+      <div class="screen" id="dashboard">
+        <div class="dashboard-header">
+          <h1>歡迎回來, 以諾! <span class="level-indicator">Lv. 5 熱心服事者</span></h1>
+        </div>
+
+        <div class="card" style="border-left-color: var(--secondary-color);">
+          <h2><span class="icon icon-calendar" style="background-color: var(--secondary-color)"></span> 下次服事預告</h2>
+          <div class="service-list-item">
+            <div class="service-details">
+              <div class="ministry-name">主日敬拜 (週六晚堂)</div>
+              <div class="role">小提琴手</div>
+              <div class="time">2023/12/16 (六) 19:00 - 21:00</div>
+            </div>
+            <div class="service-actions">
+              <button class="tertiary"><span class="icon icon-swap"></span> 找人代班</button>
+            </div>
+          </div>
+          <p style="text-align: center; color: var(--text-secondary); font-size: 0.9em; margin-top: 15px;">距離下次服事還有 3 天
+          </p>
+        </div>
+
+        <div class="quick-actions">
+          <button class="secondary" onclick="alert('前往請假申請畫面')">
+            <span class="icon icon-leave"></span>
+            預先請假
+          </button>
+          <button class="secondary" onclick="alert('前往換班申請畫面')">
+            <span class="icon icon-swap"></span>
+            申請換班
+          </button>
+        </div>
+
+        <div class="card">
+          <h2><span class="icon icon-time"></span> 本月服事清單</h2>
+          <div class="service-list-item">
+            <div class="service-details">
+              <div class="ministry-name">主日敬拜 (週六晚堂)</div>
+              <div class="role">小提琴手</div>
+              <div class="time">2023/12/16 (六)</div>
+            </div>
+          </div>
+          <div class="service-list-item">
+            <div class="service-details">
+              <div class="ministry-name">G1 小組聚會</div>
+              <div class="role">招待</div>
+              <div class="time">2023/12/20 (三)</div>
+            </div>
+          </div>
+          <div class="service-list-item">
+            <div class="service-details">
+              <div class="ministry-name">聖誕特別聚會</div>
+              <div class="role">詩班 (A團)</div>
+              <div class="time">2023/12/24 (日)</div>
+            </div>
+          </div>
+          <!-- More items -->
+          <a href="#schedule" class="button-like tertiary"
+            style="margin-top: 15px; display: block; text-align: center;">查看完整行事曆</a>
+        </div>
+      </div>
+
+      <!-- Screen: Full Schedule View -->
+      <div class="screen" id="schedule" style="display: none;">
+        <h1><span class="icon icon-calendar"></span> 服事總表</h1>
+
+        <div class="schedule-controls">
+          <div>
+            <button class="tertiary">
+              << /button>
+                <span style="font-size: 1.2em; margin: 0 10px;">2023年 12月</span>
+                <button class="tertiary">></button>
+          </div>
+          <div class="view-toggle">
+            <button class="secondary">月</button>
+            <button class="tertiary">週</button>
+            <button class="tertiary">列表</button>
+          </div>
+          <button class="filter-button"><span class="icon icon-filter"
+              style="background-color: var(--accent-color)"></span> 篩選</button> <!-- Opens filter modal -->
+        </div>
+
+        <!-- Example: Monthly Calendar Grid -->
+        <div class="calendar-grid">
+          <!-- Headers -->
+          <div class="calendar-day-header">日</div>
+          <div class="calendar-day-header">一</div>
+          <div class="calendar-day-header">二</div>
+          <div class="calendar-day-header">三</div>
+          <div class="calendar-day-header">四</div>
+          <div class="calendar-day-header">五</div>
+          <div class="calendar-day-header">六</div>
+
+          <!-- Days (Example structure) -->
+          <div class="calendar-day other-month"><span class="day-number">26</span></div>
+          <div class="calendar-day other-month"><span class="day-number">27</span></div>
+          <div class="calendar-day other-month"><span class="day-number">28</span></div>
+          <div class="calendar-day other-month"><span class="day-number">29</span></div>
+          <div class="calendar-day other-month"><span class="day-number">30</span></div>
+          <div class="calendar-day schedulable"><span class="day-number">1</span>
+            <div class="calendar-entry" style="background-color: #AD1457;">禱告會-主領:雅各</div>
+          </div>
+          <div class="calendar-day schedulable"><span class="day-number">2</span>
+            <div class="calendar-entry" style="background-color: #6A1B9A;">主日-敬拜主領:大衛</div>
+            <div class="calendar-entry" style="background-color: #6A1B9A;">主日-司琴:利亞</div>
+            <div class="calendar-entry locked"><span class="icon icon-locked"
+                style="width: 1em; height: 1em; margin-right: 2px;"></span>小提琴:以諾 (上限)</div>
+          </div>
+          <!-- ... more days ... -->
+          <div class="calendar-day schedulable"><span class="day-number">9</span>
+            <div class="calendar-entry" style="background-color: #6A1B9A;">主日-敬拜主領:彼得</div>
+            <div class="calendar-entry" style="background-color: #6A1B9A;">主日-吉他:安德烈</div>
+            <div class="calendar-entry conflict"><span class="icon icon-warning"
+                style="background-color: var(--error-color); width: 1em; height: 1em; margin-right: 2px;"></span>鼓手:
+              [待指派 - A/B團衝突]</div>
+          </div>
+          <div class="calendar-day schedulable"><span class="day-number">16</span>
+            <div class="calendar-entry" style="background-color: #6A1B9A;">主日-敬拜主領:馬利亞</div>
+            <div class="calendar-entry" style="background-color: #6A1B9A;">主日-小提琴:以諾</div>
+            <div class="calendar-entry" style="background-color: #FF8A65;">SC-兒童:路得</div>
+          </div>
+          <div class="calendar-day schedulable"><span class="day-number">23</span>
+            <div class="calendar-entry" style="background-color: #6A1B9A;">主日-司琴:利亞</div>
+          </div>
+          <div class="calendar-day schedulable"><span class="day-number">24</span>
+            <div class="calendar-entry" style="background-color: #EC407A;">聖誕-A團 (部分鎖定)</div>
+          </div>
+          <div class="calendar-day schedulable"><span class="day-number">25</span>
+            <div class="calendar-entry" style="background-color: #EC407A;">聖誕-戶外報佳音</div>
+          </div>
+          <!-- ... more days ... -->
+          <div class="calendar-day schedulable"><span class="day-number">30</span></div>
+          <div class="calendar-day other-month"><span class="day-number">1</span></div>
+        </div>
+        <!-- Add logic for weekly/list view toggling -->
+        <p style="font-size: 0.8em; color: var(--text-secondary); margin-top: 10px;">
+          說明: <span class="icon icon-locked" style="width: 1em; height: 1em;"></span> 已達上限/鎖定; <span
+            class="icon icon-warning" style="background-color: var(--error-color); width: 1em; height: 1em;"></span>
+          條件衝突. 點擊日期進行排班 (主責權限).
+        </p>
+      </div>
+
+      <!-- Screen: Request Management (Leader View) -->
+      <div class="screen" id="requests" style="display: none;">
+        <h1><span class="icon icon-swap"></span> 請求管理中心</h1>
+
+        <div class="card request-item">
+          <div class="request-header">
+            <div class="request-type"><span class="icon icon-leave"></span> 請假申請</div>
+            <div class="request-status pending">待審核</div>
+          </div>
+          <div class="request-details">
+            <p>申請人: <strong>馬可</strong></p>
+            <p>請假日期: <strong>2023/12/30 (六)</strong></p>
+            <p>原定服事: <strong>主日敬拜 - 吉他手</strong></p>
+            <p>理由: 家庭旅遊</p>
+          </div>
+          <div class="request-actions">
+            <button><span class="icon icon-approve"></span> 核准</button>
+            <button class="secondary"><span class="icon icon-deny"></span> 拒絕</button>
+          </div>
+          <div class="line-action">
+            <span class="icon icon-line"></span> 可在 Line 直接回覆審核
+          </div>
+        </div>
+
+        <div class="card request-item">
+          <div class="request-header">
+            <div class="request-type"><span class="icon icon-swap"></span> 換班申請</div>
+            <div class="request-status pending">尋找代班中</div>
+          </div>
+          <div class="request-details">
+            <p>申請人: <strong>路加</strong></p>
+            <p>換班服事: <strong>2023/12/23 (六) 主日敬拜 - 招待</strong></p>
+            <p>狀態: 系統已透過 Line 自動詢問 5 位合適同工...</p>
+            <!-- Substitute Finder UI could be integrated here or linked -->
+            <div class="substitute-finder" style="margin-top: 10px;">
+              <div class="contact-status"><span class="status-icon status-contacting"></span> 正在聯絡 約翰...</div>
+              <div class="contact-status"><span class="status-icon status-declined"></span> 馬太 已拒絕</div>
+              <div class="contact-status"><span class="status-icon status-contacting"></span> 正在聯絡 西門...</div>
+            </div>
+          </div>
+          <!-- Actions might appear after someone accepts -->
+        </div>
+
+        <div class="card request-item">
+          <div class="request-header">
+            <div class="request-type"><span class="icon icon-swap"></span> 換班請求</div>
+            <div class="request-status pending">待您確認</div> <!-- User view: Accept/Reject -->
+          </div>
+          <div class="request-details">
+            <p>請求來自: <strong>安德烈</strong></p>
+            <p>請求換班: <strong>您 2023/12/16 (六) 的 主日敬拜-小提琴</strong></p>
+            <p>換成他的: <strong>2023/12/09 (六) 的 主日敬拜-吉他</strong></p>
+          </div>
+          <div class="request-actions">
+            <button><span class="icon icon-approve"></span> 接受換班</button>
+            <button class="secondary"><span class="icon icon-deny"></span> 拒絕換班</button>
+          </div>
+        </div>
+
+        <div class="card request-item">
+          <div class="request-header">
+            <div class="request-type"><span class="icon icon-swap"></span> 代班確認</div>
+            <div class="request-status pending">待主責審核</div>
+          </div>
+          <div class="request-details">
+            <p>原申請人: <strong>馬可</strong> (吉他手, 12/30)</p>
+            <p>代班人: <strong>約翰</strong> <span style="color: var(--success-color);">(已同意代班)</span></p>
+            <p>狀態: 等待 <strong>[主責姓名]</strong> 最終核准</p>
+          </div>
+          <!-- Leader sees Approve/Deny here -->
+          <div class="request-actions" style="/* display: none; */"> <!-- Hidden for non-leaders -->
+            <button><span class="icon icon-approve"></span> 核准代班</button>
+            <button class="secondary"><span class="icon icon-deny"></span> 拒絕代班</button>
+          </div>
+          <div class="line-action">
+            <span class="icon icon-line"></span> 主責可在 Line 審核此最終確認
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Screen: Profile & Achievements -->
+      <div class="screen" id="profile" style="display: none;">
+        <div class="profile-header">
+          <div class="profile-pic">E</div> <!-- Placeholder Initial -->
+          <div class="profile-name">以諾</div>
+          <div class="profile-level">Lv. 5 熱心服事者</div>
+        </div>
+
+        <div class="card">
+          <h2><span class="icon icon-stats"></span> 服事統計</h2>
+          <div class="stats-section">
+            <div class="stat-card">
+              <div class="stat-value">32</div>
+              <div class="stat-label">本季服事次數</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">5</div>
+              <div class="stat-label">主要事工項目</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">95%</div>
+              <div class="stat-label">出席率</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2><span class="icon icon-badge"></span> 我的成就徽章</h2>
+          <div class="achievements-grid">
+            <div class="achievement-item">
+              <div class="achievement-badge" title="完成10次主日服事">☀️</div>
+              <div class="achievement-name">忠心守望</div>
+            </div>
+            <div class="achievement-item">
+              <div class="achievement-badge" title="完成5次兒童服事">🧸</div>
+              <div class="achievement-name">孩童之友</div>
+            </div>
+            <div class="achievement-item">
+              <div class="achievement-badge" title="成功換班/代班5次">🤝</div>
+              <div class="achievement-name">最佳隊友</div>
+            </div>
+            <div class="achievement-item">
+              <div class="achievement-badge locked" title="參與3次特殊節慶服事">🎉</div>
+              <div class="achievement-name">節慶同樂 (未解鎖)</div>
+            </div>
+            <div class="achievement-item">
+              <div class="achievement-badge locked" title="連續12週參與禱告會">🔥</div>
+              <div class="achievement-name">禱告勇士 (未解鎖)</div>
+            </div>
+            <!-- More badges -->
+          </div>
+        </div>
+
+        <div class="card" style="margin-top: 20px;">
+          <h2><span class="icon icon-google"></span> 行事曆同步</h2>
+          <button class="secondary"><span class="icon icon-google"></span> 連接 Google Calendar</button>
+          <p style="font-size: 0.8em; color: var(--text-secondary); margin-top: 10px;">將您的服事行程自動同步到個人 Google 行事曆。</p>
+        </div>
+
+      </div>
+
+      <!-- Screen: Settings (Admin/Leader focus) -->
+      <div class="screen" id="settings" style="display: none;">
+        <h1><span class="icon icon-settings"></span> 系統設定</h1>
+
+        <div class="settings-item" onclick="alert('進入人員管理')">
+          <div class="label"><span class="icon icon-person"></span> 人員與權限管理</div>
+          <div class="arrow">></div>
+        </div>
+        <div class="settings-item" onclick="alert('進入服事項目設定')">
+          <div class="label"><span class="icon icon-ministry"></span> 服事項目設定</div>
+          <div class="arrow">></div>
+        </div>
+        <div class="settings-item" onclick="alert('進入團隊/群組設定')">
+          <div class="label"><span class="icon icon-group"></span> 團隊/群組規則</div>
+          <div class="arrow">></div>
+        </div>
+        <div class="settings-item" onclick="alert('進入排班規則與限制')">
+          <div class="label"><span class="icon icon-locked"></span> 排班限制與衝突規則</div>
+          <div class="arrow">></div>
+        </div>
+        <div class="settings-item" onclick="alert('進入 Line 整合設定')">
+          <div class="label"><span class="icon icon-line"></span> Line Bot 整合</div>
+          <div class="arrow">></div>
+        </div>
+        <div class="settings-item" onclick="alert('查看歷史編輯紀錄')">
+          <div class="label"><span class="icon icon-time"></span> 版本控制 (編輯紀錄)</div>
+          <div class="arrow">></div>
+        </div>
+        <div class="settings-item" onclick="alert('進入成就系統設定')">
+          <div class="label"><span class="icon icon-badge"></span> 成就與獎勵設定</div>
+          <div class="arrow">></div>
+        </div>
+        <div style="margin-top: 30px;">
+          <button class="tertiary" style="width: 100%;">登出系統</button>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Bottom Navigation for Mobile - Hidden on Web -->
+    <nav class="bottom-nav">
+      <a href="#dashboard" class="nav-item active">
+        <span class="icon icon-home" style="background-color: var(--accent-color);"></span> <!-- Placeholder -->
+        <span>主畫面</span>
+      </a>
+      <a href="#schedule" class="nav-item">
+        <span class="icon icon-calendar"></span>
+        <span>服事總表</span>
+      </a>
+      <a href="#requests" class="nav-item">
+        <span class="icon icon-swap"></span>
+        <span>請求</span> <!-- Simplified name -->
+      </a>
+      <a href="#profile" class="nav-item">
+        <span class="icon icon-person"></span>
+        <span>檔案</span> <!-- Simplified name -->
+      </a>
+      <!-- Settings might be accessed via profile on mobile -->
+    </nav>
+
+  </div>
+
+  <!-- Placeholder for Modals/Panels -->
+  <div class="scheduling-panel" style="display: none;"> <!-- Example Scheduling Panel -->
+    <div class="scheduling-content">
+      <h2>指派服事 - 2023/12/09 主日鼓手</h2>
+      <div class="input-group">
+        <label for="assign-user">選擇人員</label>
+        <input type="text" id="assign-user-search" placeholder="搜尋姓名...">
+        <div class="user-availability-list"
+          style="max-height: 150px; overflow-y: auto; margin-top: 10px; border: 1px solid #444; border-radius: 8px; padding: 5px;">
+          <div class="user-item"><label><input type="radio" name="assignee"> 彼得 <span
+                class="status-indicator status-available"></span></label></div>
+          <div class="user-item"><label><input type="radio" name="assignee"> 安德烈 (A團) <span
+                class="status-indicator status-limited" title="本月已服事1次"></span></label></div>
+          <div class="user-item"><label><input type="radio" name="assignee" disabled> 以諾 (已被排小提琴) <span
+                class="status-indicator status-locked"></span></label></div>
+          <div class="user-item"><label><input type="radio" name="assignee"> 雅各 (B團) <span
+                class="status-indicator status-available"></span></label></div>
+          <div class="user-item"><label><input type="radio" name="assignee" disabled> 馬可 (請假) <span
+                class="status-indicator status-unavailable"></span></label></div>
+        </div>
+      </div>
+      <div class="conflict-warning" style="display: none;"> <!-- Show based on selection -->
+        <span class="icon icon-warning" style="background-color: var(--error-color); width: 1em; height: 1em;"></span>
+        警告: 指派 安德烈 (A團) 將導致 A 樂團無法於 12/24 服事!
+      </div>
+      <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <button style="flex-grow: 1;">確認指派</button>
+        <button class="secondary" style="flex-grow: 1;"
+          onclick="this.closest('.scheduling-panel').style.display='none'">取消</button>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    // Basic navigation simulation (for demo purposes)
+    document.querySelectorAll('.nav-item, .side-nav .nav-item, .button-like[href^="#"]').forEach(link => {
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        const targetId = this.getAttribute('href').substring(1);
+        document.querySelectorAll('.screen').forEach(screen => {
+          screen.style.display = 'none';
+        });
+        const targetScreen = document.getElementById(targetId);
+        if (targetScreen) {
+          targetScreen.style.display = 'flex'; // Or 'block' depending on screen type
+        } else {
+          document.getElementById('dashboard').style.display = 'flex'; // Fallback to dashboard
+        }
+
+
+        // Update active state for nav
+        document.querySelectorAll('.nav-item, .side-nav .nav-item').forEach(item => item.classList.remove('active'));
+        // Find corresponding items in both navs if they exist
+        document.querySelectorAll(`.nav-item[href="#${targetId}"], .side-nav .nav-item[href="#${targetId}"]`).forEach(activeLink => activeLink.classList.add('active'));
+
+        // Scroll to top of new screen
+        if (targetScreen) targetScreen.scrollTop = 0;
+      });
+    });
+
+    // Show Login screen first for demo if needed, otherwise dashboard
+    // document.getElementById('login').style.display = 'flex';
+    document.getElementById('dashboard').style.display = 'flex'; // Start with dashboard
+
+    // Media Query simulation for side nav
+    function checkLayout() {
+      const sideNav = document.querySelector('.side-nav');
+      const bottomNav = document.querySelector('.bottom-nav');
+      const mainContent = document.querySelector('main'); // Assuming the main content wrapper
+      const screenDivs = document.querySelectorAll('.screen'); // Get all screen divs to adjust padding etc if needed
+
+      if (window.innerWidth >= 768) {
+        if (sideNav) sideNav.style.display = 'flex';
+        if (bottomNav) bottomNav.style.display = 'none';
+        // Add class to body or container for web-specific styles if needed
+        document.body.classList.add('web-layout');
+        // If main content area needs adjustment when side nav is shown
+        if (mainContent) mainContent.style.marginLeft = sideNav ? `${sideNav.offsetWidth}px` : '0';
+
+      } else {
+        if (sideNav) sideNav.style.display = 'none';
+        if (bottomNav) bottomNav.style.display = 'flex';
+        document.body.classList.remove('web-layout');
+        if (mainContent) mainContent.style.marginLeft = '0';
+      }
+    }
+
+    window.addEventListener('resize', checkLayout);
+    document.addEventListener('DOMContentLoaded', checkLayout); // Initial check
+
+    // Simple modal simulation
+    // Example: Clicking a schedulable day might open the panel
+    document.querySelectorAll('.calendar-day.schedulable').forEach(day => {
+      day.addEventListener('click', () => {
+        const panel = document.querySelector('.scheduling-panel');
+        if (panel) panel.style.display = 'flex';
+      })
+    })
+
+
+  </script>
+
+</body>
+
+</html>

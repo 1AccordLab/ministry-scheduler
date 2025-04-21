@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flourish - Ministry Scheduler</title>
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS (CDN for simplicity) -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio"></script>
+  <!-- Custom Styles -->
+  <style>
+    :root {
+      --bg-main: #FBF8EF;
+      /* Soft Beige */
+      --primary-accent: #2D7A74;
+      /* Deep Teal */
+      --secondary-accent: #B87F6B;
+      /* Earthy Terracotta */
+      --highlight: #EBC974;
+      /* Gentle Gold */
+      --text-main: #5C4B3E;
+      /* Dark Desaturated Brown */
+      --text-light: #8C7B6A;
+      /* Lighter Brown */
+      --border-color: #D4CBBF;
+      /* Subtle border */
+      --locked: #B0A89D;
+      /* Muted grey for locked/disabled */
+      --leaf-green: #74A85A;
+      /* A brighter green for icons/highlights */
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      /* Subtle background texture */
+      /* background-image: url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23D4CBBF" fill-opacity="0.1"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E'); */
+    }
+
+    /* Custom button style resembling smooth stones or leaves */
+    .btn-nature {
+      padding: 8px 16px;
+      border-radius: 20px;
+      /* Rounded */
+      font-weight: 600;
+      transition: all 0.3s ease;
+      border: 1px solid transparent;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-primary {
+      background-color: var(--primary-accent);
+      color: white;
+      border-color: var(--primary-accent);
+    }
+
+    .btn-primary:hover {
+      background-color: #25665F;
+      /* Darker Teal */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background-color: var(--secondary-accent);
+      color: white;
+      border-color: var(--secondary-accent);
+    }
+
+    .btn-secondary:hover {
+      background-color: #A36D5A;
+      /* Darker Terracotta */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      color: var(--primary-accent);
+      border-color: var(--primary-accent);
+    }
+
+    .btn-outline:hover {
+      background-color: rgba(45, 122, 116, 0.1);
+      /* Light Teal bg */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Styling for list items - avoid card look */
+    .service-item,
+    .request-item {
+      background-color: rgba(255, 255, 255, 0.6);
+      /* Slightly transparent white */
+      padding: 12px 18px;
+      margin-bottom: 10px;
+      border-radius: 12px;
+      border-left: 5px solid var(--primary-accent);
+      /* Color accent */
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background-color 0.2s ease;
+    }
+
+    .service-item:hover {
+      background-color: rgba(255, 255, 255, 0.9);
+    }
+
+    .service-item.special-event {
+      border-left-color: var(--highlight);
+    }
+
+    .service-item.prayer-meeting {
+      border-left-color: var(--secondary-accent);
+    }
+
+    /* Achievement Badge Style */
+    .bloom-badge {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: var(--highlight);
+      color: var(--text-main);
+      text-align: center;
+      line-height: 40px;
+      font-weight: bold;
+      margin: 4px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      /* Placeholder for icon - replace with actual SVG/Image */
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="%235C4B3E"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.707a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>');
+      /* Simple Checkmark Placeholder */
+      background-size: 60%;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    .bloom-badge.first-service {
+      background-color: var(--leaf-green);
+    }
+
+    .bloom-badge.helping-hand {
+      background-color: var(--secondary-accent);
+    }
+
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.05);
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--text-light);
+    }
+
+    /* Simple leaf animation on hover for nav */
+    .nav-link:hover span {
+      display: inline-block;
+      animation: rustle 0.5s ease-in-out;
+    }
+
+    @keyframes rustle {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      25% {
+        transform: rotate(5deg);
+      }
+
+      50% {
+        transform: rotate(-5deg);
+      }
+
+      75% {
+        transform: rotate(3deg);
+      }
+
+      100% {
+        transform: rotate(0deg);
+      }
+    }
+
+    /* Scheduler Grid Style */
+    .schedule-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      /* Weekly view */
+      gap: 8px;
+    }
+
+    .schedule-day {
+      background-color: rgba(255, 255, 255, 0.4);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      min-height: 150px;
+      padding: 8px;
+      position: relative;
+      /* For positioning day number */
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .schedule-day-header {
+      font-weight: 600;
+      color: var(--text-light);
+      font-size: 0.9em;
+      text-align: center;
+      margin-bottom: 4px;
+      padding-bottom: 4px;
+      border-bottom: 1px dashed var(--border-color);
+    }
+
+    .schedule-entry {
+      background-color: var(--primary-accent);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 15px;
+      /* Pill shape */
+      font-size: 0.85em;
+      cursor: grab;
+      transition: opacity 0.2s ease;
+    }
+
+    .schedule-entry:active {
+      cursor: grabbing;
+      opacity: 0.7;
+    }
+
+    .schedule-entry.locked {
+      background-color: var(--locked);
+      color: var(--bg-main);
+      cursor: not-allowed;
+      font-style: italic;
+    }
+
+    .schedule-entry.conflict {
+      background-color: #E53E3E;
+      /* Red for conflict */
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(229, 62, 62, 0.4);
+      }
+
+      70% {
+        box-shadow: 0 0 0 5px rgba(229, 62, 62, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(229, 62, 62, 0);
+      }
+    }
+
+    .available-user {
+      background-color: var(--leaf-green);
+      color: white;
+      padding: 4px 8px;
+      margin: 2px;
+      border-radius: 15px;
+      font-size: 0.85em;
+      cursor: pointer;
+      display: inline-block;
+    }
+
+    .available-user:hover {
+      opacity: 0.8;
+    }
+
+    .available-user.unavailable {
+      background-color: var(--locked);
+      cursor: not-allowed;
+      text-decoration: line-through;
+    }
+  </style>
+</head>
+
+<body class="flex min-h-screen text-base">
+
+  <!-- Sidebar Navigation -->
+  <aside class="w-64 bg-white bg-opacity-70 p-5 shadow-lg flex flex-col justify-between"
+    style="border-right: 1px solid var(--border-color);">
+    <div>
+      <div class="text-2xl font-bold mb-8 text-center" style="color: var(--primary-accent);">
+        Flourish <span class="text-sm font-normal block" style="color: var(--secondary-accent);">Ministry Garden</span>
+      </div>
+
+      <nav class="space-y-3">
+        <a href="#dashboard"
+          class="nav-link flex items-center p-2 rounded-lg hover:bg-teal-100 hover:bg-opacity-50 transition-colors duration-200"
+          style="color: var(--primary-accent);">
+          <!-- Replace with SVG icon later -->
+          <span class="mr-3">🏠</span> <span>Dashboard</span>
+        </a>
+        <a href="#schedule"
+          class="nav-link flex items-center p-2 rounded-lg hover:bg-teal-100 hover:bg-opacity-50 transition-colors duration-200"
+          style="color: var(--primary-accent);">
+          <span class="mr-3">🗓️</span> <span>Full Schedule</span>
+        </a>
+        <a href="#requests"
+          class="nav-link flex items-center p-2 rounded-lg hover:bg-teal-100 hover:bg-opacity-50 transition-colors duration-200"
+          style="color: var(--primary-accent);">
+          <span class="mr-3">🔄</span> <span>Swaps & Leave</span>
+        </a>
+        <a href="#people"
+          class="nav-link flex items-center p-2 rounded-lg hover:bg-teal-100 hover:bg-opacity-50 transition-colors duration-200"
+          style="color: var(--primary-accent);">
+          <span class="mr-3">👥</span> <span>People</span>
+        </a>
+        <!-- Leader/Admin Only -->
+        <a href="#admin"
+          class="nav-link flex items-center p-2 rounded-lg hover:bg-teal-100 hover:bg-opacity-50 transition-colors duration-200"
+          style="color: var(--primary-accent);">
+          <span class="mr-3">⚙️</span> <span>Admin Settings</span>
+        </a>
+        <a href="#history"
+          class="nav-link flex items-center p-2 rounded-lg hover:bg-teal-100 hover:bg-opacity-50 transition-colors duration-200"
+          style="color: var(--primary-accent);">
+          <span class="mr-3">📜</span> <span>History</span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- User Profile & Logout -->
+    <div class="mt-auto">
+      <div class="text-center mb-4">
+        <img src="https://via.placeholder.com/60/B87F6B/FBF8EF?text=A" alt="User Avatar"
+          class="w-16 h-16 rounded-full mx-auto mb-2 border-2" style="border-color: var(--secondary-accent);">
+        <p class="font-semibold">Anna Chen</p>
+        <p class="text-sm" style="color: var(--text-light);">Growth Points: 1250 GP</p>
+      </div>
+      <button class="w-full btn-nature btn-outline text-sm">
+        <span class="mr-1">🚪</span> Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="flex-1 p-6 lg:p-10 overflow-y-auto">
+
+    <!-- === DASHBOARD VIEW (Personal) === -->
+    <section id="dashboard">
+      <h1 class="text-3xl font-bold mb-2">Welcome back, Anna!</h1>
+      <p class="mb-8" style="color: var(--text-light);">Your garden plot is looking vibrant today.</p>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Upcoming Services -->
+        <div class="lg:col-span-2">
+          <h2 class="text-xl font-semibold mb-4 flex items-center">
+            <span class="mr-2 text-2xl" style="color: var(--leaf-green);">🌿</span> Upcoming Services
+          </h2>
+          <div class="space-y-3">
+            <div class="service-item">
+              <div>
+                <span class="font-semibold">主日敬拜 - 小提琴</span>
+                <span class="text-sm ml-2 px-2 py-0.5 rounded-full bg-opacity-20"
+                  style="background-color: rgba(45, 122, 116, 0.2); color: var(--primary-accent);">Worship</span>
+              </div>
+              <span class="text-sm font-medium" style="color: var(--text-light);">Sat, Oct 26th - 10:00 AM</span>
+            </div>
+            <div class="service-item special-event">
+              <div>
+                <span class="font-semibold">聖誕節慶典 - 招待</span>
+                <span class="text-sm ml-2 px-2 py-0.5 rounded-full"
+                  style="background-color: rgba(235, 201, 116, 0.3); color: #8D7234;">Special</span>
+              </div>
+              <span class="text-sm font-medium" style="color: var(--text-light);">Tue, Dec 24th - 7:00 PM</span>
+            </div>
+            <div class="service-item prayer-meeting">
+              <div>
+                <span class="font-semibold">禱告會 - 領會同工</span>
+                <span class="text-sm ml-2 px-2 py-0.5 rounded-full"
+                  style="background-color: rgba(184, 127, 107, 0.2); color: var(--secondary-accent);">Meeting</span>
+              </div>
+              <span class="text-sm font-medium" style="color: var(--text-light);">Wed, Nov 6th - 8:00 PM</span>
+            </div>
+            <!-- More items... -->
+          </div>
+          <div class="mt-6 flex gap-4">
+            <button class="btn-nature btn-secondary"><span class="mr-1">☀️</span> Request Leave</button>
+            <button class="btn-nature btn-outline"><span class="mr-1">🤝</span> Request Swap</button>
+          </div>
+        </div>
+
+        <!-- Achievements & Requests -->
+        <div>
+          <!-- Achievements -->
+          <div class="mb-8">
+            <h2 class="text-xl font-semibold mb-3 flex items-center">
+              <span class="mr-2 text-2xl" style="color: var(--highlight);">🌟</span> My Blooms (Achievements)
+            </h2>
+            <div class="flex flex-wrap">
+              <div class="bloom-badge first-service" title="First Service Completed!"></div>
+              <div class="bloom-badge helping-hand" title="Helped a Friend (Swap)"></div>
+              <div class="bloom-badge" title="Consistent Tending (5 Services)"></div>
+              <!-- More badges -->
+            </div>
+          </div>
+
+          <!-- Pending Requests -->
+          <div>
+            <h2 class="text-xl font-semibold mb-3 flex items-center">
+              <span class="mr-2 text-2xl" style="color: var(--secondary-accent);">⏳</span> Pending Requests
+            </h2>
+            <div class="space-y-3">
+              <div class="request-item">
+                <div>
+                  <span class="font-semibold">Leave Request</span>
+                  <span class="block text-sm" style="color: var(--text-light);">Nov 1st - Nov 3rd</span>
+                </div>
+                <span class="text-sm font-medium px-2 py-0.5 rounded-full bg-yellow-200 text-yellow-800">Pending</span>
+              </div>
+              <div class="request-item">
+                <div>
+                  <span class="font-semibold">Swap Request</span>
+                  <span class="block text-sm" style="color: var(--text-light);">You <-> David (Oct 26th Worship)</span>
+                </div>
+                <span class="text-sm font-medium px-2 py-0.5 rounded-full bg-green-200 text-green-800">Approved</span>
+              </div>
+              <!-- More requests -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- === SCHEDULER VIEW (Leader/Admin) === -->
+    <section id="schedule" class="hidden mt-10">
+      <h1 class="text-3xl font-bold mb-6">Ministry Schedule - October 2024</h1>
+
+      <div class="flex justify-between items-center mb-6">
+        <!-- Filters -->
+        <div class="flex gap-4 items-center">
+          <select
+            class="rounded-lg border-gray-300 shadow-sm focus:border-teal-500 focus:ring focus:ring-teal-200 focus:ring-opacity-50 text-sm py-1"
+            style="border-color: var(--border-color); color: var(--text-main);">
+            <option>All Ministries</option>
+            <option>主日敬拜</option>
+            <option>SC 服事</option>
+            <option>禱告會</option>
+            <option>特殊活動</option>
+          </select>
+          <select
+            class="rounded-lg border-gray-300 shadow-sm focus:border-teal-500 focus:ring focus:ring-teal-200 focus:ring-opacity-50 text-sm py-1"
+            style="border-color: var(--border-color); color: var(--text-main);">
+            <option>Weekly View</option>
+            <option>Monthly View</option>
+            <option>Daily View</option>
+          </select>
+          <button class="btn-nature btn-outline text-sm">Apply Filter</button>
+        </div>
+        <!-- View Controls -->
+        <div class="flex gap-2">
+          <button class="p-2 rounded-full hover:bg-gray-200" style="color: var(--text-light);">ᐊ Prev</button>
+          <button class="p-2 rounded-full hover:bg-gray-200" style="color: var(--text-light);">Next ᐅ</button>
+          <button class="btn-nature btn-primary"><span class="mr-1">➕</span> Add Event</button>
+        </div>
+      </div>
+
+      <!-- Available Users (Simulated Drag Source) -->
+      <div class="mb-6 p-4 bg-white bg-opacity-50 rounded-lg shadow-sm border border-dashed"
+        style="border-color: var(--leaf-green);">
+        <h3 class="font-semibold mb-2" style="color: var(--leaf-green);">Available Volunteers (Drag to Schedule)</h3>
+        <div class="flex flex-wrap gap-2">
+          <span class="available-user" draggable="true">Anna C.</span>
+          <span class="available-user" draggable="true">David L.</span>
+          <span class="available-user unavailable" draggable="false" title="On Leave Oct 25-27">Ben T. (Locked)</span>
+          <span class="available-user" draggable="true">Grace W.</span>
+          <span class="available-user unavailable" draggable="false" title="Max 2 services/month reached">Sam K.
+            (Limit)</span>
+          <span class="available-user" draggable="true">Orchestra A</span>
+          <span class="available-user unavailable" draggable="false"
+            title="Requires Violinist (Anna C.) - Incompatible if Anna serves elsewhere">Orchestra B (Locked)</span>
+          <!-- Add more -->
+        </div>
+      </div>
+
+      <!-- Weekly Schedule Grid -->
+      <div class="schedule-grid">
+        <!-- Day Column Example -->
+        <div class="schedule-day">
+          <div class="schedule-day-header">Mon 21</div>
+          <!-- Entries for the day -->
+        </div>
+        <div class="schedule-day">
+          <div class="schedule-day-header">Tue 22</div>
+          <div class="schedule-entry">SC - Tech Team (David L.)</div>
+        </div>
+        <div class="schedule-day">
+          <div class="schedule-day-header">Wed 23</div>
+          <div class="schedule-entry prayer-meeting" style="background-color: var(--secondary-accent);">Prayer Mtg
+            (Grace W.)</div>
+        </div>
+        <div class="schedule-day">
+          <div class="schedule-day-header">Thu 24</div>
+        </div>
+        <div class="schedule-day">
+          <div class="schedule-day-header">Fri 25</div>
+          <div class="schedule-entry locked">Prep Team (Ben T. - Locked)</div>
+        </div>
+        <div class="schedule-day">
+          <div class="schedule-day-header">Sat 26</div>
+          <div class="schedule-entry" draggable="true">Worship - Violin (Anna C.)</div>
+          <div class="schedule-entry conflict" draggable="true">Worship - Piano (Anna C.) 🚨</div>
+          <div class="schedule-entry" draggable="true">Worship - Vocals (Sam K.)</div>
+        </div>
+        <div class="schedule-day">
+          <div class="schedule-day-header">Sun 27</div>
+          <div class="schedule-entry" draggable="true">Sunday School (Grace W.)</div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Other sections (Requests, People, Admin, History) would follow similar structure -->
+
+  </main>
+
+  <!-- Potential Modal for Swaps/Leave Requests -->
+  <div id="request-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-lg p-6 max-w-md w-full shadow-xl"
+      style="background-color: var(--bg-main); border: 1px solid var(--border-color);">
+      <h2 class="text-xl font-semibold mb-4" style="color: var(--primary-accent);">Request Swap</h2>
+      <p class="mb-4">Swap <strong style="color: var(--secondary-accent);">Worship - Violin (Sat, Oct 26th)</strong>
+        with:</p>
+      <!-- List potential swappers -->
+      <div class="space-y-2 mb-6 max-h-40 overflow-y-auto">
+        <label class="flex items-center p-2 rounded hover:bg-gray-100 cursor-pointer">
+          <input type="radio" name="swap_person" class="form-radio text-teal-600 focus:ring-teal-500">
+          <span class="ml-2">David Lee (Available)</span>
+        </label>
+        <label class="flex items-center p-2 rounded hover:bg-gray-100 cursor-pointer">
+          <input type="radio" name="swap_person" class="form-radio text-teal-600 focus:ring-teal-500">
+          <span class="ml-2">Grace Wang (Available)</span>
+        </label>
+        <label class="flex items-center p-2 rounded bg-gray-100 cursor-not-allowed opacity-60">
+          <input type="radio" name="swap_person" class="form-radio text-gray-400" disabled>
+          <span class="ml-2">Ben Tan (On Leave)</span>
+        </label>
+      </div>
+      <div class="flex justify-end gap-3">
+        <button onclick="closeModal()" class="btn-nature btn-outline">Cancel</button>
+        <button onclick="closeModal()" class="btn-nature btn-primary">Send Request</button>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    // Simple JS for view switching and modal example
+    const sections = document.querySelectorAll('main > section');
+    const navLinks = document.querySelectorAll('.nav-link');
+    const modal = document.getElementById('request-modal');
+
+    function showSection(id) {
+      sections.forEach(section => {
+        if (section.id === id) {
+          section.classList.remove('hidden');
+        } else {
+          section.classList.add('hidden');
+        }
+      });
+    }
+
+    navLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetId = link.getAttribute('href').substring(1);
+        showSection(targetId);
+
+        // Update active link style (optional)
+        navLinks.forEach(l => l.classList.remove('bg-teal-100', 'bg-opacity-50'));
+        link.classList.add('bg-teal-100', 'bg-opacity-50');
+      });
+    });
+
+    // Initial view
+    showSection('dashboard');
+    document.querySelector('.nav-link[href="#dashboard"]').classList.add('bg-teal-100', 'bg-opacity-50');
+
+    // Modal functions (Example)
+    function openModal() {
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+    function closeModal() {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    // Add event listeners to buttons that should open the modal
+    // Example: document.querySelector('button selector for swap').addEventListener('click', openModal);
+
+    // Basic Drag & Drop simulation (visual only)
+    document.querySelectorAll('[draggable="true"]').forEach(item => {
+      item.addEventListener('dragstart', (e) => {
+        e.dataTransfer.setData('text/plain', e.target.textContent);
+        e.target.style.opacity = '0.5';
+      });
+      item.addEventListener('dragend', (e) => {
+        e.target.style.opacity = '1';
+      });
+    });
+
+    document.querySelectorAll('.schedule-day').forEach(day => {
+      day.addEventListener('dragover', (e) => {
+        e.preventDefault(); // Necessary to allow drop
+        day.style.backgroundColor = 'rgba(212, 203, 191, 0.3)'; // Highlight drop target
+      });
+      day.addEventListener('dragleave', (e) => {
+        day.style.backgroundColor = 'rgba(255,255,255,0.4)'; // Reset background
+      });
+      day.addEventListener('drop', (e) => {
+        e.preventDefault();
+        day.style.backgroundColor = 'rgba(255,255,255,0.4)'; // Reset background
+        const data = e.dataTransfer.getData('text/plain');
+        // In a real app, you'd handle the drop logic here (create element, update data)
+        console.log(`Dropped: ${data} onto ${day.querySelector('.schedule-day-header').textContent}`);
+        const newEntry = document.createElement('div');
+        newEntry.className = 'schedule-entry';
+        newEntry.textContent = data + ' (Dropped)';
+        day.appendChild(newEntry);
+      });
+    });
+
+  </script>
+
+</body>
+
+</html>

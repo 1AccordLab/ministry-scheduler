@@ -16,6 +16,8 @@ func main() {
 	app.Use(logger.New())
 	app.Static("/public", "./public")
 
+	app.Static("/ui", "./spec")
+
 	app.Get("/", render(views.Index("World!")))
 
 	app.Get("/data", func(c *fiber.Ctx) error {

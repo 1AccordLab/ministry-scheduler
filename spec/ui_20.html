@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>教會服事表管理系統 (Mockup)</title>
+  <!-- Basic Styling for Demo Purposes (Not comprehensive CSS) -->
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      background-color: #f0f2f5;
+      color: #333;
+    }
+
+    .screen {
+      border: 1px solid #ccc;
+      margin: 10px auto;
+      max-width: 400px;
+      background-color: #fff;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      display: none;
+      /* Hide screens initially */
+      flex-direction: column;
+      min-height: 600px;
+    }
+
+    .screen.active {
+      display: flex;
+      /* Show active screen */
+    }
+
+    header {
+      background-color: #4a76a8;
+      /* Church-friendly blue */
+      color: white;
+      padding: 15px;
+      text-align: center;
+      position: relative;
+    }
+
+    header h1 {
+      font-size: 1.2em;
+      margin: 0;
+    }
+
+    header .back-button {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: white;
+      text-decoration: none;
+      font-size: 1.5em;
+    }
+
+    header .actions {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    header .actions i,
+    header .back-button i {
+      font-size: 1.2em;
+    }
+
+    /* Placeholder for icons */
+    main {
+      padding: 15px;
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+
+    footer {
+      background-color: #fff;
+      border-top: 1px solid #eee;
+      padding: 10px 0;
+      display: flex;
+      justify-content: space-around;
+    }
+
+    footer button {
+      background: none;
+      border: none;
+      color: #555;
+      font-size: 0.8em;
+      text-align: center;
+      cursor: pointer;
+      padding: 5px;
+    }
+
+    footer button i {
+      display: block;
+      font-size: 1.5em;
+      margin-bottom: 3px;
+      color: #aaa;
+    }
+
+    /* Placeholder */
+    footer button.active i {
+      color: #4a76a8;
+    }
+
+    footer button.active {
+      color: #4a76a8;
+      font-weight: bold;
+    }
+
+    /* Gamification Elements */
+    .card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      margin-bottom: 15px;
+      padding: 15px;
+    }
+
+    .card h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 1em;
+      color: #4a76a8;
+    }
+
+    .card p {
+      margin: 5px 0;
+      font-size: 0.9em;
+      color: #555;
+    }
+
+    .card .actions {
+      margin-top: 10px;
+      text-align: right;
+    }
+
+    .button {
+      background-color: #5cb85c;
+      /* Green for positive actions */
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.9em;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .button-primary {
+      background-color: #4a76a8;
+    }
+
+    /* Blue for primary actions */
+    .button-secondary {
+      background-color: #f0ad4e;
+    }
+
+    /* Orange for secondary/warning */
+    .button-danger {
+      background-color: #d9534f;
+    }
+
+    /* Red for danger/cancel */
+    .button-outline {
+      background-color: transparent;
+      border: 1px solid #4a76a8;
+      color: #4a76a8;
+    }
+
+    .button i {
+      margin-right: 5px;
+    }
+
+    /* Placeholder */
+
+    .list-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .list-item:last-child {
+      border-bottom: none;
+    }
+
+    .list-item .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #ddd;
+      margin-right: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.2em;
+      color: #fff;
+      background-color: #aaa;
+    }
+
+    /* Placeholder */
+    .list-item .content {
+      flex-grow: 1;
+    }
+
+    .list-item .content p {
+      margin: 0;
+      font-size: 0.9em;
+    }
+
+    .list-item .content .name {
+      font-weight: bold;
+      color: #333;
+    }
+
+    .list-item .content .detail {
+      font-size: 0.8em;
+      color: #777;
+    }
+
+    .list-item .action-button {
+      margin-left: 10px;
+    }
+
+    .achievement-badge {
+      display: inline-block;
+      text-align: center;
+      margin: 5px;
+    }
+
+    .achievement-badge i {
+      font-size: 3em;
+      color: #ffd700;
+      /* Gold */
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    /* Placeholder icon */
+    .achievement-badge span {
+      font-size: 0.8em;
+      color: #555;
+    }
+
+    .progress-bar {
+      background-color: #e9ecef;
+      border-radius: .25rem;
+      height: 10px;
+      overflow: hidden;
+      margin: 10px 0;
+    }
+
+    .progress-bar-inner {
+      background-color: #5cb85c;
+      height: 100%;
+      transition: width .6s ease;
+      text-align: center;
+      color: white;
+      font-size: 0.7em;
+      line-height: 10px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      font-size: 0.9em;
+      color: #555;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+      font-size: 1em;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #ccc;
+      margin-bottom: 15px;
+    }
+
+    .tabs button {
+      background: none;
+      border: none;
+      padding: 10px 15px;
+      cursor: pointer;
+      font-size: 1em;
+      color: #777;
+      border-bottom: 3px solid transparent;
+    }
+
+    .tabs button.active {
+      color: #4a76a8;
+      border-bottom: 3px solid #4a76a8;
+      font-weight: bold;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 90%;
+      min-width: 300px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-content h2 {
+      margin-top: 0;
+      font-size: 1.2em;
+      color: #4a76a8;
+    }
+
+    .modal-actions {
+      text-align: right;
+      margin-top: 20px;
+    }
+
+    .modal-actions .button {
+      margin-left: 10px;
+    }
+
+    /* Helper */
+    .text-center {
+      text-align: center;
+    }
+
+    .mt-1 {
+      margin-top: 10px;
+    }
+
+    .mt-2 {
+      margin-top: 20px;
+    }
+
+    .mb-1 {
+      margin-bottom: 10px;
+    }
+
+    .mb-2 {
+      margin-bottom: 20px;
+    }
+
+    .text-muted {
+      color: #777;
+    }
+
+    .text-success {
+      color: #5cb85c;
+    }
+
+    .text-warning {
+      color: #f0ad4e;
+    }
+
+    .text-danger {
+      color: #d9534f;
+    }
+
+    .icon-placeholder {
+      font-style: normal;
+    }
+
+    /* Style 'i' tags if not using an icon font */
+  </style>
+  <!-- Add link to an icon library like Font Awesome if desired -->
+  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"> -->
+</head>
+
+<body>
+
+  <!-- Screen: Login -->
+  <div class="screen active" id="login-screen">
+    <header style="background: none; box-shadow: none;">
+      <!-- Add a logo or graphic here for game feel -->
+      <div style="padding: 30px 0;">
+        <i class="icon-placeholder" style="font-size: 4em; color: #4a76a8;"></i> <!-- Placeholder clock icon -->
+        <h1 style="color: #4a76a8; margin-top: 10px;">服事裝備站</h1>
+        <p style="color: #777;">輕鬆管理你的服事時間</p>
+      </div>
+    </header>
+    <main>
+      <div class="form-group">
+        <label for="username">帳號 (Username)</label>
+        <input type="text" id="username" placeholder="請輸入手機號碼或Email">
+      </div>
+      <div class="form-group">
+        <label for="password">密碼 (Password)</label>
+        <input type="password" id="password" placeholder="請輸入密碼">
+      </div>
+      <button class="button button-primary" style="width: 100%; padding: 15px; font-size: 1.1em;"
+        onclick="showScreen('dashboard-screen')">
+        <i class="icon-placeholder"></i> 登入啟程！
+      </button>
+      <div class="text-center mt-2">
+        <a href="#" style="color: #4a76a8; font-size: 0.9em;">忘記密碼?</a> | <a href="#"
+          style="color: #4a76a8; font-size: 0.9em;">註冊新帳號</a>
+      </div>
+    </main>
+    <footer>
+      <!-- Login screen might not need a footer nav -->
+    </footer>
+  </div>
+
+  <!-- Screen: Dashboard (User's Personal View) -->
+  <div class="screen" id="dashboard-screen">
+    <header>
+      <h1><i class="icon-placeholder"></i> 我的主頁</h1>
+      <div class="actions">
+        <i class="icon-placeholder" onclick="showScreen('notifications-screen')"></i> <!-- Bell Icon -->
+      </div>
+    </header>
+    <main>
+      <div class="card">
+        <h3><i class="icon-placeholder"></i> 歡迎回來, [使用者名稱] !</h3>
+        <p>這是你接下來的服事任務：</p>
+      </div>
+
+      <div class="card">
+        <h3><i class="icon-placeholder"></i> 近期服事</h3>
+        <!-- Example Item 1 -->
+        <div class="list-item">
+          <div class="avatar" style="background-color: #6fbf73;">主</div> <!-- 主 for 主日 -->
+          <div class="content">
+            <p class="name">主日敬拜 - 吉他手</p>
+            <p class="detail">2023-12-17 (日) 09:30</p>
+          </div>
+          <button class="button button-secondary button-sm" onclick="showScreen('swap-request-screen')"><i
+              class="icon-placeholder">⇄</i> 換班</button>
+        </div>
+        <!-- Example Item 2 -->
+        <div class="list-item">
+          <div class="avatar" style="background-color: #f5a623;">禱</div> <!-- 禱 for 禱告會 -->
+          <div class="content">
+            <p class="name">禱告會 - 招待</p>
+            <p class="detail">2023-12-20 (三) 19:30</p>
+          </div>
+          <button class="button button-secondary button-sm" onclick="showScreen('swap-request-screen')"><i
+              class="icon-placeholder">⇄</i> 換班</button>
+        </div>
+        <!-- More items here -->
+        <p class="text-center text-muted mt-1" style="font-size: 0.9em;">目前沒有更多近期服事囉！</p>
+        <button class="button button-primary mt-1" style="width: 100%;" onclick="showScreen('full-schedule-screen')"><i
+            class="icon-placeholder"></i> 查看完整行事曆</button>
+      </div>
+
+      <div class="card">
+        <h3><i class="icon-placeholder"></i> 我的貢獻值</h3>
+        <p>本月服事次數: <strong>3</strong> / 目標 5 次</p>
+        <div class="progress-bar">
+          <div class="progress-bar-inner" style="width: 60%;">60%</div>
+        </div>
+        <p>已解鎖徽章： <span class="achievement-badge"><i class="icon-placeholder"></i><span>熱心服事</span></span> <span
+            class="achievement-badge"><i class="icon-placeholder"></i><span>吉他好手</span></span></p>
+        <button class="button button-outline" style="width: 100%;" onclick="showScreen('achievements-screen')"><i
+            class="icon-placeholder"></i> 查看我的成就</button>
+      </div>
+
+      <button class="button button-secondary" style="width: 100%; padding: 12px; font-size: 1em;"
+        onclick="showScreen('leave-request-screen')">
+        <i class="icon-placeholder"></i> 申請休假
+      </button>
+
+    </main>
+    <footer>
+      <button class="active" onclick="showScreen('dashboard-screen')"><i class="icon-placeholder"></i>主頁</button>
+      <button onclick="showScreen('full-schedule-screen')"><i class="icon-placeholder"></i>行事曆</button>
+      <button onclick="showScreen('requests-screen')"><i class="icon-placeholder"></i>請求</button>
+      <button onclick="showScreen('achievements-screen')"><i class="icon-placeholder"></i>成就</button>
+    </footer>
+  </div>
+
+  <!-- Screen: Full Schedule View -->
+  <div class="screen" id="full-schedule-screen">
+    <header>
+      <a href="#" class="back-button" onclick="goBack()"><i class="icon-placeholder">
+          << /i></a>
+      <h1><i class="icon-placeholder"></i> 服事行事曆</h1>
+      <div class="actions">
+        <i class="icon-placeholder"></i> <!-- Search Icon -->
+      </div>
+    </header>
+    <main>
+      <div class="tabs">
+        <button class="active" onclick="switchTab(this, 'schedule-month')">本月</button>
+        <button onclick="switchTab(this, 'schedule-week')">本週</button>
+        <button onclick="switchTab(this, 'schedule-list')">清單</button>
+      </div>
+
+      <!-- Filters -->
+      <div style="display: flex; justify-content: space-between; margin-bottom: 15px; gap: 10px;">
+        <select style="flex: 1;">
+          <option>所有服事項目</option>
+          <option>主日敬拜</option>
+          <option>SC 服事</option>
+          <option>禱告會</option>
+          <option>特殊活動</option>
+        </select>
+        <select style="flex: 1;">
+          <option>所有人/團隊</option>
+          <option>A 樂團</option>
+          <option>招待團隊</option>
+          <option>[某人姓名]</option>
+        </select>
+      </div>
+
+      <!-- Content for Month/Week/List view would go here -->
+      <div class="schedule-content" id="schedule-month">
+        <h4>2023 年 12 月</h4>
+        <!-- Simplified List View for Demo -->
+        <div class="card">
+          <h3><i class="icon-placeholder"></i> 12 月 17 日 (日) - 主日聚會</h3>
+          <p><strong>09:30 敬拜</strong></p>
+          <p> <i class="icon-placeholder"></i> 吉他: [你的名字], 王大明</p>
+          <p> <i class="icon-placeholder"></i> 鍵盤: 陳小美</p>
+          <p> <i class="icon-placeholder"></i> 主領: 李志偉</p>
+          <p> <i class="icon-placeholder"></i> 招待: 張麗華, 黃小英</p>
+          <hr style="border: none; border-top: 1px dashed #eee; margin: 10px 0;">
+          <p><strong>11:00 SC 服事</strong></p>
+          <p> <i class="icon-placeholder"></i> 老師: 林老師 </p>
+          <p> <i class="icon-placeholder">例</i> 助教: 吳小弟, 趙小妹</p>
+        </div>
+        <div class="card">
+          <h3><i class="icon-placeholder"></i> 12 月 20 日 (三) - 禱告會</h3>
+          <p><strong>19:30 禱告會</strong></p>
+          <p> <i class="icon-placeholder"></i> 領會: 劉牧師</p>
+          <p> <i class="icon-placeholder"></i> 招待: [你的名字]</p>
+        </div>
+        <!-- More schedule items -->
+      </div>
+      <div class="schedule-content" id="schedule-week" style="display: none;">
+        <!-- Weekly view content -->
+        <p class="text-center text-muted">本週服事列表...</p>
+      </div>
+      <div class="schedule-content" id="schedule-list" style="display: none;">
+        <!-- List view content -->
+        <p class="text-center text-muted">所有服事清單...</p>
+      </div>
+
+    </main>
+    <footer>
+      <button onclick="showScreen('dashboard-screen')"><i class="icon-placeholder"></i>主頁</button>
+      <button class="active" onclick="showScreen('full-schedule-screen')"><i class="icon-placeholder"></i>行事曆</button>
+      <button onclick="showScreen('requests-screen')"><i class="icon-placeholder"></i>請求</button>
+      <button onclick="showScreen('achievements-screen')"><i class="icon-placeholder"></i>成就</button>
+    </footer>
+  </div>
+
+  <!-- Screen: Leave Request -->
+  <div class="screen" id="leave-request-screen">
+    <header>
+      <a href="#" class="back-button" onclick="goBack()"><i class="icon-placeholder">
+          << /i></a>
+      <h1><i class="icon-placeholder"></i> 申請休假</h1>
+    </header>
+    <main>
+      <div class="card">
+        <h3>填寫休假申請</h3>
+        <p class="text-muted">主責同工將會審核你的申請。</p>
+        <div class="form-group">
+          <label for="leave-start-date">開始日期</label>
+          <input type="date" id="leave-start-date">
+        </div>
+        <div class="form-group">
+          <label for="leave-end-date">結束日期</label>
+          <input type="date" id="leave-end-date">
+        </div>
+        <div class="form-group">
+          <label for="leave-reason">原因 (選填)</label>
+          <textarea id="leave-reason" placeholder="例如：家庭旅遊、個人事務..."></textarea>
+        </div>
+        <button class="button button-primary" style="width: 100%;" onclick="submitRequest('leave')">
+          <i class="icon-placeholder"></i> 送出神聖的請假單
+        </button>
+      </div>
+    </main>
+    <footer>
+      <button onclick="showScreen('dashboard-screen')"><i class="icon-placeholder"></i>主頁</button>
+      <button onclick="showScreen('full-schedule-screen')"><i class="icon-placeholder"></i>行事曆</button>
+      <button onclick="showScreen('requests-screen')"><i class="icon-placeholder"></i>請求</button>
+      <button onclick="showScreen('achievements-screen')"><i class="icon-placeholder"></i>成就</button>
+    </footer>
+  </div>
+
+  <!-- Screen: Swap Request (Select Duty) -->
+  <div class="screen" id="swap-request-screen">
+    <header>
+      <a href="#" class="back-button" onclick="goBack()"><i class="icon-placeholder">
+          << /i></a>
+      <h1><i class="icon-placeholder">⇄</i> 請求換班 (1/2)</h1>
+    </header>
+    <main>
+      <div class="card">
+        <h3>選擇你想換班的服事</h3>
+        <p class="text-muted">點選一個服事來尋找代班夥伴！</p>
+
+        <!-- Example Item 1 -->
+        <div class="list-item" style="cursor: pointer;" onclick="showScreen('swap-request-find-screen')">
+          <div class="avatar" style="background-color: #6fbf73;">主</div>
+          <div class="content">
+            <p class="name">主日敬拜 - 吉他手</p>
+            <p class="detail">2023-12-17 (日) 09:30</p>
+          </div>
+          <i class="icon-placeholder" style="color: #ccc;">></i>
+        </div>
+        <!-- Example Item 2 -->
+        <div class="list-item" style="cursor: pointer;" onclick="showScreen('swap-request-find-screen')">
+          <div class="avatar" style="background-color: #f5a623;">禱</div>
+          <div class="content">
+            <p class="name">禱告會 - 招待</p>
+            <p class="detail">2023-12-20 (三) 19:30</p>
+          </div>
+          <i class="icon-placeholder" style="color: #ccc;">></i>
+        </div>
+        <!-- More items -->
+      </div>
+    </main>
+    <footer>
+      <button onclick="showScreen('dashboard-screen')"><i class="icon-placeholder"></i>主頁</button>
+      <button onclick="showScreen('full-schedule-screen')"><i class="icon-placeholder"></i>行事曆</button>
+      <button onclick="showScreen('requests-screen')"><i class="icon-placeholder"></i>請求</button>
+      <button onclick="showScreen('achievements-screen')"><i class="icon-placeholder"></i>成就</button>
+    </footer>
+  </div>
+
+  <!-- Screen: Swap Request (Find Person) -->
+  <div class="screen" id="swap-request-find-screen">
+    <header>
+      <a href="#" class="back-button" onclick="goBack()"><i class="icon-placeholder">
+          << /i></a>
+      <h1><i class="icon-placeholder"></i> 尋找夥伴 (2/2)</h1>
+    </header>
+    <main>
+      <div class="card">
+        <h3>換班對象 for:</h3>
+        <p><strong>主日敬拜 - 吉他手</strong> (2023-12-17 Sun 09:30)</p>
+      </div>
+
+      <div class="card">
+        <h3><i class="icon-placeholder"></i> 系統推薦人選</h3>
+        <p class="text-muted">這些夥伴可能適合且有空！</p>
+        <!-- Recommended Person 1 -->
+        <div class="list-item">
+          <div class="avatar">王</div>
+          <div class="content">
+            <p class="name">王大明</p>
+            <p class="detail">技能: 吉他, 貝斯 / 本月已服事 1 次</p>
+          </div>
+          <button class="button button-primary button-sm action-button" onclick="sendSwapRequest('王大明')">邀請</button>
+        </div>
+        <!-- Recommended Person 2 -->
+        <div class="list-item">
+          <div class="avatar">周</div>
+          <div class="content">
+            <p class="name">周小弟</p>
+            <p class="detail">技能: 吉他 / 本月已服事 0 次 <span class="text-success">(空閒!)</span></p>
+          </div>
+          <button class="button button-primary button-sm action-button" onclick="sendSwapRequest('周小弟')">邀請</button>
+        </div>
+        <!-- Info about incompatible person -->
+        <div class="list-item" style="opacity: 0.5;">
+          <div class="avatar" style="background-color: #aaa;">李</div>
+          <div class="content">
+            <p class="name">李志偉</p>
+            <p class="detail text-danger"><i class="icon-placeholder"></i> 不相容 (與 [你的名字] 同時排班限制)</p>
+          </div>
+          <button class="button button-disabled button-sm action-button" disabled>無法邀請</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><i class="icon-placeholder"></i> 或手動指定</h3>
+        <select class="form-group">
+          <option>選擇一位成員...</option>
+          <option>陳小美</option>
+          <option>張麗華</option>
+          <option>黃小英</option>
+          <!-- ... more names -->
+        </select>
+        <textarea class="form-group" placeholder="留個訊息給對方吧 (選填)"></textarea>
+        <button class="button button-primary" style="width: 100%;" onclick="sendSwapRequest('manual')">
+          <i class="icon-placeholder"></i> 發送換班邀請
+        </button>
+      </div>
+
+      <div class="card" style="background-color: #fff9e6;"> <!-- Light yellow background -->
+        <h3><i class="icon-placeholder"></i> 緊急！需要立刻找人代班？</h3>
+        <p class="text-muted">系統將透過 Line 自動詢問所有可能人選，第一個回覆者將接手，並通知主責。</p>
+        <button class="button button-warning" style="width: 100%;" onclick="findSubstitute()">
+          <i class="icon-placeholder"></i> 啟動 Line 緊急呼叫！
+        </button>
+      </div>
+    </main>
+    <footer>
+      <button onclick="showScreen('dashboard-screen')"><i class="icon-placeholder"></i>主頁</button>
+      <button onclick="showScreen('full-schedule-screen')"><i class="icon-placeholder"></i>行事曆</button>
+      <button onclick="showScreen('requests-screen')"><i class="icon-placeholder"></i>請求</button>
+      <button onclick="showScreen('achievements-screen')"><i class="icon-placeholder"></i>成就</button>
+    </footer>
+  </div>
+
+  <!-- Screen: Requests (Inbox/Outbox) -->
+  <div class="screen" id="requests-screen">
+    <header>
+      <a href="#" class="back-button" onclick="goBack()"><i class="icon-placeholder">
+          << /i></a>
+      <h1><i class="icon-placeholder"></i> 我的請求中心</h1>
+    </header>
+    <main>
+      <div class="tabs">
+        <button class="active" onclick="switchTab(this, 'requests-incoming')">待我處理 (3)</button>
+        <button onclick="switchTab(this, 'requests-outgoing')">我發出的 (1)</button>
+        <button onclick="switchTab(this, 'requests-history')">歷史紀錄</button>
+      </div>
+
+      <div class="requests-content" id="requests-incoming">
+        <!-- Incoming Request 1: Swap request to me -->
+        <div class="card">
+          <h3><i class="icon-placeholder">⇄</i> 換班請求 <span class="text-warning">(待處理)</span></h3>
+          <p><strong>王大明</strong> 想請你代班:</p>
+          <p><i class="icon-placeholder"></i> 主日敬拜 - 吉他手</p>
+          <p><i class="icon-placeholder"></i> 2023-12-24 (日) 09:30</p>
+          <p class="text-muted">訊息: "那天家裡有事，拜託了！感謝！"</p>
+          <div class="actions">
+            <button class="button button-danger" onclick="respondRequest('reject_swap', 1)"> <i
+                class="icon-placeholder">❌</i> 拒絕 </button>
+            <button class="button button-success" onclick="respondRequest('accept_swap', 1)"> <i
+                class="icon-placeholder">✅</i> 接受挑戰! </button>
+          </div>
+        </div>
+        <!-- Incoming Request 2: Swap request for leader approval -->
+        <div class="card" style="border-left: 5px solid #4a76a8;"> <!-- Leader view indicator -->
+          <h3><i class="icon-placeholder"></i> 換班待審核 <span class="text-warning">(主責權限)</span></h3>
+          <p><strong>陳小美</strong> <i class="icon-placeholder">→</i> <strong>吳小弟</strong></p>
+          <p><i class="icon-placeholder">例</i> SC 服事 - 助教</p>
+          <p><i class="icon-placeholder"></i> 2023-12-24 (日) 11:00</p>
+          <p class="text-muted">吳小弟已同意代班。</p>
+          <div class="actions">
+            <button class="button button-danger" onclick="respondRequest('reject_approval', 2)"> <i
+                class="icon-placeholder">❌</i> 駁回 </button>
+            <button class="button button-success" onclick="respondRequest('approve_swap', 2)"> <i
+                class="icon-placeholder">✅</i> 核准 </button>
+            <button class="button button-outline" onclick="approveOnLine(2)"> <i class="icon-placeholder"></i> Line 核准
+            </button> <!-- Line Icon Placeholder -->
+          </div>
+        </div>
+        <!-- Incoming Request 3: Leave request for leader approval -->
+        <div class="card" style="border-left: 5px solid #4a76a8;"> <!-- Leader view indicator -->
+          <h3><i class="icon-placeholder"></i> 休假待審核 <span class="text-warning">(主責權限)</span></h3>
+          <p><strong>張麗華</strong> 申請休假:</p>
+          <p><i class="icon-placeholder"></i> 2024-01-10 ~ 2024-01-15</p>
+          <p class="text-muted">原因: 家庭旅遊</p>
+          <div class="actions">
+            <button class="button button-danger" onclick="respondRequest('reject_leave', 3)"> <i
+                class="icon-placeholder">❌</i> 駁回 </button>
+            <button class="button button-success" onclick="respondRequest('approve_leave', 3)"> <i
+                class="icon-placeholder">✅</i> 核准 </button>
+            <button class="button button-outline" onclick="approveOnLine(3)"> <i class="icon-placeholder"></i> Line 核准
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="requests-content" id="requests-outgoing" style="display: none;">
+        <!-- Outgoing Request 1: My swap request pending -->
+        <div class="card">
+          <h3><i class="icon-placeholder">⇄</i> 我的換班請求 <span class="text-warning">(等待 王大明 回應)</span></h3>
+          <p>你請求 <strong>王大明</strong> 代班:</p>
+          <p><i class="icon-placeholder"></i> 主日敬拜 - 吉他手</p>
+          <p><i class="icon-placeholder"></i> 2023-12-17 (日) 09:30</p>
+          <div class="actions">
+            <button class="button button-danger" onclick="cancelRequest('swap', 4)"> <i class="icon-placeholder"></i>
+              取消請求 </button>
+          </div>
+        </div>
+        <!-- Outgoing Request 2: My leave request approved -->
+        <div class="card">
+          <h3><i class="icon-placeholder"></i> 我的休假申請 <span class="text-success">(已核准)</span></h3>
+          <p><i class="icon-placeholder"></i> 2023-12-28 ~ 2023-12-29</p>
+          <p class="text-muted">主責 [主責姓名] 已批准。</p>
+        </div>
+      </div>
+
+      <div class="requests-content" id="requests-history" style="display: none;">
+        <p class="text-center text-muted">顯示所有已完成或已取消的請求歷史...</p>
+      </div>
+
+    </main>
+    <footer>
+      <button onclick="showScreen('dashboard-screen')"><i class="icon-placeholder"></i>主頁</button>
+      <button onclick="showScreen('full-schedule-screen')"><i class="icon-placeholder"></i>行事曆</button>
+      <button class="active" onclick="showScreen('requests-screen')"><i class="icon-placeholder"></i>請求</button>
+      <button onclick="showScreen('achievements-screen')"><i class="icon-placeholder"></i>成就</button>
+    </footer>
+  </div>
+
+  <!-- Screen: Achievements -->
+  <div class="screen" id="achievements-screen">
+    <header>
+      <a href="#" class="back-button" onclick="goBack()"><i class="icon-placeholder">
+          << /i></a>
+      <h1><i class="icon-placeholder"></i> 成就殿堂</h1>
+    </header>
+    <main>
+      <div class="card text-center">
+        <img src="placeholder-avatar.png" alt="User Avatar"
+          style="width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; border: 3px solid #4a76a8;">
+        <h3>[使用者名稱]</h3>
+        <p class="text-muted">服事等級: <strong style="color: #5cb85c;">熱心的助手 Lv. 5</strong></p>
+        <p>總服事時數: <strong>128 小時</strong></p>
+      </div>
+
+      <div class="card">
+        <h3><i class="icon-placeholder"></i> 我的徽章收藏</h3>
+        <div style="display: flex; flex-wrap: wrap; justify-content: center;">
+          <span class="achievement-badge">
+            <i class="icon-placeholder"></i> <!-- Trophy -->
+            <span>熱心服事</span>
+          </span>
+          <span class="achievement-badge">
+            <i class="icon-placeholder"></i> <!-- Guitar -->
+            <span>吉他好手</span>
+          </span>
+          <span class="achievement-badge">
+            <i class="icon-placeholder" style="color: #aaa;"></i> <!-- Running shoe (locked) -->
+            <span style="color: #aaa;">全勤勇者 (鎖定)</span>
+          </span>
+          <span class="achievement-badge">
+            <i class="icon-placeholder">欄</i> <!-- Handshake -->
+            <span>最佳夥伴</span>
+          </span>
+          <span class="achievement-badge">
+            <i class="icon-placeholder" style="color: #cd7f32;"></i> <!-- Birthday cake (Bronze) -->
+            <span>服事週年(銅)</span>
+          </span>
+          <span class="achievement-badge">
+            <i class="icon-placeholder" style="color: #aaa;"></i> <!-- Target (locked) -->
+            <span style="color: #aaa;">精準代班王(鎖定)</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><i class="icon-placeholder"></i> 進行中的挑戰</h3>
+        <div>
+          <p><strong>月度全勤獎:</strong> 連續 4 週參與主日服事 (進度: 2 / 4)</p>
+          <div class="progress-bar">
+            <div class="progress-bar-inner" style="width: 50%;">50%</div>
+          </div>
+        </div>
+        <div class="mt-1">
+          <p><strong>音樂大師:</strong> 參與 5 次不同的樂器服事 (進度: 3 / 5)</p>
+          <div class="progress-bar">
+            <div class="progress-bar-inner" style="width: 60%; background-color: #f0ad4e;">60%</div>
+          </div>
+        </div>
+        <div class="mt-1">
+          <p><strong>幕後英雄:</strong> 完成 10 次招待或場地服事 (進度: 8 / 10)</p>
+          <div class="progress-bar">
+            <div class="progress-bar-inner" style="width: 80%;">80%</div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+    <footer>
+      <button onclick="showScreen('dashboard-screen')"><i class="icon-placeholder"></i>主頁</button>
+      <button onclick="showScreen('full-schedule-screen')"><i class="icon-placeholder"></i>行事曆</button>
+      <button onclick="showScreen('requests-screen')"><i class="icon-placeholder"></i>請求</button>
+      <button class="active" onclick="showScreen('achievements-screen')"><i class="icon-placeholder"></i>成就</button>
+    </footer>
+  </div>
+
+  <!-- Screen: Notifications (Placeholder) -->
+  <div class="screen" id="notifications-screen">
+    <header>
+      <a href="#" class="back-button" onclick="goBack()"><i class="icon-placeholder">
+          << /i></a>
+      <h1><i class="icon-placeholder"></i> 通知中心</h1>
+    </header>
+    <main>
+      <div class="list-item">
+        <div class="avatar" style="background-color: #5cb85c;"><i class="icon-placeholder" style="color:white;">✅</i>
+        </div>
+        <div class="content">
+          <p class="name">休假申請已核准</p>
+          <p class="detail">你的 2023-12-28 休假已被 [主責姓名] 核准。</p>
+          <p class="detail text-muted">2 小時前</p>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="avatar" style="background-color: #4a76a8;"><i class="icon-placeholder" style="color:white;"></i>
+        </div>
+        <div class="content">
+          <p class="name">本週服事提醒</p>
+          <p class="detail">提醒您: 本週日 09:30 主日敬拜 - 吉他手。</p>
+          <p class="detail text-muted">昨天</p>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="avatar" style="background-color: #f0ad4e;"><i class="icon-placeholder" style="color:white;"></i>
+        </div>
+        <div class="content">
+          <p class="name">新徽章解鎖！</p>
+          <p class="detail">恭喜獲得「最佳夥伴」徽章！</p>
+          <p class="detail text-muted">3 天前</p>
+        </div>
+      </div>
+      <p class="text-center text-muted mt-2">沒有更多通知了</p>
+    </main>
+    <footer>
+      <button onclick="showScreen('dashboard-screen')"><i class="icon-placeholder"></i>主頁</button>
+      <button onclick="showScreen('full-schedule-screen')"><i class="icon-placeholder"></i>行事曆</button>
+      <button onclick="showScreen('requests-screen')"><i class="icon-placeholder"></i>請求</button>
+      <button onclick="showScreen('achievements-screen')"><i class="icon-placeholder"></i>成就</button>
+    </footer>
+  </div>
+
+  <!-- Screen: Admin/Leader - Scheduling Interface (Simplified View) -->
+  <div class="screen" id="admin-schedule-edit-screen">
+    <header>
+      <a href="#" class="back-button" onclick="goBack()"><i class="icon-placeholder">
+          << /i></a>
+      <h1><i class="icon-placeholder"></i> 排班工作台</h1> <!-- Edit icon -->
+      <div class="actions">
+        <i class="icon-placeholder" onclick="saveSchedule()"></i> <!-- Save Icon -->
+      </div>
+    </header>
+    <main>
+      <div class="card">
+        <h3>編輯: 主日聚會 - 2023-12-24 (日)</h3>
+        <p class="text-muted">點擊下方欄位進行人員指派或調整。</p>
+      </div>
+
+      <div class="card">
+        <h4><i class="icon-placeholder"></i> 敬拜團隊 (09:30)</h4>
+        <!-- Role: 主領 -->
+        <div class="form-group">
+          <label><i class="icon-placeholder"></i> 主領 (需要 1)</label>
+          <select>
+            <option value="">-- 選擇人員 --</option>
+            <option value="leader1" selected>李志偉</option>
+            <option value="leader2" disabled>劉牧師 (已排禱告會)</option> <!-- Disabled Example -->
+          </select>
+        </div>
+        <!-- Role: 鍵盤 -->
+        <div class="form-group">
+          <label><i class="icon-placeholder"></i> 鍵盤 (需要 1)</label>
+          <select>
+            <option value="">-- 選擇人員 --</option>
+            <option value="keyboard1">陳小美</option>
+          </select>
+        </div>
+        <!-- Role: 吉他 -->
+        <div class="form-group">
+          <label><i class="icon-placeholder"></i> 吉他 (需要 2)</label>
+          <select multiple size="3">
+            <option value="">-- 選擇人員 --</option>
+            <option value="guitar1" selected>王大明 (本月第 1 次)</option>
+            <option value="guitar2">周小弟 (空閒)</option>
+            <option value="guitar3" disabled>[你的名字] (與李志偉衝突!)</option> <!-- Conflict Example -->
+            <option value="guitar4" disabled>林大山 (本月已達 2 次上限)</option> <!-- Limit Example -->
+          </select>
+          <p class="text-warning text-sm"><i class="icon-placeholder">⚠</i> [你的名字] 無法與 李志偉 同時排班。</p>
+        </div>
+        <!-- Lock Example -->
+        <div class="form-group">
+          <label><i class="icon-placeholder"></i> 團隊鎖定</label>
+          <p class="text-danger"><i class="icon-placeholder"></i> 無法排定 A 樂團 (王大明已被排定)。</p>
+          <select disabled> <!-- Group Lock Example -->
+            <option>A 樂團</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="card">
+        <h4><i class="icon-placeholder"></i> 招待團隊 (09:00)</h4>
+        <!-- Role: 招待 -->
+        <div class="form-group">
+          <label><i class="icon-placeholder"></i> 招待 (需要 2)</label>
+          <select multiple size="3">
+            <option value="">-- 選擇人員 --</option>
+            <option value="usher1" selected>張麗華</option>
+            <option value="usher2" selected>黃小英</option>
+            <option value="usher3">趙小妹</option>
+            <option value="usher4" disabled>林小姐 (已請假)</option> <!-- Leave Lock Example -->
+          </select>
+          <p class="text-danger text-sm"><i class="icon-placeholder"></i> 林小姐 在此期間休假。</p>
+        </div>
+      </div>
+      <button class="button button-primary" style="width: 100%;" onclick="saveSchedule()"><i
+          class="icon-placeholder"></i> 儲存並發佈排班</button>
+      <button class="button button-outline mt-1" style="width: 100%;"><i class="icon-placeholder"></i>
+        查看歷史編輯紀錄</button>
+
+
+    </main>
+    <footer>
+      <!-- Admin/Leader might have different footer nav -->
+      <button onclick="showScreen('dashboard-screen')"><i class="icon-placeholder"></i>主頁</button>
+      <button class="active" onclick="showScreen('admin-schedule-edit-screen')"><i
+          class="icon-placeholder"></i>排班</button>
+      <button onclick="showScreen('requests-screen')"><i class="icon-placeholder"></i>審核</button>
+      <button onclick="showScreen('admin-stats-screen')"><i class="icon-placeholder"></i>統計</button>
+    </footer>
+  </div>
+
+  <!-- Modal Placeholder -->
+  <div class="modal-backdrop" id="confirmation-modal">
+    <div class="modal-content">
+      <h2 id="modal-title">提示</h2>
+      <p id="modal-message">操作已完成！</p>
+      <div class="modal-actions">
+        <button class="button button-primary" onclick="closeModal()">太棒了！</button>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    // Basic JS for Screen Switching and Mock Interactions (Not fully functional)
+    let previousScreenId = 'login-screen';
+    let currentScreenId = 'login-screen';
+
+    function showScreen(screenId) {
+      const screens = document.querySelectorAll('.screen');
+      screens.forEach(screen => {
+        screen.classList.remove('active');
+      });
+      const activeScreen = document.getElementById(screenId);
+      if (activeScreen) {
+        previousScreenId = currentScreenId;
+        currentScreenId = screenId;
+        activeScreen.classList.add('active');
+
+        // Update footer active state (simple example)
+        const footers = activeScreen.querySelectorAll('footer button');
+        const allFooters = document.querySelectorAll('footer button');
+        allFooters.forEach(btn => btn.classList.remove('active'));
+
+        if (screenId === 'dashboard-screen') footers[0]?.classList.add('active');
+        else if (screenId === 'full-schedule-screen') footers[1]?.classList.add('active');
+        else if (screenId === 'requests-screen') footers[2]?.classList.add('active');
+        else if (screenId === 'achievements-screen') footers[3]?.classList.add('active');
+        else if (screenId === 'admin-schedule-edit-screen') {
+          const adminFooter = document.querySelector('#admin-schedule-edit-screen footer');
+          if (adminFooter) adminFooter.querySelector('button:nth-child(2)')?.classList.add('active');
+        }
+
+      } else {
+        console.error("Screen not found:", screenId);
+        // Fallback to dashboard if screen not found after login
+        if (currentScreenId !== 'login-screen') showScreen('dashboard-screen');
+      }
+    }
+
+    function goBack() {
+      // Simple back functionality for demo
+      if (previousScreenId && previousScreenId !== currentScreenId) {
+        showScreen(previousScreenId);
+      } else {
+        // Default back target if no history (e.g., from deep link)
+        showScreen('dashboard-screen');
+      }
+    }
+
+    function switchTab(buttonElement, contentId) {
+      // Switch tabs within a screen
+      const parentTabs = buttonElement.closest('.tabs');
+      const siblingButtons = parentTabs.querySelectorAll('button');
+      siblingButtons.forEach(btn => btn.classList.remove('active'));
+      buttonElement.classList.add('active');
+
+      const parentMain = buttonElement.closest('main'); // Find the main container
+      if (parentMain) {
+        const contentElements = parentMain.querySelectorAll('.schedule-content, .requests-content'); // Adjust selector as needed
+        contentElements.forEach(content => content.style.display = 'none');
+        const activeContent = parentMain.querySelector('#' + contentId);
+        if (activeContent) {
+          activeContent.style.display = 'block';
+        }
+      }
+    }
+
+    function showModal(title, message) {
+      document.getElementById('modal-title').innerText = title;
+      document.getElementById('modal-message').innerText = message;
+      document.getElementById('confirmation-modal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('confirmation-modal').style.display = 'none';
+    }
+
+    // --- Mock Actions ---
+    function submitRequest(type) {
+      console.log(`Submitting ${type} request...`);
+      // Add actual API call here
+      showModal('請求已送出', `你的 ${type === 'leave' ? '休假' : '換班'} 請求已成功送出，請等待主責審核！`);
+      // Optionally redirect
+      setTimeout(() => {
+        closeModal();
+        showScreen('requests-screen'); // Go to requests screen to see outgoing
+        // Force switching to outgoing tab
+        const reqScreen = document.getElementById('requests-screen');
+        if (reqScreen) {
+          const outgoingTabBtn = reqScreen.querySelector('.tabs button:nth-child(2)');
+          if (outgoingTabBtn) {
+            // Need slight delay for screen transition potentially
+            setTimeout(() => switchTab(outgoingTabBtn, 'requests-outgoing'), 50);
+          }
+        }
+      }, 1500);
+    }
+
+    function sendSwapRequest(recipient) {
+      console.log(`Sending swap request to ${recipient}...`);
+      showModal('邀請已發送', `已向 ${recipient} 發出換班邀請。請至「我發出的」查看狀態。`);
+      setTimeout(() => {
+        closeModal();
+        showScreen('requests-screen');
+        const reqScreen = document.getElementById('requests-screen');
+        if (reqScreen) {
+          const outgoingTabBtn = reqScreen.querySelector('.tabs button:nth-child(2)');
+          if (outgoingTabBtn) {
+            setTimeout(() => switchTab(outgoingTabBtn, 'requests-outgoing'), 50);
+          }
+        }
+      }, 1500);
+    }
+
+    function findSubstitute() {
+      console.log(`Initiating Line substitute search...`);
+      showModal('緊急呼叫已啟動', '系統正在透過 Line 聯繫可能的代班人選，請留意後續通知。');
+      setTimeout(closeModal, 2000);
+    }
+
+    function respondRequest(action, requestId) {
+      console.log(`Responding to request ${requestId} with action: ${action}`);
+      let message = "操作完成！";
+      if (action.includes('accept') || action.includes('approve')) {
+        message = "請求已核准！相關人員將收到通知。";
+      } else if (action.includes('reject')) {
+        message = "請求已拒絕/駁回。";
+      }
+      showModal('處理完成', message);
+      // Remove the card from the list (visual feedback)
+      // In a real app, you'd reload the list or update state
+      // This is a rough simulation:
+      setTimeout(() => {
+        // Find the card associated with the action and hide it.
+        // This requires buttons to be inside the card or have a common ancestor.
+        // For demo, just close modal and assume list updates.
+        closeModal();
+        // Potentially remove element visually - more complex for this demo structure
+      }, 1500);
+    }
+
+    function approveOnLine(requestId) {
+      console.log(`Redirecting to Line for approval of request ${requestId}...`);
+      showModal('轉移至 Line', '即將開啟 Line 應用程式進行審核...');
+      // In reality, this would trigger a deep link or web link to Line
+      setTimeout(closeModal, 2000);
+    }
+
+    function cancelRequest(type, requestId) {
+      console.log(`Cancelling ${type} request ${requestId}...`);
+      showModal('請求已取消', `你的 ${type === 'leave' ? '休假' : '換班'} 請求已被取消。`);
+      setTimeout(() => {
+        closeModal();
+        // Remove the card from the list (visual feedback)
+      }, 1500);
+    }
+
+    function saveSchedule() {
+      console.log('Saving schedule changes...');
+      showModal('儲存成功', '排班表已更新並儲存！可選擇發佈通知。');
+      setTimeout(closeModal, 1500);
+    }
+
+        // Initialize first screen on load
+        // document.addEventListener('DOMContentLoaded', () => {
+        //     showScreen('login-screen'); // Start with login
+        // });
+         // In this static setup, the first screen with 'active' class will show.
+
+  </script>
+
+</body>
+
+</html>

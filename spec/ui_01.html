@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ministry Scheduler - 首頁</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #FAF7F5;
+      --primary-accent: #87C1B9;
+      --secondary-accent: #E5A89A;
+      --text-color: #5A5350;
+      --highlight-color: #F0C808;
+      --card-bg: #FFFFFF;
+      --border-radius: 15px;
+      --shadow: 0 4px 15px rgba(90, 83, 80, 0.08);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      padding-bottom: 80px;
+      /* Space for potential bottom nav */
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      /* Adjust as needed */
+      padding: 20px;
+      margin-top: 20px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      font-size: 1.8em;
+      font-weight: 700;
+      color: var(--primary-accent);
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .user-profile span {
+      font-weight: 600;
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      background-color: var(--secondary-accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 1.2em;
+      cursor: pointer;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      border-radius: var(--border-radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      transition: transform 0.2s ease-in-out;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      min-height: 150px;
+      /* Ensure cards have some height */
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+
+    .card-header h2 {
+      font-size: 1.1em;
+      font-weight: 700;
+      color: var(--text-color);
+      margin: 0;
+    }
+
+    .card-icon {
+      font-size: 1.5em;
+      /* Placeholder for icons */
+      color: var(--primary-accent);
+      width: 30px;
+      /* Fixed width for alignment */
+      text-align: center;
+    }
+
+    .card-content {
+      font-size: 0.95em;
+      flex-grow: 1;
+      /* Allows content to fill space */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      /* Vertically center content */
+    }
+
+    .card-content p {
+      margin-bottom: 8px;
+      color: #7a7370;
+    }
+
+    .card-content strong {
+      color: var(--text-color);
+    }
+
+    .status-indicator {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 10px;
+      font-size: 0.8em;
+      font-weight: 600;
+      margin-left: 8px;
+    }
+
+    .status-pending {
+      background-color: var(--highlight-color);
+      color: var(--text-color);
+    }
+
+    .status-upcoming {
+      background-color: var(--primary-accent);
+      color: white;
+    }
+
+    .status-action-required {
+      background-color: var(--secondary-accent);
+      color: white;
+    }
+
+
+    .achievement-badge {
+      width: 35px;
+      height: 35px;
+      background-color: var(--highlight-color);
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 5px;
+      line-height: 35px;
+      /* Center icon/text vertically */
+      text-align: center;
+      /* Center icon/text horizontally */
+      font-size: 1.2em;
+      color: var(--text-color);
+    }
+
+    .action-button {
+      background-color: var(--primary-accent);
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s ease;
+      margin-top: auto;
+      /* Push to bottom if needed */
+      width: fit-content;
+      align-self: flex-end;
+      /* Align to the right */
+    }
+
+    .action-button:hover {
+      background-color: #6aabb1;
+      /* Darker shade of primary */
+    }
+
+    .placeholder {
+      color: #aaa;
+      font-style: italic;
+    }
+
+    /* Specific Card Styles */
+    .upcoming-ministry-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .upcoming-ministry-item:last-child {
+      border-bottom: none;
+    }
+
+    .request-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 5px;
+    }
+
+    /* Font Awesome (or similar) should be linked if using icons */
+    /* Example using text placeholders for icons */
+    .icon-calendar::before {
+      content: '📅';
+    }
+
+    .icon-swap::before {
+      content: '🔄';
+    }
+
+    .icon-leave::before {
+      content: '🏖️';
+    }
+
+    .icon-team::before {
+      content: '👥';
+    }
+
+    .icon-search::before {
+      content: '🔍';
+    }
+
+    .icon-badge::before {
+      content: '🏆';
+    }
+
+    .icon-history::before {
+      content: '📜';
+    }
+
+    .icon-settings::before {
+      content: '⚙️';
+    }
+
+    .icon-notification::before {
+      content: '🔔';
+    }
+
+    .icon-stats::before {
+      content: '📊';
+    }
+
+
+    /* Responsive adjustments */
+    @media (max-width: 600px) {
+      .header h1 {
+        font-size: 1.5em;
+      }
+
+      .user-profile span {
+        display: none;
+        /* Hide name on small screens */
+      }
+
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+        /* Stack cards vertically */
+        gap: 20px;
+      }
+
+      .card {
+        min-height: auto;
+        /* Adjust height */
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>Ministry Scheduler</h1>
+      <div class="user-profile">
+        <span>你好, 以諾</span>
+        <div class="user-avatar">諾</div>
+      </div>
+    </header>
+
+    <main class="dashboard-grid">
+
+      <!-- Upcoming Ministries Card -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-icon icon-calendar"></span>
+          <h2>近期服事</h2>
+          <span class="status-indicator status-upcoming">2 Upcoming</span>
+        </div>
+        <div class="card-content">
+          <div class="upcoming-ministry-item">
+            <span><strong>主日敬拜</strong> - 小提琴</span>
+            <span>7/21 (日) 10:00</span>
+          </div>
+          <div class="upcoming-ministry-item">
+            <span><strong>禱告會</strong> - 領會</span>
+            <span>7/24 (三) 19:30</span>
+          </div>
+          <p class="placeholder" style="margin-top:10px;">點擊查看完整服事表...</p>
+        </div>
+      </div>
+
+      <!-- Leave/Swap Requests Card -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-icon icon-swap"></span>
+          <h2>我的請求</h2>
+          <span class="status-indicator status-pending">1 待處理</span>
+        </div>
+        <div class="card-content">
+          <div class="request-item">
+            <span>🏖️ 請假申請 (8/3)</span> <span class="status-indicator status-pending">審核中</span>
+          </div>
+          <div class="request-item">
+            <span>🔄 換班請求 (7/21)</span> <span style="color: green;">已核准</span>
+          </div>
+          <p class="placeholder" style="margin-top:10px;">管理我的請假與換班...</p>
+        </div>
+      </div>
+
+      <!-- Team Management Card (Leader/Admin Only) -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-icon icon-team"></span>
+          <h2>團隊管理</h2>
+          <span class="status-indicator status-action-required">3 待核准</span>
+        </div>
+        <div class="card-content">
+          <p><strong>敬拜團:</strong> 2 個換班請求待核准</p>
+          <p><strong>招待團隊:</strong> 1 個請假請求待核准</p>
+          <p class="placeholder" style="margin-top:10px;">前往管理面板...</p>
+        </div>
+      </div>
+
+      <!-- Find Substitute Card -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-icon icon-search"></span>
+          <h2>尋找代班</h2>
+        </div>
+        <div class="card-content">
+          <p>臨時有狀況？快速尋找可以幫忙的夥伴。</p>
+        </div>
+        <button class="action-button">立即尋找</button>
+      </div>
+
+      <!-- Achievements Card -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-icon icon-badge"></span>
+          <h2>服事成就</h2>
+        </div>
+        <div class="card-content">
+          <p>最近獲得：</p>
+          <div>
+            <span class="achievement-badge" title="穩定服事獎">🌟</span>
+            <span class="achievement-badge" title="主日敬拜達人">🎻</span>
+            <span class="achievement-badge" title="禱告勇士">🙏</span>
+          </div>
+          <p class="placeholder" style="margin-top:10px;">查看我的徽章牆...</p>
+        </div>
+      </div>
+
+      <!-- Statistics Card (Leader/Admin Only) -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-icon icon-stats"></span>
+          <h2>服事統計</h2>
+        </div>
+        <div class="card-content">
+          <p>本月服事總人次: <strong>125</strong></p>
+          <p>平均每人服事次數: <strong>2.1</strong></p>
+          <p class="placeholder" style="margin-top:10px;">查看詳細報表...</p>
+        </div>
+      </div>
+
+      <!-- History/Version Control Card -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-icon icon-history"></span>
+          <h2>編輯紀錄</h2>
+        </div>
+        <div class="card-content">
+          <p>查看最近的排班調整與變更歷史。</p>
+          <p>上次排班時間: <strong>昨天 15:30</strong> by 雅各</p>
+          <p class="placeholder" style="margin-top:10px;">檢視版本歷史...</p>
+        </div>
+      </div>
+
+      <!-- Settings/Other Actions Card -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-icon icon-settings"></span>
+          <h2>設定 & 更多</h2>
+        </div>
+        <div class="card-content">
+          <p>行事曆同步、通知設定、個人資料...</p>
+          <p class="placeholder" style="margin-top:10px;">前往設定中心...</p>
+        </div>
+      </div>
+
+
+    </main>
+
+    <!-- Optional Bottom Navigation for Mobile Feel -->
+    <!--
+        <nav class="bottom-nav">
+            <a><span class="icon-home"></span> Home</a>
+            <a><span class="icon-calendar"></span> Schedule</a>
+            <a><span class="icon-swap"></span> Requests</a>
+            <a><span class="icon-team"></span> Team</a>
+            <a><span class="icon-settings"></span> Settings</a>
+        </nav>
+        -->
+
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>教會服事表管理系統</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Nunito', sans-serif;
+    }
+
+    /* Custom color palette - inspired by nature, soft, unique */
+    :root {
+      --bg-base: #FDF8F0;
+      /* Very light creamy beige */
+      --bg-secondary: #F4EAE0;
+      /* Slightly darker beige/light taupe */
+      --text-primary: #4E4A42;
+      /* Warm deep gray */
+      --text-secondary: #8E877E;
+      /* Lighter warm gray */
+      --accent-primary: #A0C49D;
+      /* Soft sage green */
+      --accent-primary-dark: #8AB089;
+      --accent-secondary: #FBC687;
+      /* Muted apricot/orange */
+      --accent-secondary-dark: #F9B76F;
+      --highlight: #FFDAB9;
+      /* Peach puff - subtle highlight */
+      --danger: #E57373;
+      /* Soft red */
+      --locked: #BDBDBD;
+      /* Gray for locked items */
+    }
+
+    .bg-base {
+      background-color: var(--bg-base);
+    }
+
+    .bg-secondary {
+      background-color: var(--bg-secondary);
+    }
+
+    .text-primary {
+      color: var(--text-primary);
+    }
+
+    .text-secondary {
+      color: var(--text-secondary);
+    }
+
+    .bg-accent-primary {
+      background-color: var(--accent-primary);
+    }
+
+    .hover\:bg-accent-primary-dark:hover {
+      background-color: var(--accent-primary-dark);
+    }
+
+    .border-accent-primary {
+      border-color: var(--accent-primary);
+    }
+
+    .text-accent-primary {
+      color: var(--accent-primary);
+    }
+
+    .bg-accent-secondary {
+      background-color: var(--accent-secondary);
+    }
+
+    .hover\:bg-accent-secondary-dark:hover {
+      background-color: var(--accent-secondary-dark);
+    }
+
+    .text-accent-secondary {
+      color: var(--accent-secondary);
+    }
+
+    .bg-highlight {
+      background-color: var(--highlight);
+    }
+
+    .text-danger {
+      color: var(--danger);
+    }
+
+    .text-locked {
+      color: var(--locked);
+    }
+
+    .border-dashed-secondary {
+      border-color: var(--text-secondary);
+      border-style: dashed;
+    }
+
+    /* Game-inspired elements */
+    .card {
+      background-color: white;
+      border-radius: 12px;
+      /* Slightly more rounded */
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      transition: transform 0.2s ease-in-out;
+      border: 1px solid var(--bg-secondary);
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+    }
+
+    .btn {
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-weight: 600;
+      transition: background-color 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background-color: var(--accent-primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--accent-primary-dark);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-secondary {
+      background-color: var(--accent-secondary);
+      color: var(--text-primary);
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--accent-secondary-dark);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      border: 2px solid var(--accent-primary);
+      color: var(--accent-primary);
+      box-shadow: none;
+    }
+
+    .btn-outline:hover {
+      background-color: var(--accent-primary);
+      color: white;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 12px;
+      /* Pill shape */
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .badge-green {
+      background-color: var(--accent-primary);
+      color: white;
+    }
+
+    .badge-orange {
+      background-color: var(--accent-secondary);
+      color: var(--text-primary);
+    }
+
+    .badge-gray {
+      background-color: var(--text-secondary);
+      color: white;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: var(--accent-secondary);
+      /* Placeholder */
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      object-fit: cover;
+      /* If using images */
+    }
+
+    /* Make scrollbars subtle */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-secondary);
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--text-secondary);
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+  </style>
+</head>
+
+<body class="bg-base text-primary antialiased">
+
+  <!-- Main Application Wrapper -->
+  <div class="flex h-screen overflow-hidden">
+
+    <!-- Sidebar Navigation (Game Menu Style) -->
+    <aside class="w-64 bg-secondary p-5 flex flex-col justify-between shadow-lg">
+      <div>
+        <div class="mb-10 flex items-center justify-center space-x-2">
+          <i class="fas fa-church text-accent-primary text-3xl"></i>
+          <h1 class="text-xl font-bold text-primary">服事管理</h1>
+        </div>
+        <nav class="space-y-3">
+          <a href="#dashboard"
+            class="flex items-center space-x-3 px-4 py-3 text-primary hover:bg-highlight rounded-lg transition duration-150">
+            <i class="fas fa-home w-5 text-center"></i>
+            <span>儀表板</span>
+          </a>
+          <a href="#myschedule"
+            class="flex items-center space-x-3 px-4 py-3 text-primary hover:bg-highlight rounded-lg transition duration-150">
+            <i class="fas fa-user-clock w-5 text-center"></i>
+            <span>我的服事</span>
+          </a>
+          <a href="#fullschedule"
+            class="flex items-center space-x-3 px-4 py-3 text-primary hover:bg-highlight rounded-lg transition duration-150">
+            <i class="fas fa-calendar-alt w-5 text-center"></i>
+            <span>完整服事表</span>
+          </a>
+          <a href="#requests"
+            class="flex items-center space-x-3 px-4 py-3 text-primary hover:bg-highlight rounded-lg transition duration-150">
+            <i class="fas fa-exchange-alt w-5 text-center"></i>
+            <span>請假/換班</span>
+            <span class="ml-auto badge badge-orange">3</span> <!-- Example notification bubble -->
+          </a>
+          <!-- Leader/Admin Only Sections -->
+          <a href="#manage"
+            class="flex items-center space-x-3 px-4 py-3 text-primary hover:bg-highlight rounded-lg transition duration-150">
+            <i class="fas fa-users-cog w-5 text-center"></i>
+            <span>排班管理</span>
+          </a>
+          <a href="#achievements"
+            class="flex items-center space-x-3 px-4 py-3 text-primary hover:bg-highlight rounded-lg transition duration-150">
+            <i class="fas fa-trophy w-5 text-center"></i>
+            <span>服事成就</span>
+          </a>
+          <a href="#admin"
+            class="flex items-center space-x-3 px-4 py-3 text-primary hover:bg-highlight rounded-lg transition duration-150">
+            <i class="fas fa-shield-alt w-5 text-center"></i>
+            <span>系統管理</span> <!-- Admin only -->
+          </a>
+        </nav>
+      </div>
+      <div class="mt-10">
+        <a href="#settings"
+          class="flex items-center space-x-3 px-4 py-3 text-primary hover:bg-highlight rounded-lg transition duration-150">
+          <i class="fas fa-cog w-5 text-center"></i>
+          <span>設定</span>
+        </a>
+        <a href="#logout"
+          class="flex items-center space-x-3 px-4 py-3 text-danger hover:bg-red-100 rounded-lg transition duration-150">
+          <i class="fas fa-sign-out-alt w-5 text-center"></i>
+          <span>登出</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 overflow-y-auto p-8">
+
+      <!-- Header -->
+      <header class="mb-8 flex justify-between items-center">
+        <h2 class="text-3xl font-bold text-primary" id="page-title">儀表板</h2>
+        <div class="flex items-center space-x-4">
+          <button class="text-text-secondary hover:text-primary focus:outline-none">
+            <i class="fas fa-bell text-xl"></i>
+            <!-- Add notification indicator if needed -->
+          </button>
+          <div class="flex items-center space-x-2">
+            <img src="https://source.unsplash.com/random/100x100?face" alt="User Avatar" class="avatar">
+            <span class="font-semibold">王大明 (User)</span>
+            <!-- Role indicator could be added -->
+          </div>
+        </div>
+      </header>
+
+      <!-- === Dynamic Content Area === -->
+      <!-- Replace this section with content for each page -->
+
+      <!-- Example: Dashboard Content -->
+      <div id="dashboard-content">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          <!-- Card: Upcoming Ministries -->
+          <div class="card p-6">
+            <h3 class="text-lg font-semibold mb-4 flex items-center space-x-2">
+              <i class="fas fa-calendar-check text-accent-primary"></i>
+              <span>近期服事</span>
+            </h3>
+            <ul class="space-y-3 text-primary">
+              <li class="flex justify-between items-center">
+                <div>
+                  <p class="font-medium">主日敬拜 - 吉他手</p>
+                  <p class="text-sm text-secondary">2023/10/28 (六) 10:00 AM</p>
+                </div>
+                <span class="badge badge-green">本週</span>
+              </li>
+              <li class="flex justify-between items-center">
+                <div>
+                  <p class="font-medium">禱告會 - 招待</p>
+                  <p class="text-sm text-secondary">2023/11/01 (三) 07:30 PM</p>
+                </div>
+              </li>
+              <li class="flex justify-between items-center">
+                <div>
+                  <p class="font-medium">主日敬拜 - 小提琴</p>
+                  <p class="text-sm text-secondary">2023/11/12 (日) 10:00 AM</p>
+                </div>
+              </li>
+            </ul>
+            <button class="mt-4 text-sm btn btn-outline w-full">查看完整服事表</button>
+          </div>
+
+          <!-- Card: Pending Requests -->
+          <div class="card p-6">
+            <h3 class="text-lg font-semibold mb-4 flex items-center space-x-2">
+              <i class="fas fa-hourglass-half text-accent-secondary"></i>
+              <span>待處理請求</span>
+              <span class="ml-auto badge badge-orange">3</span>
+            </h3>
+            <ul class="space-y-3 text-primary">
+              <li class="flex justify-between items-center">
+                <div>
+                  <p class="font-medium">請假申請 (2023/11/18)</p>
+                  <p class="text-sm text-secondary">等待主責核准...</p>
+                </div>
+                <i class="fas fa-info-circle text-secondary" title="待處理"></i>
+              </li>
+              <li class="flex justify-between items-center">
+                <div>
+                  <p class="font-medium">換班邀請 (來自 陳小美)</p>
+                  <p class="text-sm text-secondary">2023/11/04 招待換吉他</p>
+                </div>
+                <div class="space-x-2 flex-shrink-0">
+                  <button class="text-xs btn btn-primary py-1 px-3"><i class="fas fa-check"></i></button>
+                  <button
+                    class="text-xs btn btn-outline py-1 px-3 !text-danger !border-danger hover:!bg-danger hover:!text-white"><i
+                      class="fas fa-times"></i></button>
+                </div>
+              </li>
+              <li class="flex justify-between items-center">
+                <div>
+                  <p class="font-medium">代班請求 (音控 2023/11/25)</p>
+                  <p class="text-sm text-secondary">已發送給 5 人</p>
+                </div>
+                <span class="badge badge-gray">找人中</span>
+              </li>
+            </ul>
+            <button class="mt-4 text-sm btn btn-outline w-full">前往請求中心</button>
+          </div>
+
+          <!-- Card: Quick Actions -->
+          <div class="card p-6">
+            <h3 class="text-lg font-semibold mb-4 flex items-center space-x-2">
+              <i class="fas fa-bolt text-accent-primary"></i>
+              <span>快速操作</span>
+            </h3>
+            <div class="space-y-3">
+              <button class="w-full btn btn-primary">
+                <i class="fas fa-calendar-times mr-2"></i>申請休假
+              </button>
+              <button class="w-full btn btn-secondary">
+                <i class="fas fa-people-arrows mr-2"></i>尋找代班/換班
+              </button>
+            </div>
+          </div>
+
+          <!-- Card: Achievements (Optional on dashboard) -->
+          <div class="card p-6 md:col-span-2 lg:col-span-1">
+            <h3 class="text-lg font-semibold mb-4 flex items-center space-x-2">
+              <i class="fas fa-award text-accent-secondary"></i>
+              <span>我的成就</span>
+            </h3>
+            <div class="flex items-center justify-around text-center text-primary">
+              <div>
+                <i class="fas fa-star text-4xl text-yellow-400 mb-1"></i>
+                <p class="text-sm font-medium">忠心服事</p>
+                <p class="text-xs text-secondary">Lv. 3</p>
+              </div>
+              <div>
+                <i class="fas fa-music text-4xl text-blue-400 mb-1"></i>
+                <p class="text-sm font-medium">敬拜者</p>
+                <p class="text-xs text-secondary">解鎖</p>
+              </div>
+              <div>
+                <i class="fas fa-hands-helping text-4xl text-pink-400 mb-1"></i>
+                <p class="text-sm font-medium">好幫手</p>
+                <p class="text-xs text-secondary">5/10次代班</p>
+              </div>
+            </div>
+            <button class="mt-4 text-sm btn btn-outline w-full">查看所有成就</button>
+          </div>
+
+        </div>
+
+        <!-- Leader/Admin View: Schedule Overview/Stats -->
+        <div class="card p-6 mb-8">
+          <h3 class="text-lg font-semibold mb-4 flex items-center space-x-2">
+            <i class="fas fa-chart-pie text-accent-primary"></i>
+            <span>本月排班總覽 (主責視角)</span>
+          </h3>
+          <!-- Placeholder for charts or stats -->
+          <p class="text-secondary text-center py-4">圖表或統計數據顯示區域</p>
+          <div class="flex justify-end space-x-2">
+            <button class="btn btn-secondary">查看詳細統計</button>
+            <button class="btn btn-primary">前往排班管理</button>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Example: Full Schedule View Content (Simplified Grid) -->
+      <div id="fullschedule-content" class="hidden">
+        <div class="flex justify-between items-center mb-6">
+          <div>
+            <button class="btn btn-secondary px-3 py-1 text-sm mr-1"><i class="fas fa-chevron-left"></i></button>
+            <span class="text-xl font-semibold mx-2">2023年 11月</span>
+            <button class="btn btn-secondary px-3 py-1 text-sm ml-1"><i class="fas fa-chevron-right"></i></button>
+          </div>
+          <div class="flex space-x-2">
+            <select
+              class="rounded-lg border-gray-300 shadow-sm text-sm focus:border-accent-primary focus:ring focus:ring-accent-primary focus:ring-opacity-50">
+              <option>檢視模式：月份</option>
+              <option>檢視模式：週</option>
+              <option>檢視模式：日</option>
+            </select>
+            <input type="text" placeholder="搜尋人員/服事/群組..."
+              class="rounded-lg border-gray-300 shadow-sm text-sm focus:border-accent-primary focus:ring focus:ring-accent-primary focus:ring-opacity-50">
+            <button class="btn btn-primary"> <i class="fas fa-search mr-1"></i> 搜尋</button>
+            <!-- Leader Only -->
+            <button class="btn btn-secondary"><i class="fas fa-plus mr-1"></i> 新增特殊活動</button>
+          </div>
+        </div>
+
+        <!-- Calendar Grid Placeholder -->
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+          <div class="grid grid-cols-7 text-center font-semibold text-secondary border-b border-gray-200">
+            <div class="py-3">日</div>
+            <div class="py-3">一</div>
+            <div class="py-3">二</div>
+            <div class="py-3">三</div>
+            <div class="py-3">四</div>
+            <div class="py-3">五</div>
+            <div class="py-3">六</div>
+          </div>
+          <div class="grid grid-cols-7 h-[600px]">
+            <!-- Days rendering - simplified example -->
+            <div class="border-r border-b border-gray-100 p-2 text-secondary text-opacity-50">29</div>
+            <div class="border-r border-b border-gray-100 p-2 text-secondary text-opacity-50">30</div>
+            <div class="border-r border-b border-gray-100 p-2 text-secondary text-opacity-50">31</div>
+            <!-- Start of November -->
+            <div class="border-r border-b border-gray-100 p-2 overflow-y-auto relative">
+              <span class="font-bold text-primary">1</span>
+              <div class="text-xs mt-1 space-y-1">
+                <div class="bg-highlight p-1 rounded flex items-center justify-between"><span>禱告會招待: 李小花</span><i
+                    class="fas fa-lock text-locked text-opacity-50 ml-1" title="已排定"></i></div>
+              </div>
+              <!-- Plus icon for Leader/Admin -->
+              <button
+                class="absolute bottom-1 right-1 w-5 h-5 bg-accent-primary text-white rounded-full text-xs flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity"><i
+                  class="fas fa-plus"></i></button>
+            </div>
+            <div class="border-r border-b border-gray-100 p-2 overflow-y-auto relative"><span
+                class="font-bold text-primary">2</span></div>
+            <div class="border-r border-b border-gray-100 p-2 overflow-y-auto relative"><span
+                class="font-bold text-primary">3</span></div>
+            <div class="border-r border-b border-gray-100 p-2 overflow-y-auto relative">
+              <span class="font-bold text-primary">4</span>
+              <div class="text-xs mt-1 space-y-1">
+                <div class="bg-green-100 p-1 rounded">主日敬拜 吉他: 王大明 <span class="text-red-500 line-through"
+                    title="陳小美請求換班">(陳小美)</span></div>
+                <div class="bg-blue-100 p-1 rounded">主日敬拜 PPT: 林志玲</div>
+                <div class="bg-red-100 p-1 rounded flex items-center justify-between"><span>音控: 張三 (1/2) <i
+                      class="fas fa-exclamation-triangle text-yellow-600 ml-1" title="本月最多服事2次"></i></span> <i
+                    class="fas fa-user-lock text-locked text-opacity-50 ml-1" title="無法排其他服事"></i></div>
+                <div class="bg-purple-100 p-1 rounded">招待: 尚未安排</div>
+              </div>
+              <button
+                class="absolute bottom-1 right-1 w-5 h-5 bg-accent-primary text-white rounded-full text-xs flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity"><i
+                  class="fas fa-plus"></i></button>
+            </div>
+            <!-- Repeat for other days -->
+            <div class="border-r border-b border-gray-100 p-2 overflow-y-auto relative"><span
+                class="font-bold text-primary">5</span>
+              <div class="text-xs mt-1 space-y-1">
+                <div class="bg-gray-200 p-1 rounded text-locked flex items-center"><i
+                    class="fas fa-users-slash mr-1"></i> A樂團 (部分成員已排)</div>
+              </div>
+              <button
+                class="absolute bottom-1 right-1 w-5 h-5 bg-accent-primary text-white rounded-full text-xs flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity"><i
+                  class="fas fa-plus"></i></button>
+            </div>
+            <div class="border-r border-b border-gray-100 p-2 overflow-y-auto relative"><span
+                class="font-bold text-primary">6</span></div>
+            <div class="border-r border-b border-gray-100 p-2 overflow-y-auto relative"><span
+                class="font-bold text-primary">7</span></div>
+            <!-- ... more days -->
+            <div class="border-r border-b border-gray-100 p-2 overflow-y-auto relative"><span
+                class="font-bold text-primary">11</span></div>
+
+            <!-- Example Locked cell for leave -->
+            <div class="border-r border-b border-gray-100 p-2 overflow-y-auto relative bg-gray-50">
+              <span class="font-bold text-primary">18</span>
+              <div class="text-xs mt-1 space-y-1">
+                <div class="bg-orange-100 p-1 rounded flex items-center justify-between"><span class="text-primary">王大明:
+                    休假中 <i class="fas fa-umbrella-beach ml-1 text-accent-secondary"></i></span></div>
+              </div>
+            </div>
+
+            <!-- Rest of the month grid -->
+            <!-- ... -->
+            <div class="p-2"></div>
+            <div class="p-2"></div>
+            <div class="p-2"></div>
+            <div class="p-2"></div>
+            <div class="p-2"></div>
+            <div class="p-2"></div>
+            <div class="p-2"></div>
+            <div class="p-2"></div>
+            <div class="p-2"></div>
+            <div class="p-2"></div>
+            <div class="p-2"></div>
+            <div class="p-2"></div>
+            <div class="p-2"></div>
+            <div class="p-2"></div>
+            <div class="p-2"></div>
+            <div class="p-2"></div>
+            <div class="p-2"></div>
+            <div class="p-2"></div>
+            <div class="p-2"></div>
+            <div class="p-2"></div>
+            <div class="p-2"></div>
+          </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="mt-4 text-xs text-secondary flex space-x-4 items-center">
+          <span>圖例:</span>
+          <span class="flex items-center"><i class="fas fa-lock text-locked mr-1"></i> 已鎖定</span>
+          <span class="flex items-center"><i class="fas fa-user-lock text-locked mr-1"></i> 無法再排</span>
+          <span class="flex items-center"><i class="fas fa-users-slash text-locked mr-1"></i> 群組衝突</span>
+          <span class="flex items-center"><i class="fas fa-exclamation-triangle text-yellow-600 mr-1"></i> 達到上限</span>
+          <span class="flex items-center"><i class="fas fa-umbrella-beach text-accent-secondary mr-1"></i> 休假</span>
+        </div>
+      </div>
+
+      <!-- Example: Leave Request Modal (Simplified) -->
+      <div id="leave-request-modal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden">
+        <div class="card p-8 w-full max-w-md transform transition-all scale-95 opacity-0">
+          <h3 class="text-xl font-semibold mb-6 text-center text-primary">申請休假 <i
+              class="fas fa-leaf ml-1 text-accent-primary"></i></h3>
+          <form>
+            <div class="mb-4">
+              <label for="leave-start" class="block text-sm font-medium text-secondary mb-1">開始日期</label>
+              <input type="date" id="leave-start" name="leave-start"
+                class="w-full rounded-lg border-gray-300 shadow-sm focus:border-accent-primary focus:ring focus:ring-accent-primary focus:ring-opacity-50">
+            </div>
+            <div class="mb-4">
+              <label for="leave-end" class="block text-sm font-medium text-secondary mb-1">結束日期</label>
+              <input type="date" id="leave-end" name="leave-end"
+                class="w-full rounded-lg border-gray-300 shadow-sm focus:border-accent-primary focus:ring focus:ring-accent-primary focus:ring-opacity-50">
+            </div>
+            <div class="mb-6">
+              <label for="leave-reason" class="block text-sm font-medium text-secondary mb-1">事由 (選填)</label>
+              <textarea id="leave-reason" name="leave-reason" rows="3"
+                class="w-full rounded-lg border-gray-300 shadow-sm focus:border-accent-primary focus:ring focus:ring-accent-primary focus:ring-opacity-50"></textarea>
+            </div>
+            <div class="flex justify-end space-x-3">
+              <button type="button" class="btn btn-outline" onclick="closeModal('leave-request-modal')">取消</button>
+              <button type="submit" class="btn btn-primary">送出申請</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Example: Achievement Page Content -->
+      <div id="achievements-content" class="hidden">
+        <h2 class="text-2xl font-bold mb-6 text-primary flex items-center"><i
+            class="fas fa-trophy mr-3 text-accent-secondary"></i> 我的服事成就</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <!-- Achievement Card -->
+          <div class="card p-5 text-center transition duration-300 ease-in-out hover:shadow-xl">
+            <i class="fas fa-star text-6xl text-yellow-400 mb-3"></i>
+            <h4 class="font-semibold text-lg mb-1">忠心服事者</h4>
+            <p class="text-sm text-secondary mb-3">持續穩定參與服事</p>
+            <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 mb-2">
+              <div class="bg-accent-primary h-2.5 rounded-full" style="width: 75%"></div>
+            </div>
+            <span class="badge badge-green">等級 3</span> <span class="text-xs text-secondary ml-2">75/100 XP</span>
+          </div>
+          <!-- Achievement Card (Locked) -->
+          <div class="card p-5 text-center opacity-60 grayscale">
+            <i class="fas fa-shield-alt text-6xl text-gray-400 mb-3"></i>
+            <h4 class="font-semibold text-lg mb-1">萬人迷</h4>
+            <p class="text-sm text-secondary mb-3">協助代班 10 次</p>
+            <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 mb-2">
+              <div class="bg-gray-400 h-2.5 rounded-full" style="width: 50%"></div>
+            </div>
+            <span class="badge badge-gray">鎖定中</span> <span class="text-xs text-secondary ml-2">5/10 次</span>
+          </div>
+          <!-- Achievement Card -->
+          <div class="card p-5 text-center">
+            <i class="fas fa-music text-6xl text-blue-400 mb-3"></i>
+            <h4 class="font-semibold text-lg mb-1">敬拜者</h4>
+            <p class="text-sm text-secondary mb-3">參與敬拜團隊服事</p>
+            <span class="badge badge-green">已解鎖</span>
+          </div>
+          <!-- Add more achievement cards... -->
+          <div class="card p-5 text-center">
+            <i class="fas fa-calendar-plus text-6xl text-purple-400 mb-3"></i>
+            <h4 class="font-semibold text-lg mb-1">活動達人</h4>
+            <p class="text-sm text-secondary mb-3">參與 5 次特殊活動</p>
+            <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 mb-2">
+              <div class="bg-accent-secondary h-2.5 rounded-full" style="width: 60%"></div>
+            </div>
+            <span class="badge badge-orange">進行中</span> <span class="text-xs text-secondary ml-2">3/5 次</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- End Dynamic Content Area -->
+
+    </main>
+  </div>
+
+  <script>
+    // Basic tab/page switching logic
+    const navLinks = document.querySelectorAll('aside nav a');
+    const contentSections = {
+      'dashboard': document.getElementById('dashboard-content'),
+      'fullschedule': document.getElementById('fullschedule-content'),
+      'achievements': document.getElementById('achievements-content'),
+      // Add other page IDs here: 'myschedule', 'requests', 'manage', 'admin', 'settings'
+      // Create corresponding divs with IDs like 'myschedule-content' etc.
+    };
+    const pageTitle = document.getElementById('page-title');
+    const defaultPage = 'dashboard';
+
+    function showPage(pageId) {
+      Object.values(contentSections).forEach(section => {
+        if (section) section.classList.add('hidden');
+      });
+      if (contentSections[pageId]) {
+        contentSections[pageId].classList.remove('hidden');
+        // Update page title (get from link text or use a map)
+        const link = document.querySelector(`a[href="#${pageId}"] span`);
+        pageTitle.textContent = link ? link.textContent : '儀表板';
+      } else {
+        // Show default or dashboard if page not found
+        if (contentSections[defaultPage]) contentSections[defaultPage].classList.remove('hidden');
+        pageTitle.textContent = '儀表板';
+      }
+
+      // Update active link style
+      navLinks.forEach(link => {
+        link.classList.remove('bg-highlight', 'font-bold');
+        if (link.getAttribute('href') === `#${pageId}`) {
+          link.classList.add('bg-highlight', 'font-bold');
+        }
+      });
+    }
+
+    navLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        const href = link.getAttribute('href');
+        if (href && href.startsWith('#')) {
+          e.preventDefault();
+          const pageId = href.substring(1);
+          // Basic modal triggers - more robust logic needed for real app
+          if (pageId === 'leaverequest_trigger') { // Example, trigger should be on a button, not nav
+            openModal('leave-request-modal');
+          } else {
+            showPage(pageId);
+          }
+        }
+      });
+    });
+
+    // Simple Modal Logic
+    function openModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) {
+        modal.classList.remove('hidden');
+        // Animate in
+        const card = modal.querySelector('.card');
+        setTimeout(() => {
+          card.classList.remove('scale-95', 'opacity-0');
+          card.classList.add('scale-100', 'opacity-100');
+        }, 50); // Short delay to allow display property to take effect
+      }
+    }
+    function closeModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) {
+        const card = modal.querySelector('.card');
+        card.classList.remove('scale-100', 'opacity-100');
+        card.classList.add('scale-95', 'opacity-0');
+        // Wait for animation to finish before hiding
+        setTimeout(() => {
+          modal.classList.add('hidden');
+        }, 200); // Match transition duration
+      }
+    }
+
+    // Add event listeners to modal close buttons/backgrounds if needed
+    document.addEventListener('DOMContentLoaded', () => {
+      // Show initial page based on hash or default
+      const initialPage = window.location.hash ? window.location.hash.substring(1) : defaultPage;
+      showPage(initialPage);
+
+      // Example listener for the quick action button
+      const quickLeaveButton = document.querySelector('#dashboard-content button:nth-child(1)'); // Adjust selector if needed
+      if (quickLeaveButton && quickLeaveButton.textContent.includes('申請休假')) {
+        quickLeaveButton.addEventListener('click', () => openModal('leave-request-modal'));
+      }
+    });
+
+    // Close modal on escape key
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        // Find any open modal and close it - needs more specific logic in real app
+        const openModal = document.querySelector('.fixed.inset-0:not(.hidden)');
+        if (openModal) {
+          closeModal(openModal.id);
+        }
+      }
+    });
+
+  </script>
+</body>
+
+</html>

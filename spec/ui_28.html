@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>教會服事表管理系統 (概念)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    /* Custom styles for gamified look */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f2f5;
+      /* Light grey background */
+    }
+
+    .main-container {
+      max-width: 420px;
+      /* Mobile width */
+      margin: auto;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      /* Purple/Blue Gradient */
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .content-area {
+      flex-grow: 1;
+      padding: 1rem 1rem 5rem 1rem;
+      /* Padding bottom for nav bar */
+      overflow-y: auto;
+      background-color: rgba(255, 255, 255, 0.9);
+      /* Slightly transparent white content area */
+      border-radius: 20px 20px 0 0;
+      margin-top: -20px;
+      /* Overlap effect */
+      box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .header {
+      padding: 1.5rem 1rem;
+      color: white;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: bold;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      max-width: 420px;
+      margin: auto;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.95);
+      border-top: 1px solid #e2e8f0;
+      padding: 0.5rem 0;
+      backdrop-filter: blur(5px);
+      border-radius: 15px 15px 0 0;
+      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #6b7280;
+      /* Gray */
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+      font-size: 0.75rem;
+      padding: 0.25rem;
+      border-radius: 8px;
+    }
+
+    .nav-item i {
+      font-size: 1.5rem;
+      /* Larger icons */
+      margin-bottom: 0.1rem;
+    }
+
+    .nav-item.active,
+    .nav-item:hover {
+      color: #667eea;
+      /* Active color matching gradient */
+      /* background-color: rgba(102, 126, 234, 0.1); */
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+      transition: transform 0.2s ease-in-out;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(to right, #667eea, #764ba2);
+      color: white;
+      font-weight: bold;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+      display: inline-block;
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
+      filter: brightness(1.1);
+    }
+
+    .btn-secondary {
+      background-color: #e2e8f0;
+      color: #4a5568;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      text-align: center;
+      display: inline-block;
+    }
+
+    .btn-secondary:hover {
+      background-color: #cbd5e1;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.25em 0.6em;
+      font-size: 0.75em;
+      font-weight: 700;
+      line-height: 1;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: baseline;
+      border-radius: 0.375rem;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid white;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .achievement-icon {
+      width: 50px;
+      height: 50px;
+      filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3));
+      transition: transform 0.3s ease;
+    }
+
+    .achievement-icon:hover {
+      transform: scale(1.1);
+    }
+
+    /* Animation */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.5s ease-out forwards;
+    }
+
+    /* Specific adjustments for lists and interactive elements */
+    .list-item {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .list-item:last-child {
+      border-bottom: none;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      margin-top: 0.5rem;
+      background-color: #f8fafc;
+    }
+
+    .input-field:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+    }
+
+    /* Progress Bar (Gamified) */
+    .progress-bar-container {
+      width: 100%;
+      background-color: #e2e8f0;
+      border-radius: 9999px;
+      height: 10px;
+      overflow: hidden;
+      margin: 0.5rem 0;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(to right, #a855f7, #ec4899);
+      /* Pink/Purple Gradient for progress */
+      border-radius: 9999px;
+      transition: width 0.5s ease-in-out;
+    }
+
+    /* Filters / Tabs */
+    .tabs {
+      display: flex;
+      overflow-x: auto;
+      padding-bottom: 1px;
+      /* For shadow visibility */
+      margin-bottom: 1rem;
+      gap: 0.5rem;
+      -ms-overflow-style: none;
+      /* IE and Edge */
+      scrollbar-width: none;
+      /* Firefox */
+    }
+
+    .tabs::-webkit-scrollbar {
+      /* Hide scrollbar for Chrome, Safari and Opera */
+      display: none;
+    }
+
+    .tab {
+      padding: 0.5rem 1rem;
+      white-space: nowrap;
+      border-radius: 9999px;
+      background-color: #e2e8f0;
+      color: #4a5568;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .tab.active,
+    .tab:hover {
+      background: linear-gradient(to right, #667eea, #764ba2);
+      color: white;
+      box-shadow: 0 2px 5px rgba(102, 126, 234, 0.3);
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="main-container">
+    <!-- ========= Header ========= -->
+    <header class="header" id="header-section">
+      <!-- Content changes dynamically based on screen -->
+      <h1 id="header-title">主畫面</h1>
+    </header>
+
+    <!-- ========= Content Area ========= -->
+    <main class="content-area" id="content-root">
+      <!-- Content loads here dynamically -->
+      <!-- Example: Dashboard Screen -->
+      <div id="dashboard-screen" class="fade-in">
+        <h2 class="text-xl font-semibold mb-4 text-gray-700">嗨, [使用者名稱]!</h2>
+
+        <!-- Quick Summary Card -->
+        <div class="card bg-gradient-to-r from-blue-50 to-indigo-50">
+          <h3 class="text-lg font-semibold text-indigo-700 mb-2"><i class="fas fa-star mr-2 text-yellow-400"></i>本週服事提醒
+          </h3>
+          <p class="text-gray-600">您本週有 <strong class="text-indigo-600">2</strong> 項服事任務。</p>
+          <div class="mt-3">
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-sm font-medium text-gray-500">週六 10:00 - 主日敬拜</span>
+              <span class="badge bg-green-100 text-green-800">吉他手</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-sm font-medium text-gray-500">週日 14:00 - 成長班</span>
+              <span class="badge bg-blue-100 text-blue-800">小組長</span>
+            </div>
+          </div>
+          <button class="btn-primary w-full mt-4 text-sm py-2"><i class="fas fa-calendar-alt mr-1"></i>查看完整服事表</button>
+        </div>
+
+        <!-- Quick Actions Card -->
+        <div class="card">
+          <h3 class="text-lg font-semibold text-gray-700 mb-3"><i class="fas fa-bolt mr-2 text-yellow-500"></i>快速行動</h3>
+          <div class="grid grid-cols-2 gap-3">
+            <button class="btn-secondary py-3 text-center text-sm font-medium" onclick="loadLeaveRequestScreen()">
+              <i class="fas fa-plane-departure mr-1"></i> 申請休假
+            </button>
+            <button class="btn-secondary py-3 text-center text-sm font-medium" onclick="loadSwapRequestScreen()">
+              <i class="fas fa-exchange-alt mr-1"></i> 請求換班
+            </button>
+            <button class="btn-secondary py-3 text-center text-sm font-medium" onclick="loadScheduleScreen()">
+              <i class="fas fa-users mr-1"></i> 尋找代班
+            </button>
+            <button class="btn-secondary py-3 text-center text-sm font-medium" onclick="loadAchievementsScreen()">
+              <i class="fas fa-trophy mr-1"></i> 查看成就
+            </button>
+          </div>
+        </div>
+
+        <!-- Gamification Element: Monthly Progress -->
+        <div class="card">
+          <h3 class="text-lg font-semibold text-gray-700 mb-2"><i
+              class="fas fa-chart-line mr-2 text-pink-500"></i>本月服事進度</h3>
+          <p class="text-sm text-gray-500 mb-2">目標: 最多服事 4 次 / 這個月已完成 2 次</p>
+          <div class="progress-bar-container">
+            <div class="progress-bar" style="width: 50%;"></div>
+          </div>
+          <p class="text-xs text-right text-gray-400 mt-1">已達 50%！繼續加油！ <i class="fas fa-fist-raised"></i></p>
+        </div>
+
+        <!-- Leader Specific Card (Conditional Display) -->
+        <!-- <div class="card bg-red-50 border border-red-200">
+                    <h3 class="text-lg font-semibold text-red-700 mb-2"><i class="fas fa-exclamation-triangle mr-2"></i>待審核事項</h3>
+                    <p class="text-gray-600">您有 <strong class="text-red-600">3</strong> 項待處理的換班/休假請求。</p>
+                    <button class="btn-primary bg-gradient-to-r from-red-500 to-pink-500 w-full mt-3 text-sm py-2" onclick="loadApprovalScreen()"><i class="fas fa-check-circle mr-1"></i>前往審核</button>
+                </div> -->
+
+      </div>
+
+      <!-- Other screens will be loaded here -->
+    </main>
+
+    <!-- ========= Bottom Navigation ========= -->
+    <nav class="bottom-nav">
+      <div class="nav-item active" onclick="loadDashboardScreen()">
+        <i class="fas fa-home"></i>
+        <span>主頁</span>
+      </div>
+      <div class="nav-item" onclick="loadScheduleScreen()">
+        <i class="fas fa-calendar-alt"></i>
+        <span>服事表</span>
+      </div>
+      <div class="nav-item" onclick="loadNotificationsScreen()">
+        <!-- Placeholder for notifications count -->
+        <span
+          class="absolute top-0 right-0 transform translate-x-1/3 -translate-y-1/4 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">3</span>
+        <i class="fas fa-bell"></i>
+        <span>通知</span>
+      </div>
+      <div class="nav-item" onclick="loadAchievementsScreen()">
+        <i class="fas fa-trophy"></i>
+        <span>成就</span>
+      </div>
+      <div class="nav-item" onclick="loadProfileScreen()">
+        <i class="fas fa-user-circle"></i>
+        <span>我的</span>
+      </div>
+    </nav>
+  </div>
+
+  <script>
+    const contentRoot = document.getElementById('content-root');
+    const headerTitle = document.getElementById('header-title');
+    const navItems = document.querySelectorAll('.nav-item');
+
+    function setActiveNav(activeIndex) {
+      navItems.forEach((item, index) => {
+        if (index === activeIndex) {
+          item.classList.add('active');
+        } else {
+          item.classList.remove('active');
+        }
+      });
+    }
+
+    function loadScreen(screenHtml, title, navIndex) {
+      contentRoot.innerHTML = screenHtml;
+      // Re-trigger animation if elements have .fade-in class
+      const animatedElements = contentRoot.querySelectorAll('.fade-in');
+      animatedElements.forEach(el => {
+        el.style.animation = 'none';
+        el.offsetHeight; // Trigger reflow
+        el.style.animation = '';
+      });
+      headerTitle.innerText = title;
+      setActiveNav(navIndex);
+      // Scroll content area to top
+      const contentArea = document.querySelector('.content-area');
+      if (contentArea) {
+        contentArea.scrollTop = 0;
+      }
+    }
+
+    // --- Screen Loading Functions ---
+
+    function loadDashboardScreen() {
+      const dashboardHtml = `
+            <div id="dashboard-screen" class="fade-in">
+                <h2 class="text-xl font-semibold mb-4 text-gray-700">嗨, [使用者名稱]!</h2>
+
+                <!-- Quick Summary Card -->
+                <div class="card bg-gradient-to-r from-blue-50 to-indigo-50">
+                     <h3 class="text-lg font-semibold text-indigo-700 mb-2"><i class="fas fa-star mr-2 text-yellow-400"></i>本週服事提醒</h3>
+                     <p class="text-gray-600">您本週有 <strong class="text-indigo-600">2</strong> 項服事任務。</p>
+                     <div class="mt-3">
+                         <div class="flex justify-between items-center mb-1">
+                             <span class="text-sm font-medium text-gray-500">週六 10:00 - 主日敬拜</span>
+                             <span class="badge bg-green-100 text-green-800">吉他手</span>
+                         </div>
+                         <div class="flex justify-between items-center">
+                             <span class="text-sm font-medium text-gray-500">週日 14:00 - 成長班</span>
+                             <span class="badge bg-blue-100 text-blue-800">小組長</span>
+                         </div>
+                     </div>
+                     <button class="btn-primary w-full mt-4 text-sm py-2" onclick="loadScheduleScreen()"><i class="fas fa-calendar-alt mr-1"></i>查看完整服事表</button>
+                </div>
+
+                <!-- Quick Actions Card -->
+                 <div class="card">
+                     <h3 class="text-lg font-semibold text-gray-700 mb-3"><i class="fas fa-bolt mr-2 text-yellow-500"></i>快速行動</h3>
+                     <div class="grid grid-cols-2 gap-3">
+                         <button class="btn-secondary py-3 text-center text-sm font-medium" onclick="loadLeaveRequestScreen()">
+                            <i class="fas fa-plane-departure mr-1"></i> 申請休假
+                         </button>
+                         <button class="btn-secondary py-3 text-center text-sm font-medium" onclick="loadSwapRequestScreen()">
+                            <i class="fas fa-exchange-alt mr-1"></i> 請求換班
+                         </button>
+                         <button class="btn-secondary py-3 text-center text-sm font-medium" onclick="loadSubstituteFinderScreen()">
+                             <i class="fas fa-users mr-1"></i> 尋找代班
+                          </button>
+                         <button class="btn-secondary py-3 text-center text-sm font-medium" onclick="loadAchievementsScreen()">
+                             <i class="fas fa-trophy mr-1"></i> 查看成就
+                         </button>
+                    </div>
+                </div>
+
+                 <!-- Gamification Element: Monthly Progress -->
+                 <div class="card">
+                     <h3 class="text-lg font-semibold text-gray-700 mb-2"><i class="fas fa-chart-line mr-2 text-pink-500"></i>本月服事進度</h3>
+                     <p class="text-sm text-gray-500 mb-2">目標: 最多服事 4 次 / 這個月已完成 2 次</p>
+                     <div class="progress-bar-container">
+                         <div class="progress-bar" style="width: 50%;"></div>
+                     </div>
+                      <p class="text-xs text-right text-gray-400 mt-1">已達 50%！繼續加油！ <i class="fas fa-fist-raised"></i></p>
+                 </div>
+
+                <!-- Leader Specific Card (Conditional Display Example) -->
+                <div class="card bg-orange-50 border border-orange-200">
+                     <h3 class="text-lg font-semibold text-orange-700 mb-2"><i class="fas fa-bell mr-2 animate-pulse"></i>待辦事項</h3>
+                    <p class="text-gray-600">您有 <strong class="text-orange-600">3</strong> 項待處理的請求。</p>
+                    <button class="btn-primary bg-gradient-to-r from-orange-400 to-red-500 w-full mt-3 text-sm py-2" onclick="loadApprovalScreen()"><i class="fas fa-check-double mr-1"></i> 前往處理</button>
+                </div>
+            </div>`;
+      loadScreen(dashboardHtml, '主畫面', 0);
+    }
+
+    function loadScheduleScreen() {
+      const scheduleHtml = `
+            <div id="schedule-screen" class="fade-in">
+                 <!-- Filter Tabs -->
+                <div class="tabs mb-4">
+                     <button class="tab active">我的服事</button>
+                    <button class="tab">團隊列表</button>
+                    <button class="tab">服事項目</button>
+                    <button class="tab">本月總覽</button>
+                    <button class="tab">依週檢視</button>
+                 </div>
+
+                <!-- Schedule Content Area -->
+                <div class="space-y-3">
+                     <!-- Example Schedule Item Card -->
+                     <div class="card border-l-4 border-green-500">
+                         <div class="flex justify-between items-start">
+                            <div>
+                                <p class="font-bold text-gray-800">主日敬拜 (敬拜團A)</p>
+                                 <p class="text-sm text-gray-500"><i class="far fa-clock mr-1"></i> 週六, 10月28日, 09:00 - 12:00</p>
+                                 <p class="text-sm text-purple-600 font-medium mt-1"><i class="fas fa-music mr-1"></i> 擔任: 吉他手</p>
+                             </div>
+                             <div class="flex space-x-2 mt-1">
+                                <button class="text-blue-500 hover:text-blue-700" title="請求換班" onclick="loadSwapRequestScreen()"><i class="fas fa-exchange-alt"></i></button>
+                                <button class="text-orange-500 hover:text-orange-700" title="尋找代班" onclick="loadSubstituteFinderScreen()"><i class="fas fa-users"></i></button>
+                             </div>
+                         </div>
+                         <div class="mt-2 pt-2 border-t border-gray-100 flex items-center space-x-2">
+                             <span class="text-xs text-gray-500">參與同工:</span>
+                             <img src="https://via.placeholder.com/30/AABBCC/fff?text=P1" alt="User" class="avatar w-6 h-6">
+                            <img src="https://via.placeholder.com/30/FFAA00/fff?text=P2" alt="User" class="avatar w-6 h-6">
+                             <img src="https://via.placeholder.com/30/33CC99/fff?text=P3" alt="User" class="avatar w-6 h-6">
+                             <span class="text-xs text-gray-400">+2 more</span>
+                        </div>
+                    </div>
+
+                    <div class="card border-l-4 border-blue-500">
+                         <div class="flex justify-between items-start">
+                             <div>
+                                <p class="font-bold text-gray-800">成長班教學</p>
+                                 <p class="text-sm text-gray-500"><i class="far fa-clock mr-1"></i> 週日, 10月29日, 14:00 - 16:00</p>
+                                 <p class="text-sm text-purple-600 font-medium mt-1"><i class="fas fa-chalkboard-teacher mr-1"></i> 擔任: 小組長</p>
+                            </div>
+                             <button class="text-gray-400 cursor-not-allowed" title="不可換班項目"><i class="fas fa-lock"></i></button>
+                         </div>
+                     </div>
+
+                     <!-- Add more schedule items here -->
+                      <div class="card border-l-4 border-gray-300 bg-gray-50 opacity-70">
+                          <div class="flex justify-between items-start">
+                            <div>
+                                <p class="font-bold text-gray-600 line-through">禱告會領會 (已請假)</p>
+                                 <p class="text-sm text-gray-400"><i class="far fa-clock mr-1"></i> 週三, 11月1日, 19:30 - 21:00</p>
+                            </div>
+                              <span class="badge bg-yellow-100 text-yellow-800">已請假</span>
+                         </div>
+                    </div>
+
+                </div>
+
+                 <!-- Floating Action Button -->
+                 <button class="fixed bottom-20 right-5 btn-primary rounded-full shadow-lg w-14 h-14 flex items-center justify-center z-10" onclick="showScheduleOptions()">
+                     <i class="fas fa-plus text-xl"></i>
+                </button>
+            </div>
+            `;
+      loadScreen(scheduleHtml, '服事總覽', 1);
+    }
+
+    function loadLeaveRequestScreen() {
+      const leaveHtml = `
+             <div id="leave-request-screen" class="fade-in">
+                <h2 class="text-xl font-semibold mb-4 text-gray-700"><i class="fas fa-plane-departure mr-2 text-blue-500"></i>申請休假</h2>
+                <div class="card">
+                     <form>
+                        <div class="mb-4">
+                             <label class="block text-sm font-medium text-gray-600 mb-1" for="leave-dates">選擇日期</label>
+                             <input type="date" id="leave-dates" class="input-field" multiple>
+                             <p class="text-xs text-gray-500 mt-1">您可以選擇單日或多日。</p>
+                         </div>
+                        <div class="mb-4">
+                             <label class="block text-sm font-medium text-gray-600 mb-1" for="leave-reason">事由 (選填)</label>
+                             <textarea id="leave-reason" rows="3" class="input-field" placeholder="例如：家庭旅遊、個人事務"></textarea>
+                        </div>
+                         <div class="text-center">
+                             <button type="submit" class="btn-primary w-full">
+                                <i class="fas fa-paper-plane mr-2"></i> 送出神聖的請假單
+                            </button>
+                         </div>
+                    </form>
+                 </div>
+            </div>`;
+      loadScreen(leaveHtml, '申請休假', 0); // Assuming launched from Dashboard
+    }
+
+    function loadSwapRequestScreen() {
+      const swapHtml = `
+             <div id="swap-request-screen" class="fade-in">
+                <h2 class="text-xl font-semibold mb-4 text-gray-700"><i class="fas fa-exchange-alt mr-2 text-green-500"></i>請求換班協助</h2>
+                <div class="card">
+                    <form>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-600 mb-1" for="swap-original-duty">選擇您想換掉的服事</label>
+                            <select id="swap-original-duty" class="input-field">
+                                <option value="">-- 請選擇 --</option>
+                                <option value="duty1">週六 10/28 09:00 - 主日敬拜 (吉他手)</option>
+                                <option value="duty2" disabled>週日 10/29 14:00 - 成長班 (小組長 - 不可換)</option>
+                                <!-- More duties loaded here -->
+                            </select>
+                         </div>
+
+                         <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-600 mb-1">希望邀請誰協助？ (可複選)</label>
+                             <div class="max-h-40 overflow-y-auto border border-gray-200 rounded-md p-2 bg-gray-50 space-y-2">
+                                <!-- List potential helpers -->
+                                <div class="flex items-center justify-between p-2 rounded hover:bg-indigo-50 transition duration-150">
+                                    <div class="flex items-center space-x-3">
+                                         <img src="https://via.placeholder.com/40/8B5CF6/fff?text=A" alt="User A" class="avatar">
+                                         <div>
+                                             <p class="font-medium text-gray-700">同工 A</p>
+                                             <p class="text-xs text-gray-500">本月已服事 1 次</p>
+                                         </div>
+                                    </div>
+                                    <input type="checkbox" class="form-checkbox h-5 w-5 text-indigo-600 rounded">
+                                </div>
+                                <div class="flex items-center justify-between p-2 rounded hover:bg-indigo-50 transition duration-150">
+                                    <div class="flex items-center space-x-3">
+                                         <img src="https://via.placeholder.com/40/EC4899/fff?text=B" alt="User B" class="avatar">
+                                         <div>
+                                            <p class="font-medium text-gray-700">同工 B</p>
+                                             <p class="text-xs text-green-600">本月 0 次 - 很閒!</p>
+                                        </div>
+                                    </div>
+                                    <input type="checkbox" class="form-checkbox h-5 w-5 text-indigo-600 rounded">
+                                </div>
+                                <div class="flex items-center justify-between p-2 rounded bg-gray-200 opacity-60 cursor-not-allowed">
+                                     <div class="flex items-center space-x-3">
+                                        <img src="https://via.placeholder.com/40/cccccc/fff?text=C" alt="User C" class="avatar">
+                                        <div>
+                                            <p class="font-medium text-gray-500">同工 C (不能彈吉他)</p>
+                                            <p class="text-xs text-red-500">條件不符</p>
+                                        </div>
+                                     </div>
+                                    <input type="checkbox" class="form-checkbox h-5 w-5 text-gray-400 rounded" disabled>
+                                 </div>
+                                 <!-- ... more potential helpers ... -->
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-600 mb-1" for="swap-message">留言給對方 (選填)</label>
+                             <textarea id="swap-message" rows="2" class="input-field" placeholder="例：那天家裡突然有事，拜託了！"></textarea>
+                         </div>
+
+                        <div class="text-center">
+                            <button type="submit" class="btn-primary w-full">
+                                <i class="fas fa-paper-plane mr-2"></i> 發出求救信號！
+                             </button>
+                         </div>
+                    </form>
+                 </div>
+             </div>`;
+      loadScreen(swapHtml, '請求換班', 0); // Assuming launched from Dashboard or Schedule
+    }
+
+    function loadSubstituteFinderScreen() {
+      // Similar UI to Swap Request, but likely focuses on finding ANYONE available.
+      // Might auto-send requests based on criteria.
+      const findSubHtml = `
+             <div id="sub-finder-screen" class="fade-in">
+                 <h2 class="text-xl font-semibold mb-4 text-gray-700"><i class="fas fa-users mr-2 text-teal-500"></i>尋找代班勇士</h2>
+                <div class="card">
+                    <form>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-600 mb-1" for="sub-duty">需要代班的服事</label>
+                             <select id="sub-duty" class="input-field">
+                                <option value="">-- 請選擇 --</option>
+                                 <option value="duty1">週六 10/28 09:00 - 主日敬拜 (吉他手)</option>
+                             </select>
+                        </div>
+                        <div class="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                            <p class="text-sm text-blue-700"><i class="fas fa-info-circle mr-1"></i> 系統將會自動透過 Line / App 通知所有符合資格且有空的同工。第一位接受的勇士將接下任務！</p>
+                         </div>
+                         <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-600 mb-1" for="sub-message">加註訊息 (選填)</label>
+                            <textarea id="sub-message" rows="2" class="input-field" placeholder="例：臨時需要協助，感謝支援！"></textarea>
+                        </div>
+                         <div class="text-center">
+                             <button type="submit" class="btn-primary w-full bg-gradient-to-r from-teal-400 to-blue-500">
+                                 <i class="fas fa-bullhorn mr-2"></i> 發出英雄帖！
+                            </button>
+                        </div>
+                     </form>
+                </div>
+             </div>`;
+      loadScreen(findSubHtml, '尋找代班', 0); // Launched from Dashboard or Schedule
+    }
+
+    function loadAchievementsScreen() {
+      const achievementsHtml = `
+            <div id="achievements-screen" class="fade-in">
+                 <h2 class="text-xl font-semibold mb-4 text-gray-700"><i class="fas fa-trophy mr-2 text-yellow-500"></i>榮譽殿堂</h2>
+
+                <!-- User Rank/Level -->
+                <div class="card text-center bg-gradient-to-br from-yellow-100 to-orange-100 mb-6">
+                     <img src="https://via.placeholder.com/60/FFA500/fff?text=U" alt="User Avatar" class="avatar w-16 h-16 mx-auto mb-2 border-4 border-white shadow-lg">
+                    <p class="font-bold text-lg text-orange-700">[使用者名稱]</p>
+                     <p class="text-sm text-gray-600">等級 5 - <span class="font-medium">熱心的僕人</span></p>
+                    <div class="progress-bar-container mt-2 w-3/4 mx-auto">
+                         <div class="progress-bar bg-gradient-to-r from-yellow-400 to-orange-500" style="width: 60%;"></div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">600 / 1000 經驗值</p>
+                </div>
+
+                 <!-- Achievements Grid -->
+                <div class="grid grid-cols-3 gap-4 text-center">
+                    <div class="flex flex-col items-center">
+                        <img src="https://img.icons8.com/?size=100&id=cUaHRZLcC5Dx&format=png&color=000000" alt="First Service" class="achievement-icon w-16 h-16">
+                         <p class="text-xs mt-1 font-medium text-gray-600">初次服事</p>
+                         <p class="text-xs text-gray-400">完成首次任務</p>
+                     </div>
+                    <div class="flex flex-col items-center">
+                        <img src="https://img.icons8.com/?size=100&id=zGC5VUNUj2aL&format=png&color=000000" alt="Perfect Attendance" class="achievement-icon w-16 h-16">
+                        <p class="text-xs mt-1 font-medium text-gray-600">全勤勇士</p>
+                        <p class="text-xs text-gray-400">連續一個月</p>
+                    </div>
+                     <div class="flex flex-col items-center">
+                        <img src="https://img.icons8.com/?size=100&id=b2NuXD2jBqOq&format=png&color=cccccc" alt="Team Player - Locked" class="achievement-icon w-16 h-16 filter grayscale">
+                        <p class="text-xs mt-1 font-medium text-gray-400">團隊之心</p>
+                         <p class="text-xs text-gray-400">協助換班 5 次</p>
+                     </div>
+                    <div class="flex flex-col items-center">
+                         <img src="https://img.icons8.com/?size=100&id=OjdTIp6cPvX8&format=png&color=000000" alt="Worship Leader" class="achievement-icon w-16 h-16">
+                         <p class="text-xs mt-1 font-medium text-gray-600">敬拜核心</p>
+                        <p class="text-xs text-gray-400">參與主日 10 次</p>
+                    </div>
+                     <div class="flex flex-col items-center">
+                         <img src="https://img.icons8.com/?size=100&id=14NldbofakqT&format=png&color=cccccc" alt="Special Event Master - Locked" class="achievement-icon w-16 h-16 filter grayscale">
+                        <p class="text-xs mt-1 font-medium text-gray-400">節慶大使</p>
+                        <p class="text-xs text-gray-400">完成 3 次特活</p>
+                    </div>
+                    <!-- More achievements... -->
+                </div>
+            </div>`;
+      loadScreen(achievementsHtml, '我的成就', 3);
+    }
+
+    function loadNotificationsScreen() {
+      const notificationsHtml = `
+            <div id="notifications-screen" class="fade-in">
+                 <h2 class="text-xl font-semibold mb-4 text-gray-700"><i class="fas fa-bell mr-2 text-purple-500"></i>通知中心</h2>
+
+                <!-- Filter Tabs -->
+                 <div class="tabs mb-4">
+                     <button class="tab active">全部</button>
+                    <button class="tab">請求 <span class="ml-1 inline-block py-0.5 px-1.5 leading-none text-center whitespace-nowrap align-baseline font-bold bg-red-500 text-white rounded-full text-xs">3</span></button>
+                    <button class="tab">提醒</button>
+                    <button class="tab">系統</button>
+                 </div>
+
+                <div class="space-y-3">
+                     <!-- Example Notification: Swap Request Received -->
+                    <div class="card border-l-4 border-orange-400">
+                        <div class="flex items-start justify-between">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-exchange-alt text-orange-500 text-xl w-6 text-center"></i>
+                                 <div>
+                                    <p class="font-semibold text-gray-800">收到換班請求</p>
+                                    <p class="text-sm text-gray-600"><strong class="font-medium">同工 B</strong> 希望與您交換 週六 10/28 的主日敬拜服事。</p>
+                                    <p class="text-xs text-gray-400 mt-1">2 小時前</p>
+                                </div>
+                            </div>
+                         </div>
+                         <div class="mt-3 pt-3 border-t border-gray-100 flex justify-end space-x-3">
+                            <button class="btn-secondary text-sm py-1 px-3">查看詳情</button>
+                            <button class="btn-primary text-sm py-1 px-3 bg-gradient-to-r from-green-400 to-blue-500">接受</button>
+                         </div>
+                     </div>
+
+                     <!-- Example Notification: Leave Approved (For User) -->
+                     <div class="card border-l-4 border-green-500">
+                        <div class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 text-xl mr-3 mt-1"></i>
+                             <div>
+                                 <p class="font-semibold text-gray-800">休假已核准</p>
+                                 <p class="text-sm text-gray-600">您申請的 11/5 休假已被 <strong class="font-medium">[主責名稱]</strong> 核准。</p>
+                                <p class="text-xs text-gray-400 mt-1">昨天</p>
+                            </div>
+                         </div>
+                     </div>
+
+                     <!-- Example Notification: Reminder -->
+                     <div class="card border-l-4 border-blue-400">
+                         <div class="flex items-start">
+                             <i class="fas fa-clock text-blue-500 text-xl mr-3 mt-1"></i>
+                             <div>
+                                 <p class="font-semibold text-gray-800">服事提醒</p>
+                                <p class="text-sm text-gray-600">提醒您：本週六 09:00 有 主日敬拜 (吉他手) 服事。</p>
+                                 <p class="text-xs text-gray-400 mt-1">3 天前</p>
+                             </div>
+                         </div>
+                    </div>
+
+                     <!-- Example Notification: Swap Request Approval Needed (For Leader) -->
+                    <div class="card border-l-4 border-red-500 bg-red-50">
+                        <div class="flex items-start justify-between">
+                             <div class="flex items-center space-x-3">
+                                <i class="fas fa-exclamation-circle text-red-500 text-xl w-6 text-center"></i>
+                                 <div>
+                                    <p class="font-semibold text-red-800">待審核：換班請求</p>
+                                     <p class="text-sm text-gray-700"><strong class="font-medium">同工 A</strong> 請求 <strong class="font-medium">同工 B</strong> 代班 週六 11/4 主日音控。</p>
+                                    <p class="text-xs text-gray-500 mt-1">剛剛</p>
+                                 </div>
+                            </div>
+                        </div>
+                        <div class="mt-3 pt-3 border-t border-red-100 flex justify-end space-x-3">
+                            <button class="btn-secondary text-sm py-1 px-3 border-red-300 text-red-600 hover:bg-red-100">拒絕</button>
+                             <button class="btn-primary text-sm py-1 px-3 bg-gradient-to-r from-red-500 to-pink-500">核准</button>
+                        </div>
+                     </div>
+                </div>
+             </div>`;
+      loadScreen(notificationsHtml, '通知', 2);
+    }
+
+    function loadProfileScreen() {
+      const profileHtml = `
+            <div id="profile-screen" class="fade-in">
+                 <div class="card text-center -mt-8 relative pt-16">
+                    <img src="https://via.placeholder.com/80/667EEA/fff?text=U" alt="User Avatar" class="avatar w-20 h-20 mx-auto mb-3 absolute -top-10 left-1/2 transform -translate-x-1/2 border-4 border-white shadow-xl">
+                    <p class="font-bold text-xl text-gray-800 mt-2">[使用者名稱]</p>
+                    <p class="text-sm text-gray-500">[角色: 一般服事人員/主責]</p>
+                     <p class="text-sm text-purple-600 mt-1"><i class="fas fa-envelope mr-1"></i> user@example.com</p>
+                    <div class="mt-4 pt-4 border-t border-gray-100 flex justify-around text-center">
+                        <div>
+                            <p class="font-bold text-lg text-indigo-600">15</p>
+                             <p class="text-xs text-gray-500">本年度服事</p>
+                         </div>
+                         <div>
+                            <p class="font-bold text-lg text-green-600">95%</p>
+                            <p class="text-xs text-gray-500">出席率</p>
+                        </div>
+                        <div>
+                             <p class="font-bold text-lg text-yellow-600">Lv. 5</p>
+                            <p class="text-xs text-gray-500">目前等級</p>
+                        </div>
+                    </div>
+                 </div>
+
+                <div class="card">
+                     <h3 class="text-lg font-semibold text-gray-700 mb-3">帳號設定</h3>
+                     <ul class="space-y-2">
+                        <li class="list-item justify-between hover:bg-gray-50 p-2 rounded-md cursor-pointer">
+                             <span><i class="fas fa-user-edit mr-3 text-gray-400 w-5 text-center"></i> 編輯個人資料</span>
+                            <i class="fas fa-chevron-right text-gray-400"></i>
+                        </li>
+                        <li class="list-item justify-between hover:bg-gray-50 p-2 rounded-md cursor-pointer">
+                            <span><i class="fas fa-key mr-3 text-gray-400 w-5 text-center"></i> 修改密碼</span>
+                            <i class="fas fa-chevron-right text-gray-400"></i>
+                         </li>
+                         <li class="list-item justify-between hover:bg-gray-50 p-2 rounded-md cursor-pointer">
+                             <span><i class="fas fa-calendar-check mr-3 text-gray-400 w-5 text-center"></i> Google 行事曆同步</span>
+                             <i class="fas fa-chevron-right text-gray-400"></i>
+                         </li>
+                         <li class="list-item justify-between hover:bg-gray-50 p-2 rounded-md cursor-pointer">
+                            <span><i class="fab fa-line mr-3 text-gray-400 w-5 text-center"></i> Line 通知綁定</span>
+                             <i class="fas fa-chevron-right text-gray-400"></i>
+                         </li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                     <h3 class="text-lg font-semibold text-gray-700 mb-3">偏好設定</h3>
+                     <div class="list-item justify-between">
+                         <span><i class="fas fa-bell-slash mr-3 text-gray-400 w-5 text-center"></i> 勿擾模式</span>
+                         <input type="checkbox" class="form-checkbox h-5 w-5 text-indigo-600 rounded">
+                     </div>
+                     <div class="list-item justify-between">
+                         <span><i class="fas fa-moon mr-3 text-gray-400 w-5 text-center"></i> 深色模式</span>
+                        <input type="checkbox" class="form-checkbox h-5 w-5 text-indigo-600 rounded">
+                     </div>
+                 </div>
+
+                <div class="mt-6 text-center">
+                     <button class="btn-secondary text-red-500 border-red-300 hover:bg-red-100 px-8">
+                        <i class="fas fa-sign-out-alt mr-2"></i> 登出
+                     </button>
+                 </div>
+            </div>`;
+      loadScreen(profileHtml, '個人中心', 4);
+    }
+
+    // --- Leader Specific Screens ---
+    function loadApprovalScreen() {
+      const approvalHtml = `
+             <div id="approval-screen" class="fade-in">
+                 <h2 class="text-xl font-semibold mb-4 text-gray-700"><i class="fas fa-check-double mr-2 text-indigo-500"></i>待審核項目</h2>
+                 <div class="tabs mb-4">
+                     <button class="tab active">全部 <span class="ml-1 inline-block py-0.5 px-1.5 leading-none text-center whitespace-nowrap align-baseline font-bold bg-red-500 text-white rounded-full text-xs">3</span></button>
+                     <button class="tab">換班 <span class="ml-1 inline-block py-0.5 px-1.5 leading-none text-center whitespace-nowrap align-baseline font-bold bg-red-500 text-white rounded-full text-xs">2</span></button>
+                    <button class="tab">請假 <span class="ml-1 inline-block py-0.5 px-1.5 leading-none text-center whitespace-nowrap align-baseline font-bold bg-red-500 text-white rounded-full text-xs">1</span></button>
+                </div>
+
+                <div class="space-y-3">
+                    <!-- Example Approval Card: Swap Request -->
+                     <div class="card border-l-4 border-orange-400">
+                         <div class="flex items-start justify-between">
+                             <div class="flex items-start space-x-3">
+                                 <i class="fas fa-exchange-alt text-orange-500 text-2xl w-8 text-center mt-1"></i>
+                                 <div>
+                                    <p class="font-semibold text-gray-800">換班請求</p>
+                                    <p class="text-sm text-gray-600">
+                                         <strong class="font-medium">同工 A</strong> (吉他手) 請求與 <strong class="font-medium">同工 B</strong> 交換
+                                        <br>服事：<span class="text-indigo-600">週六 11/4 主日敬拜</span>
+                                     </p>
+                                     <p class="text-xs text-gray-500 bg-yellow-50 p-1 rounded inline-block mt-1">理由：家庭因素</p>
+                                     <p class="text-xs text-gray-400 mt-1">請求時間：1 小時前</p>
+                                </div>
+                            </div>
+                         </div>
+                        <div class="mt-3 pt-3 border-t border-gray-100 flex justify-end space-x-3">
+                             <button class="btn-secondary text-sm py-1 px-3 border-gray-300 text-gray-600 hover:bg-gray-100">拒絕</button>
+                            <button class="btn-primary text-sm py-1 px-3 bg-gradient-to-r from-green-400 to-blue-500">核准換班</button>
+                         </div>
+                     </div>
+
+                    <!-- Example Approval Card: Leave Request -->
+                     <div class="card border-l-4 border-blue-400">
+                         <div class="flex items-start justify-between">
+                             <div class="flex items-start space-x-3">
+                                 <i class="fas fa-plane-departure text-blue-500 text-2xl w-8 text-center mt-1"></i>
+                                 <div>
+                                    <p class="font-semibold text-gray-800">休假申請</p>
+                                    <p class="text-sm text-gray-600">
+                                        <strong class="font-medium">同工 C</strong> 申請休假
+                                        <br>日期：<span class="text-indigo-600">11月 10日 - 11月 12日</span>
+                                    </p>
+                                    <p class="text-xs text-gray-400 mt-1">申請時間：昨天</p>
+                                 </div>
+                            </div>
+                        </div>
+                         <div class="mt-3 pt-3 border-t border-gray-100 flex justify-end space-x-3">
+                             <button class="btn-secondary text-sm py-1 px-3 border-gray-300 text-gray-600 hover:bg-gray-100">拒絕</button>
+                            <button class="btn-primary text-sm py-1 px-3 bg-gradient-to-r from-green-400 to-blue-500">核准休假</button>
+                        </div>
+                     </div>
+
+                     <!-- More approval items... -->
+                 </div>
+             </div>`;
+      loadScreen(approvalHtml, '審核中心', 2); // Likely accessed via Notifications or special Leader menu
+    }
+
+    // --- Initial Load ---
+    loadDashboardScreen(); // Load dashboard on start
+
+  </script>
+
+</body>
+
+</html>

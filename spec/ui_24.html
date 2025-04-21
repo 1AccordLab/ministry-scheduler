@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>教會服事表管理系統</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    /* Custom styles for gamification elements */
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: .7;
+      }
+    }
+
+    .achievement-badge {
+      background: linear-gradient(135deg, #ffd700, #ffae00);
+      border: 2px solid #e0ac00;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2), inset 0 -2px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .achievement-badge-locked {
+      background: linear-gradient(135deg, #c0c0c0, #a0a0a0);
+      border: 2px solid #909090;
+      filter: grayscale(80%);
+    }
+
+    .progress-bar-container {
+      background-color: #e0e0e0;
+      border-radius: 9999px;
+      overflow: hidden;
+      height: 10px;
+    }
+
+    .progress-bar {
+      background: linear-gradient(90deg, #4ade80, #22c55e);
+      height: 100%;
+      border-radius: 9999px;
+      transition: width 0.5s ease-in-out;
+    }
+
+    .bottom-nav-item.active i,
+    .bottom-nav-item.active span {
+      color: #3b82f6;
+      /* Blue-500 */
+    }
+
+    /* Simulate iOS safe area */
+    body {
+      padding-bottom: calc(60px + env(safe-area-inset-bottom));
+      /* Adjust 60px based on actual nav height */
+    }
+
+    .bottom-nav {
+      padding-bottom: env(safe-area-inset-bottom);
+      height: calc(60px + env(safe-area-inset-bottom));
+    }
+
+    /* Minimal Scrollbar for non-mobile */
+    @media (min-width: 768px) {
+      ::-webkit-scrollbar {
+        width: 5px;
+        height: 5px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #c5c5c5;
+        border-radius: 10px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100 font-sans">
+
+  <!-- === App Container === -->
+  <div class="max-w-md mx-auto bg-white shadow-lg min-h-screen">
+
+    <!-- == Screen: Login == -->
+    <div id="screen-login"
+      class="p-6 flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-blue-500 to-purple-600">
+      <i class="fas fa-church text-6xl text-white mb-6 animate-pulse"></i>
+      <h1 class="text-3xl font-bold text-white mb-8">服事表系統</h1>
+      <div class="w-full max-w-xs">
+        <input type="text" placeholder="帳號 (Username)"
+          class="w-full px-4 py-3 mb-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-400">
+        <input type="password" placeholder="密碼 (Password)"
+          class="w-full px-4 py-3 mb-6 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-400">
+        <button
+          class="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-bold py-3 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+          <i class="fas fa-sign-in-alt mr-2"></i>登入
+        </button>
+        <a href="#" class="block text-center text-sm text-blue-100 hover:text-white mt-4">忘記密碼?</a>
+      </div>
+    </div>
+
+    <!-- Screens below are hidden by default, shown by JS -->
+
+    <!-- == Screen: User Dashboard == -->
+    <div id="screen-user-dashboard" class="p-4 pb-20 hidden">
+      <!-- Header -->
+      <div class="flex justify-between items-center mb-4">
+        <div>
+          <h2 class="text-xl font-semibold text-gray-700">嗨, 以諾! 👋</h2>
+          <p class="text-sm text-gray-500">這是你接下來的服事總覽</p>
+        </div>
+        <img src="https://via.placeholder.com/40/3b82f6/ffffff?text=E" alt="Avatar"
+          class="w-10 h-10 rounded-full object-cover shadow">
+      </div>
+
+      <!-- Upcoming Service Highlight -->
+      <div
+        class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-4 rounded-xl shadow-lg mb-5 transform hover:scale-[1.02] transition duration-300">
+        <h3 class="text-lg font-bold mb-2 flex items-center"><i class="fas fa-bell fa-fw mr-2 animate-pulse"></i>下次服事提醒
+        </h3>
+        <p class="text-md"><i class="fas fa-calendar-alt fa-fw mr-1"></i> 2023/10/28 (六) 10:00</p>
+        <p class="text-md"><i class="fas fa-guitar fa-fw mr-1"></i> 主日敬拜 - 吉他手</p>
+        <div class="mt-2 text-xs opacity-80">地點: 大會堂</div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="grid grid-cols-2 gap-3 mb-5">
+        <button
+          class="bg-green-100 text-green-700 p-3 rounded-lg shadow-sm hover:bg-green-200 transition duration-200 flex items-center justify-center text-sm font-medium">
+          <i class="fas fa-calendar-plus fa-fw mr-2"></i> 申請休假
+        </button>
+        <button
+          class="bg-orange-100 text-orange-700 p-3 rounded-lg shadow-sm hover:bg-orange-200 transition duration-200 flex items-center justify-center text-sm font-medium">
+          <i class="fas fa-exchange-alt fa-fw mr-2"></i> 請求換班
+        </button>
+      </div>
+
+      <!-- Upcoming Schedule List -->
+      <h3 class="text-lg font-semibold text-gray-800 mb-2">我的服事列表</h3>
+      <div class="space-y-3">
+        <!-- Schedule Item 1 -->
+        <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-200 flex items-center justify-between">
+          <div>
+            <div class="font-medium text-gray-800">主日敬拜 - 吉他手</div>
+            <div class="text-sm text-gray-500"><i class="far fa-clock fa-fw mr-1"></i> 2023/10/28 (六) 10:00</div>
+          </div>
+          <i class="fas fa-chevron-right text-gray-400"></i>
+        </div>
+        <!-- Schedule Item 2 -->
+        <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-200 flex items-center justify-between">
+          <div>
+            <div class="font-medium text-gray-800">SC服事 -招待</div>
+            <div class="text-sm text-gray-500"><i class="far fa-clock fa-fw mr-1"></i> 2023/11/05 (日) 09:30</div>
+          </div>
+          <i class="fas fa-chevron-right text-gray-400"></i>
+        </div>
+        <!-- Schedule Item 3 -->
+        <div
+          class="bg-white p-3 rounded-lg shadow-sm border border-gray-200 flex items-center justify-between opacity-70">
+          <div>
+            <div class="font-medium text-gray-800"><i class="fas fa-exclamation-triangle text-yellow-500 mr-1"></i> 禱告會
+              - 帶領 <span class="text-xs text-yellow-600">(待確認)</span></div>
+            <div class="text-sm text-gray-500"><i class="far fa-clock fa-fw mr-1"></i> 2023/11/10 (五) 19:30</div>
+          </div>
+          <i class="fas fa-chevron-right text-gray-400"></i>
+        </div>
+      </div>
+
+      <!-- Achievement Sneak Peek -->
+      <div class="mt-6 bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+        <h4 class="text-md font-semibold text-yellow-800 mb-2 flex items-center"><i
+            class="fas fa-star text-yellow-500 mr-2"></i>我的服事成就</h4>
+        <div class="flex items-center mb-2">
+          <span class="text-sm mr-2 text-yellow-700">本月服事進度:</span>
+          <div class="progress-bar-container flex-grow">
+            <div class="progress-bar" style="width: 75%;"></div>
+          </div>
+          <span class="text-sm ml-2 font-bold text-yellow-700">3/4 次</span>
+        </div>
+        <div class="flex space-x-2 overflow-x-auto pb-1">
+          <div
+            class="achievement-badge w-10 h-10 rounded-full flex items-center justify-center text-xl text-white flex-shrink-0"
+            title="忠心服事者 (5次服事)"><i class="fas fa-heart"></i></div>
+          <div
+            class="achievement-badge w-10 h-10 rounded-full flex items-center justify-center text-xl text-white flex-shrink-0"
+            title="敬拜達人 (3次主日敬拜)"><i class="fas fa-music"></i></div>
+          <div
+            class="achievement-badge-locked w-10 h-10 rounded-full flex items-center justify-center text-xl text-gray-600 flex-shrink-0"
+            title="全勤獎 (鎖定中)"><i class="fas fa-calendar-check"></i></div>
+          <div
+            class="achievement-badge-locked w-10 h-10 rounded-full flex items-center justify-center text-xl text-gray-600 flex-shrink-0"
+            title="代禱勇士 (鎖定中)"><i class="fas fa-fire"></i></div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- == Screen: Schedule View (All) == -->
+    <div id="screen-schedule-all" class="p-4 pb-20 hidden">
+      <!-- Header & Filters -->
+      <div class="mb-4">
+        <h2 class="text-xl font-semibold text-gray-800 mb-3">服事總表</h2>
+        <div class="flex items-center space-x-2 overflow-x-auto pb-2">
+          <input type="date" value="2023-10-27"
+            class="p-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 flex-shrink-0">
+          <select
+            class="p-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 flex-shrink-0">
+            <option>每月</option>
+            <option selected>每週</option>
+            <option>每日</option>
+          </select>
+          <select
+            class="p-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 flex-shrink-0">
+            <option>所有服事</option>
+            <option>主日聚會</option>
+            <option>SC 服事</option>
+            <option>禱告會</option>
+            <option>特殊活動</option>
+          </select>
+          <button
+            class="p-2 border rounded-md text-sm bg-gray-200 hover:bg-gray-300 focus:outline-none flex-shrink-0"><i
+              class="fas fa-filter mr-1"></i>進階</button>
+        </div>
+      </div>
+
+      <!-- Weekly Schedule View -->
+      <div class="space-y-4">
+        <!-- Day Block -->
+        <div>
+          <h3 class="text-lg font-semibold text-blue-600 mb-2 pb-1 border-b border-blue-200">10/28 (六)</h3>
+          <div class="space-y-2 pl-2">
+            <!-- Ministry Item -->
+            <div class="bg-white p-3 rounded-lg shadow-sm border-l-4 border-green-500">
+              <div class="font-medium text-gray-800">主日敬拜 (10:00)</div>
+              <div class="text-sm text-gray-600 mt-1">
+                <span class="inline-block bg-green-100 text-green-800 px-2 py-0.5 rounded-full text-xs mr-1 mb-1"><i
+                    class="fas fa-guitar fa-fw"></i> 以諾</span>
+                <span class="inline-block bg-green-100 text-green-800 px-2 py-0.5 rounded-full text-xs mr-1 mb-1"><i
+                    class="fas fa-keyboard fa-fw"></i> 雅各</span>
+                <span class="inline-block bg-green-100 text-green-800 px-2 py-0.5 rounded-full text-xs mr-1 mb-1"><i
+                    class="fas fa-drum fa-fw"></i> 彼得</span>
+                <span class="inline-block bg-red-100 text-red-800 px-2 py-0.5 rounded-full text-xs mr-1 mb-1"><i
+                    class="fas fa-microphone fa-fw"></i> <i class="fas fa-question-circle ml-1"></i> 未安排</span>
+                <span class="inline-block bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-xs mr-1 mb-1"><i
+                    class="fas fa-sliders-h fa-fw"></i> 約翰 (音控)</span>
+              </div>
+            </div>
+            <div class="bg-white p-3 rounded-lg shadow-sm border-l-4 border-orange-500">
+              <div class="font-medium text-gray-800">場地預備 (09:00)</div>
+              <div class="text-sm text-gray-600 mt-1">
+                <span
+                  class="inline-block bg-orange-100 text-orange-800 px-2 py-0.5 rounded-full text-xs mr-1 mb-1">保羅</span>
+                <span
+                  class="inline-block bg-orange-100 text-orange-800 px-2 py-0.5 rounded-full text-xs mr-1 mb-1">西拉</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Day Block -->
+        <div>
+          <h3 class="text-lg font-semibold text-blue-600 mb-2 pb-1 border-b border-blue-200">10/29 (日)</h3>
+          <div class="space-y-2 pl-2">
+            <div class="bg-white p-3 rounded-lg shadow-sm border-l-4 border-green-500">
+              <div class="font-medium text-gray-800">主日聚會 (10:00)</div>
+              <div class="text-sm text-gray-600 mt-1">
+                <span class="inline-block bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full text-xs mr-1 mb-1"><i
+                    class="fas fa-lock mr-1"></i> 樂團 B <span class="text-xs">(A團有人已排)</span></span>
+                <span class="inline-block bg-green-100 text-green-800 px-2 py-0.5 rounded-full text-xs mr-1 mb-1">馬利亞
+                  (主領)</span>
+                <span class="inline-block bg-green-100 text-green-800 px-2 py-0.5 rounded-full text-xs mr-1 mb-1">路加
+                  (PPT)</span>
+              </div>
+            </div>
+            <div class="bg-white p-3 rounded-lg shadow-sm border-l-4 border-purple-500">
+              <div class="font-medium text-gray-800">SC 服事 (09:30)</div>
+              <div class="text-sm text-gray-600 mt-1">
+                <span
+                  class="inline-block bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full text-xs mr-1 mb-1">提摩太</span>
+                <span
+                  class="inline-block bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full text-xs mr-1 mb-1">腓力門</span>
+                <span class="inline-block bg-red-100 text-red-800 px-2 py-0.5 rounded-full text-xs mr-1 mb-1"><i
+                    class="fas fa-user-clock mr-1"></i> 以諾 <span class="text-xs">(已達本月上限)</span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Add more days as needed -->
+      </div>
+    </div>
+
+    <!-- == Screen: Request Leave/Swap Form == -->
+    <div id="screen-request-form" class="p-4 pb-20 hidden">
+      <button class="text-blue-500 mb-4"><i class="fas fa-chevron-left mr-1"></i> 返回</button>
+      <h2 class="text-xl font-semibold text-gray-800 mb-4" id="request-form-title">申請休假</h2>
+
+      <form class="space-y-4">
+        <div>
+          <label for="request-type" class="block text-sm font-medium text-gray-700 mb-1">申請類型</label>
+          <select id="request-type"
+            class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
+            <option value="leave" selected>休假</option>
+            <option value="swap">換班</option>
+            <option value="substitute">找代班</option>
+          </select>
+        </div>
+
+        <!-- Fields for Leave -->
+        <div id="leave-fields">
+          <div>
+            <label for="leave-date-start" class="block text-sm font-medium text-gray-700 mb-1">開始日期</label>
+            <input type="date" id="leave-date-start"
+              class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
+          </div>
+          <div>
+            <label for="leave-date-end" class="block text-sm font-medium text-gray-700 mb-1">結束日期 (可選)</label>
+            <input type="date" id="leave-date-end"
+              class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
+          </div>
+        </div>
+
+        <!-- Fields for Swap/Substitute (Hidden by default) -->
+        <div id="swap-sub-fields" class="hidden space-y-4">
+          <div>
+            <label for="swap-ministry" class="block text-sm font-medium text-gray-700 mb-1">要換/代的服事</label>
+            <select id="swap-ministry"
+              class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
+              <option>2023/10/28 主日敬拜 - 吉他手</option>
+              <option>2023/11/05 SC 服事 - 招待</option>
+            </select>
+          </div>
+          <div id="swap-target-field" class="hidden">
+            <label for="swap-target" class="block text-sm font-medium text-gray-700 mb-1">想跟誰換班?</label>
+            <select id="swap-target"
+              class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
+              <option>雅各</option>
+              <option>彼得</option>
+              <option>約翰</option>
+            </select>
+          </div>
+          <div id="substitute-message-field" class="hidden">
+            <p class="text-sm text-gray-600">系統將會自動發送 Line 訊息給所有符合資格的同工。第一個接受者將送交主責審核。</p>
+          </div>
+        </div>
+
+        <div>
+          <label for="request-reason" class="block text-sm font-medium text-gray-700 mb-1">原因 (Reason)</label>
+          <textarea id="request-reason" rows="3" placeholder="請簡述原因"
+            class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
+        </div>
+
+        <button type="submit"
+          class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg shadow-md transition duration-300">
+          <i class="fas fa-paper-plane mr-2"></i> 送出申請
+        </button>
+      </form>
+    </div>
+
+    <!-- == Screen: Achievements == -->
+    <div id="screen-achievements" class="p-4 pb-20 hidden bg-gradient-to-b from-yellow-50 to-white">
+      <div class="flex items-center mb-5">
+        <img src="https://via.placeholder.com/50/3b82f6/ffffff?text=E" alt="Avatar"
+          class="w-12 h-12 rounded-full object-cover shadow-md mr-3 border-2 border-yellow-400">
+        <div>
+          <h2 class="text-xl font-bold text-yellow-900">以諾的服事勳章</h2>
+          <p class="text-sm text-yellow-700">總積分: <span class="font-bold">1250</span> ✨</p>
+        </div>
+      </div>
+
+      <!-- Current Goals / Progress -->
+      <div class="mb-6">
+        <h3 class="text-lg font-semibold text-gray-700 mb-2">進行中的挑戰</h3>
+        <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-200 mb-2">
+          <div class="flex justify-between items-center mb-1">
+            <span class="text-sm font-medium text-gray-700">本月全勤獎</span>
+            <span class="text-xs font-bold text-green-600">3 / 4 次</span>
+          </div>
+          <div class="progress-bar-container">
+            <div class="progress-bar" style="width: 75%;"></div>
+          </div>
+        </div>
+        <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-200">
+          <div class="flex justify-between items-center mb-1">
+            <span class="text-sm font-medium text-gray-700">敬拜同工 (Lv.2)</span>
+            <span class="text-xs font-bold text-blue-600">8 / 10 次敬拜服事</span>
+          </div>
+          <div class="progress-bar-container">
+            <div class="progress-bar bg-gradient-to-r from-blue-400 to-blue-600" style="width: 80%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Earned Badges -->
+      <h3 class="text-lg font-semibold text-gray-700 mb-3">已獲得的徽章</h3>
+      <div class="grid grid-cols-3 gap-4 text-center">
+        <!-- Badge Item -->
+        <div class="flex flex-col items-center p-2 rounded-lg hover:bg-yellow-100 transition duration-200">
+          <div
+            class="achievement-badge w-16 h-16 rounded-full flex items-center justify-center text-3xl text-white mb-1 shadow-lg"
+            title="忠心服事者">
+            <i class="fas fa-heart"></i>
+          </div>
+          <span class="text-xs font-medium text-yellow-800">忠心服事者</span>
+          <span class="text-xs text-gray-500">服事 5 次</span>
+        </div>
+        <!-- Badge Item -->
+        <div class="flex flex-col items-center p-2 rounded-lg hover:bg-yellow-100 transition duration-200">
+          <div
+            class="achievement-badge w-16 h-16 rounded-full flex items-center justify-center text-3xl text-white mb-1 shadow-lg"
+            title="敬拜達人">
+            <i class="fas fa-music"></i>
+          </div>
+          <span class="text-xs font-medium text-yellow-800">敬拜達人</span>
+          <span class="text-xs text-gray-500">主日敬拜 3 次</span>
+        </div>
+        <!-- Badge Item -->
+        <div class="flex flex-col items-center p-2 rounded-lg hover:bg-yellow-100 transition duration-200">
+          <div
+            class="achievement-badge w-16 h-16 rounded-full flex items-center justify-center text-3xl text-white mb-1 shadow-lg"
+            title="即刻救援">
+            <i class="fas fa-life-ring"></i>
+          </div>
+          <span class="text-xs font-medium text-yellow-800">即刻救援</span>
+          <span class="text-xs text-gray-500">成功代班 1 次</span>
+        </div>
+        <!-- Locked Badge Item -->
+        <div class="flex flex-col items-center p-2 rounded-lg opacity-60">
+          <div
+            class="achievement-badge-locked w-16 h-16 rounded-full flex items-center justify-center text-3xl text-gray-600 mb-1 shadow-inner"
+            title="全勤獎 (未解鎖)">
+            <i class="fas fa-calendar-check"></i>
+          </div>
+          <span class="text-xs font-medium text-gray-600">本月全勤</span>
+          <span class="text-xs text-gray-500">完成 4 次</span>
+        </div>
+        <!-- Locked Badge Item -->
+        <div class="flex flex-col items-center p-2 rounded-lg opacity-60">
+          <div
+            class="achievement-badge-locked w-16 h-16 rounded-full flex items-center justify-center text-3xl text-gray-600 mb-1 shadow-inner"
+            title="代禱勇士 (未解鎖)">
+            <i class="fas fa-fire"></i>
+          </div>
+          <span class="text-xs font-medium text-gray-600">代禱勇士</span>
+          <span class="text-xs text-gray-500">禱告會 5 次</span>
+        </div>
+        <!-- Locked Badge Item -->
+        <div class="flex flex-col items-center p-2 rounded-lg opacity-60">
+          <div
+            class="achievement-badge-locked w-16 h-16 rounded-full flex items-center justify-center text-3xl text-gray-600 mb-1 shadow-inner"
+            title="特殊活動專家 (未解鎖)">
+            <i class="fas fa-star"></i>
+          </div>
+          <span class="text-xs font-medium text-gray-600">活動專家</span>
+          <span class="text-xs text-gray-500">特殊活動 3 次</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- == Screen: Leader/Admin Dashboard == -->
+    <div id="screen-leader-dashboard" class="p-4 pb-20 hidden">
+      <!-- Header -->
+      <div class="flex justify-between items-center mb-4">
+        <div>
+          <h2 class="text-xl font-semibold text-gray-700">管理中心 🛡️</h2>
+          <p class="text-sm text-gray-500">主責: 敬拜團</p>
+        </div>
+        <i class="fas fa-user-shield text-3xl text-blue-500"></i>
+      </div>
+
+      <!-- Pending Approvals -->
+      <div class="bg-red-50 p-4 rounded-lg border border-red-200 mb-5 shadow">
+        <h3 class="text-lg font-semibold text-red-800 mb-3 flex items-center"><i
+            class="fas fa-exclamation-circle text-red-600 mr-2"></i> 待審核請求 (3)</h3>
+        <div class="space-y-3">
+          <!-- Approval Item -->
+          <div class="bg-white p-3 rounded-md shadow-sm border border-gray-200">
+            <p class="text-sm font-medium text-gray-800 mb-1">雅各 請求換班 (與 以諾)</p>
+            <p class="text-xs text-gray-500 mb-2">原因: 家中有事</p>
+            <p class="text-xs text-gray-500 mb-2">涉及服事: 2023/11/12 主日敬拜 - 琴手</p>
+            <div class="flex justify-end space-x-2">
+              <button class="px-3 py-1 bg-red-500 text-white text-xs font-bold rounded hover:bg-red-600"><i
+                  class="fas fa-times mr-1"></i> 拒絕</button>
+              <button class="px-3 py-1 bg-green-500 text-white text-xs font-bold rounded hover:bg-green-600"><i
+                  class="fas fa-check mr-1"></i> 核准</button>
+            </div>
+          </div>
+          <!-- Approval Item -->
+          <div class="bg-white p-3 rounded-md shadow-sm border border-gray-200">
+            <p class="text-sm font-medium text-gray-800 mb-1">馬利亞 申請休假</p>
+            <p class="text-xs text-gray-500 mb-2">日期: 2023/11/15 - 2023/11/18</p>
+            <p class="text-xs text-gray-500 mb-2">原因: 家庭旅遊</p>
+            <div class="flex justify-end space-x-2">
+              <button class="px-3 py-1 bg-red-500 text-white text-xs font-bold rounded hover:bg-red-600"><i
+                  class="fas fa-times mr-1"></i> 拒絕</button>
+              <button class="px-3 py-1 bg-green-500 text-white text-xs font-bold rounded hover:bg-green-600"><i
+                  class="fas fa-check mr-1"></i> 核准</button>
+            </div>
+          </div>
+          <!-- Approval Item -->
+          <div class="bg-white p-3 rounded-md shadow-sm border border-gray-200">
+            <p class="text-sm font-medium text-gray-800 mb-1">系統代發: 代班請求 (來自 彼得)</p>
+            <p class="text-xs text-gray-500 mb-2">接受者: 提摩太</p>
+            <p class="text-xs text-gray-500 mb-2">涉及服事: 2023/11/19 主日敬拜 - 鼓手</p>
+            <div class="flex justify-end space-x-2">
+              <button class="px-3 py-1 bg-red-500 text-white text-xs font-bold rounded hover:bg-red-600"><i
+                  class="fas fa-times mr-1"></i> 拒絕</button>
+              <button class="px-3 py-1 bg-green-500 text-white text-xs font-bold rounded hover:bg-green-600"><i
+                  class="fas fa-check mr-1"></i> 核准</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions for Leader -->
+      <div class="grid grid-cols-2 gap-3 mb-5">
+        <button
+          class="bg-blue-100 text-blue-700 p-3 rounded-lg shadow-sm hover:bg-blue-200 transition duration-200 flex items-center justify-center text-sm font-medium">
+          <i class="fas fa-calendar-alt fa-fw mr-2"></i> 排定服事
+        </button>
+        <button
+          class="bg-purple-100 text-purple-700 p-3 rounded-lg shadow-sm hover:bg-purple-200 transition duration-200 flex items-center justify-center text-sm font-medium">
+          <i class="fas fa-users fa-fw mr-2"></i> 管理團隊
+        </button>
+        <button
+          class="bg-yellow-100 text-yellow-700 p-3 rounded-lg shadow-sm hover:bg-yellow-200 transition duration-200 flex items-center justify-center text-sm font-medium col-span-2">
+          <i class="fas fa-chart-bar fa-fw mr-2"></i> 查看統計報告
+        </button>
+      </div>
+
+      <!-- Team Overview (Simplified) -->
+      <h3 class="text-lg font-semibold text-gray-800 mb-2">敬拜團概況</h3>
+      <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-200">
+        <p class="text-sm text-gray-600 mb-2">下週主日 (11/5) 狀況:</p>
+        <ul class="list-disc list-inside text-sm space-y-1">
+          <li class="text-green-600">主領: 已安排 (約翰)</li>
+          <li class="text-green-600">琴手: 已安排 (馬利亞)</li>
+          <li class="text-red-600">吉他手: <span class="font-semibold">尚缺</span> (以諾申請休假) <button
+              class="text-blue-500 text-xs ml-1">(立即處理)</button></li>
+          <li class="text-green-600">鼓手: 已安排 (彼得)</li>
+          <li class="text-yellow-600">貝斯手: <span class="font-semibold">衝突</span> (安得烈 vs. 腓力-不能同時排) <button
+              class="text-blue-500 text-xs ml-1">(查看詳情)</button></li>
+        </ul>
+      </div>
+    </div>
+
+
+    <!-- == Screen: Scheduling Interface (Leader/Admin - Simplified Mobile View) == -->
+    <div id="screen-scheduling-interface" class="pb-20 hidden">
+      <!-- Header -->
+      <div class="sticky top-0 bg-white shadow-sm z-10 p-4">
+        <div class="flex justify-between items-center mb-3">
+          <h2 class="text-xl font-semibold text-gray-800">排定服事: 主日敬拜</h2>
+          <button class="text-blue-500 font-bold"><i class="fas fa-save mr-1"></i> 儲存</button>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button class="text-gray-500 hover:text-blue-500"><i class="fas fa-chevron-left fa-fw"></i></button>
+          <input type="date" value="2023-11-05"
+            class="p-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 flex-grow text-center">
+          <button class="text-gray-500 hover:text-blue-500"><i class="fas fa-chevron-right fa-fw"></i></button>
+        </div>
+      </div>
+
+      <!-- Schedule Grid -->
+      <div class="p-4 space-y-4">
+        <!-- Service Slot: Leader -->
+        <div class="bg-white p-3 rounded-lg shadow border-l-4 border-blue-500">
+          <div class="flex justify-between items-center mb-2">
+            <span class="font-medium text-blue-700">主領</span>
+            <span class="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">需要 1 人</span>
+          </div>
+          <!-- Assigned Person -->
+          <div class="flex items-center justify-between p-2 bg-gray-50 rounded-md mb-2">
+            <div class="flex items-center">
+              <img src="https://via.placeholder.com/30/7e22ce/ffffff?text=J" alt="Avatar"
+                class="w-6 h-6 rounded-full mr-2">
+              <span class="text-sm text-gray-700">約翰</span>
+            </div>
+            <button class="text-red-500 hover:text-red-700 text-xs"><i class="fas fa-times-circle"></i> 移除</button>
+          </div>
+          <!-- Add Button -->
+          <button class="w-full text-center text-sm text-blue-500 hover:bg-blue-50 py-1 rounded-md">
+            <i class="fas fa-plus-circle mr-1"></i> 新增人員
+          </button>
+        </div>
+
+        <!-- Service Slot: Keyboard -->
+        <div class="bg-white p-3 rounded-lg shadow border-l-4 border-green-500">
+          <div class="flex justify-between items-center mb-2">
+            <span class="font-medium text-green-700">琴手</span>
+            <span class="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full">需要 1 人</span>
+          </div>
+          <div class="flex items-center justify-between p-2 bg-gray-50 rounded-md mb-2">
+            <div class="flex items-center">
+              <img src="https://via.placeholder.com/30/ea580c/ffffff?text=M" alt="Avatar"
+                class="w-6 h-6 rounded-full mr-2">
+              <span class="text-sm text-gray-700">馬利亞</span>
+            </div>
+            <button class="text-red-500 hover:text-red-700 text-xs"><i class="fas fa-times-circle"></i> 移除</button>
+          </div>
+          <button class="w-full text-center text-sm text-blue-500 hover:bg-blue-50 py-1 rounded-md">
+            <i class="fas fa-plus-circle mr-1"></i> 新增人員
+          </button>
+        </div>
+
+        <!-- Service Slot: Guitar (Needs assignment, shows constraints) -->
+        <div class="bg-white p-3 rounded-lg shadow border-l-4 border-red-500">
+          <div class="flex justify-between items-center mb-2">
+            <span class="font-medium text-red-700">吉他手</span>
+            <span class="text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded-full">尚缺 1 人</span>
+          </div>
+          <!-- Potential Candidates (with constraint info) -->
+          <div class="space-y-1 mb-2 max-h-32 overflow-y-auto text-sm p-1">
+            <div class="flex items-center justify-between p-1 hover:bg-gray-50 rounded">
+              <span>以諾</span>
+              <span class="text-xs text-red-600"><i class="fas fa-calendar-times mr-1"></i> 已申請休假</span>
+            </div>
+            <div class="flex items-center justify-between p-1 hover:bg-gray-50 rounded">
+              <span>西拉</span>
+              <button class="text-xs bg-green-500 text-white px-2 py-0.5 rounded hover:bg-green-600"><i
+                  class="fas fa-plus"></i> 加入</button>
+            </div>
+            <div class="flex items-center justify-between p-1 hover:bg-gray-50 rounded">
+              <span>保羅</span>
+              <button class="text-xs bg-green-500 text-white px-2 py-0.5 rounded hover:bg-green-600"><i
+                  class="fas fa-plus"></i> 加入</button>
+            </div>
+            <div class="flex items-center justify-between p-1 opacity-50">
+              <span>雅各</span>
+              <span class="text-xs text-gray-500"><i class="fas fa-lock mr-1"></i> 已達本月上限 (2次)</span>
+            </div>
+          </div>
+          <button class="w-full text-center text-sm text-blue-500 hover:bg-blue-50 py-1 rounded-md">
+            <i class="fas fa-search mr-1"></i> 顯示更多/搜尋
+          </button>
+        </div>
+
+        <!-- Service Slot: Bass (Conflict) -->
+        <div class="bg-white p-3 rounded-lg shadow border-l-4 border-yellow-500">
+          <div class="flex justify-between items-center mb-2">
+            <span class="font-medium text-yellow-700">貝斯手</span>
+            <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full">需要 1 人</span>
+          </div>
+          <!-- Assigned Person (with conflict indicator) -->
+          <div class="flex items-center justify-between p-2 bg-yellow-50 border border-yellow-300 rounded-md mb-2">
+            <div class="flex items-center">
+              <img src="https://via.placeholder.com/30/0ea5e9/ffffff?text=A" alt="Avatar"
+                class="w-6 h-6 rounded-full mr-2">
+              <span class="text-sm text-gray-700">安得烈</span>
+              <i class="fas fa-exclamation-triangle text-yellow-500 ml-2 text-xs" title="與腓力衝突"></i>
+            </div>
+            <button class="text-red-500 hover:text-red-700 text-xs"><i class="fas fa-times-circle"></i> 移除</button>
+          </div>
+          <div class="text-xs text-yellow-700 mb-2"><i class="fas fa-info-circle mr-1"></i> 安得烈 與 腓力 不能同時安排</div>
+          <button class="w-full text-center text-sm text-blue-500 hover:bg-blue-50 py-1 rounded-md">
+            <i class="fas fa-plus-circle mr-1"></i> 變更/新增人員
+          </button>
+        </div>
+
+        <!-- Locked Group Example -->
+        <div class="bg-gray-200 p-3 rounded-lg shadow-inner border-l-4 border-gray-400 opacity-70">
+          <div class="flex justify-between items-center">
+            <span class="font-medium text-gray-600">樂團 B</span>
+            <span class="text-xs text-gray-500"><i class="fas fa-lock mr-1"></i> 無法安排</span>
+          </div>
+          <p class="text-xs text-gray-500 mt-1">原因: 樂團 A 成員 (約翰) 已排定主領。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Navigation Bar -->
+    <nav
+      class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white border-t border-gray-200 shadow-inner h-[60px] flex justify-around items-center text-gray-500 z-20 bottom-nav">
+      <button class="flex flex-col items-center justify-center text-center w-1/4 bottom-nav-item active"
+        data-target="screen-user-dashboard">
+        <i class="fas fa-home text-xl mb-1"></i>
+        <span class="text-xs font-medium">首頁</span>
+      </button>
+      <button class="flex flex-col items-center justify-center text-center w-1/4 bottom-nav-item"
+        data-target="screen-schedule-all">
+        <i class="fas fa-calendar-alt text-xl mb-1"></i>
+        <span class="text-xs font-medium">行事曆</span>
+      </button>
+      <button class="flex flex-col items-center justify-center text-center w-1/4 bottom-nav-item relative"
+        data-target="screen-request-form"> <!-- Target changes based on user/leader -->
+        <i class="fas fa-paper-plane text-xl mb-1"></i>
+        <span class="text-xs font-medium" id="nav-request-text">請求</span>
+        <!-- Notification Badge (Example) -->
+        <span id="request-badge"
+          class="absolute top-0 right-3 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center hidden">3</span>
+      </button>
+      <button class="flex flex-col items-center justify-center text-center w-1/4 bottom-nav-item"
+        data-target="screen-achievements"> <!-- Target changes based on user/leader -->
+        <i class="fas fa-star text-xl mb-1"></i>
+        <span class="text-xs font-medium" id="nav-profile-text">成就</span>
+      </button>
+      <!-- Note: Leader/Admin might see different nav items like "Approvals", "Team", "Settings" -->
+    </nav>
+
+  </div> <!-- End App Container -->
+
+  <script>
+    // Basic Screen Switching Logic (replace with a proper router in a real app)
+    const screens = document.querySelectorAll('.max-w-md > div[id^="screen-"]');
+    const navButtons = document.querySelectorAll('.bottom-nav-item');
+
+    function showScreen(screenId) {
+      screens.forEach(screen => {
+        if (screen.id === screenId) {
+          screen.classList.remove('hidden');
+          // Reset scroll position?
+          // window.scrollTo(0, 0); // Might be jarring
+        } else {
+          screen.classList.add('hidden');
+        }
+      });
+
+      // Update nav active state
+      navButtons.forEach(button => {
+        if (button.dataset.target === screenId) {
+          button.classList.add('active');
+        } else {
+          button.classList.remove('active');
+        }
+      });
+
+      // Update labels/targets based on role (Simulated - need actual login logic)
+      updateNavForRole('user'); // or 'leader' / 'admin'
+    }
+
+    navButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const targetScreen = button.dataset.target;
+        showScreen(targetScreen);
+      });
+    });
+
+    // Initial Screen Load (Simulate login success)
+    // Set timeout to show login screen briefly first
+    setTimeout(() => {
+      // Change this to 'screen-leader-dashboard' or others to test different views
+      showScreen('screen-user-dashboard');
+    }, 500); // Show login for 0.5 seconds
+
+    // --- Additional JS for dynamic elements ---
+
+    // Request Form Logic
+    const requestTypeSelect = document.getElementById('request-type');
+    const leaveFields = document.getElementById('leave-fields');
+    const swapSubFields = document.getElementById('swap-sub-fields');
+    const swapTargetField = document.getElementById('swap-target-field');
+    const substituteMessageField = document.getElementById('substitute-message-field');
+    const requestFormTitle = document.getElementById('request-form-title');
+
+    if (requestTypeSelect) {
+      requestTypeSelect.addEventListener('change', (e) => {
+        const type = e.target.value;
+        leaveFields.classList.add('hidden');
+        swapSubFields.classList.add('hidden');
+        swapTargetField.classList.add('hidden');
+        substituteMessageField.classList.add('hidden');
+
+        if (type === 'leave') {
+          leaveFields.classList.remove('hidden');
+          requestFormTitle.textContent = '申請休假';
+        } else if (type === 'swap') {
+          swapSubFields.classList.remove('hidden');
+          swapTargetField.classList.remove('hidden');
+          requestFormTitle.textContent = '請求換班';
+        } else if (type === 'substitute') {
+          swapSubFields.classList.remove('hidden');
+          substituteMessageField.classList.remove('hidden');
+          requestFormTitle.textContent = '尋找代班';
+        }
+      });
+      // Trigger change on load in case default is not leave
+      requestTypeSelect.dispatchEvent(new Event('change'));
+    }
+
+
+    // Simulate Role Change for Navigation (In real app, this depends on login data)
+    function updateNavForRole(role) {
+      const requestButton = document.querySelector('[data-target="screen-request-form"]'); // May need adjustment
+      const profileButton = document.querySelector('[data-target="screen-achievements"]'); // May need adjustment
+      const requestText = document.getElementById('nav-request-text');
+      const profileText = document.getElementById('nav-profile-text');
+      const requestBadge = document.getElementById('request-badge');
+
+      if (!requestButton || !profileButton || !requestText || !profileText || !requestBadge) return;
+
+      if (role === 'leader' || role === 'admin') {
+        // Leader/Admin sees Approvals instead of Requests
+        requestButton.dataset.target = 'screen-leader-dashboard'; // Or a dedicated Approvals screen
+        requestText.textContent = '待辦';
+        profileText.textContent = '管理';
+        profileButton.dataset.target = 'screen-scheduling-interface'; // Or a settings/management screen
+        profileButton.querySelector('i').className = 'fas fa-cog text-xl mb-1'; // Change icon
+
+        // Show badge if there are pending items (example)
+        requestBadge.classList.remove('hidden');
+      } else {
+        // User sees Requests and Achievements/Profile
+        requestButton.dataset.target = 'screen-request-form';
+        requestText.textContent = '請求';
+        profileText.textContent = '成就';
+        profileButton.dataset.target = 'screen-achievements';
+        profileButton.querySelector('i').className = 'fas fa-star text-xl mb-1'; // Change icon back
+
+        requestBadge.classList.add('hidden');
+      }
+    }
+
+         // Example: How to switch to the Leader View for testing
+        // setTimeout(() => {
+        //     showScreen('screen-leader-dashboard');
+        // }, 500);
+
+         // Example: How to switch to Scheduling Interface
+         // setTimeout(() => {
+         //    showScreen('screen-scheduling-interface');
+        // }, 500);
+
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>教會服事系統 | Ministry Scheduler</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(145deg, #fef6e4, #e8f6f2);
+    }
+
+    .card-glass {
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(15px);
+      border-radius: 20px;
+      border: 1px solid #ddd;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .card-glass:hover {
+      transform: scale(1.02);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+
+<body class="text-gray-800">
+  <div class="min-h-screen flex flex-col items-center p-6">
+
+    <!-- Header -->
+    <header class="w-full flex justify-between items-center mb-6">
+      <h1 class="text-4xl text-indigo-700 title-font">
+        🎮 服事冒險王！
+      </h1>
+      <div class="text-right space-y-1">
+        <div class="text-md font-semibold">玩家：李小天</div>
+        <div class="text-sm">等級：Lv 3 (見習服事員)</div>
+        <div class="text-xs text-green-600">本月成就：3 顆星 🌟🌟🌟</div>
+      </div>
+    </header>
+
+    <!-- Dashboard Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-7xl">
+
+      <!-- 📆 我的服事 -->
+      <div class="card-glass p-6 flex flex-col items-start">
+        <div class="flex items-center space-x-3">
+          <span class="text-2xl">📆</span>
+          <h2 class="text-xl font-bold">我的服事</h2>
+        </div>
+        <p class="mt-2 text-sm text-gray-600">查看你的下次冒險時刻！</p>
+        <div class="mt-4 flex flex-col space-y-1 text-sm">
+          <div>🟢 禱告會 - 本週三 19:00</div>
+          <div>🟢 主日樂團 A - 本週日 09:00</div>
+        </div>
+        <button class="mt-auto ml-auto bg-indigo-400 hover:bg-indigo-500 text-white rounded px-4 py-1 text-sm mt-4">
+          查看詳細
+        </button>
+      </div>
+
+      <!-- 🔄 換服事申請 -->
+      <div class="card-glass p-6 flex flex-col items-start">
+        <div class="flex items-center space-x-3">
+          <span class="text-2xl">🔄</span>
+          <h2 class="text-xl font-bold">換服事</h2>
+        </div>
+        <p class="mt-2 text-sm text-gray-600">今天誰可以幫忙打怪？</p>
+        <div class="mt-4 text-sm space-y-1">
+          <div>📨 換班邀請：2 筆</div>
+          <div>✅ 已接受：1 筆</div>
+          <div>⏳ 審核中：1 筆</div>
+        </div>
+        <button class="mt-auto ml-auto bg-pink-400 hover:bg-pink-500 text-white rounded px-4 py-1 text-sm mt-4">
+          打開裝備背包
+        </button>
+      </div>
+
+      <!-- 👑 主責排程 -->
+      <div class="card-glass p-6 flex flex-col items-start">
+        <div class="flex items-center space-x-3">
+          <span class="text-2xl">👑</span>
+          <h2 class="text-xl font-bold">主責排程</h2>
+        </div>
+        <p class="mt-2 text-sm text-gray-600">你就是副本領主💼</p>
+        <div class="mt-4 text-sm space-y-1">
+          <div>👥 小提琴團 - 需排班人數：2</div>
+          <div>❗ 本週缺人服事：3 處</div>
+        </div>
+        <button class="mt-auto ml-auto bg-yellow-400 hover:bg-yellow-500 text-white rounded px-4 py-1 text-sm mt-4">
+          編排新的副本
+        </button>
+      </div>
+
+      <!-- 🛡️ 守護歷史 -->
+      <div class="card-glass p-6 flex flex-col items-start">
+        <div class="flex items-center space-x-3">
+          <span class="text-2xl">🛡️</span>
+          <h2 class="text-xl font-bold">歷史紀錄</h2>
+        </div>
+        <p class="mt-2 text-sm text-gray-600">追蹤服事時光機！</p>
+        <div class="mt-4 text-sm space-y-1">
+          <div>🗓️ 上月總服事：5 次</div>
+          <div>🏅 成就徽章：兩枚</div>
+        </div>
+        <button class="mt-auto ml-auto bg-green-400 hover:bg-green-500 text-white rounded px-4 py-1 text-sm mt-4">
+          查看冒險日誌
+        </button>
+      </div>
+
+      <!-- 💫 角色升級 -->
+      <div class="card-glass p-6 flex flex-col items-start">
+        <div class="flex items-center space-x-3">
+          <span class="text-2xl">💫</span>
+          <h2 class="text-xl font-bold">成就系統</h2>
+        </div>
+        <p class="mt-2 text-sm text-gray-600">全力服事，升級點加爆🔥</p>
+        <div class="mt-4 text-sm space-y-1">
+          <div>🕊️ 精神值累積：345 pts</div>
+          <div>🎖️ 當月目標完成度：75%</div>
+        </div>
+        <button class="mt-auto ml-auto bg-purple-400 hover:bg-purple-500 text-white rounded px-4 py-1 text-sm mt-4">
+          我的冒險勳章
+        </button>
+      </div>
+
+      <!-- 📨 通知系統 -->
+      <div class="card-glass p-6 flex flex-col items-start">
+        <div class="flex items-center space-x-3">
+          <span class="text-2xl">📨</span>
+          <h2 class="text-xl font-bold">通知系統</h2>
+        </div>
+        <p class="mt-2 text-sm text-gray-600">別錯過每一場任務提示⏰</p>
+        <div class="mt-4 text-sm space-y-1">
+          <div>🔔 本週提醒：4 則</div>
+          <div>💬 LINE 通知已整合</div>
+        </div>
+        <button class="mt-auto ml-auto bg-blue-400 hover:bg-blue-500 text-white rounded px-4 py-1 text-sm mt-4">
+          通知設定
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-10 text-sm text-gray-500">
+      ⛪ Ministry Scheduler Game UI • 教會服事系統 • v0.9 Beta
+    </footer>
+  </div>
+</body>
+
+</html>

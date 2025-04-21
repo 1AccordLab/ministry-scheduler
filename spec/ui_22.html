@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>教會服事表管理系統 (概念)</title>
+  <style>
+    :root {
+      --primary-color: #6a1b9a;
+      /* Purple */
+      --secondary-color: #fbc02d;
+      /* Yellow */
+      --accent-color: #1de9b6;
+      /* Teal */
+      --background-color: #f3e5f5;
+      /* Light Purple */
+      --card-background: #ffffff;
+      --text-color: #333;
+      --text-light: #666;
+      --text-on-primary: #ffffff;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      --border-radius: 15px;
+      --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      /* Example font */
+    }
+
+    body {
+      font-family: var(--font-main);
+      background-color: var(--background-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 0;
+      overscroll-behavior-y: contain;
+      /* Prevent pull-to-refresh issues */
+    }
+
+    .app-container {
+      max-width: 480px;
+      /* Simulate phone width */
+      margin: 0 auto;
+      min-height: 100vh;
+      background-color: var(--background-color);
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      /* Slight shadow for container */
+    }
+
+    .app-header {
+      background-color: var(--primary-color);
+      color: var(--text-on-primary);
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .app-header h1 {
+      margin: 0;
+      font-size: 1.4em;
+      font-weight: 600;
+    }
+
+    .header-icon {
+      font-size: 1.5em;
+      color: var(--text-on-primary);
+      text-decoration: none;
+    }
+
+    .app-content {
+      flex-grow: 1;
+      padding: 20px;
+      padding-bottom: 80px;
+      /* Space for bottom nav */
+      overflow-y: auto;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      max-width: 480px;
+      /* Match container width */
+      margin: 0 auto;
+      background-color: var(--card-background);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 10px 0;
+      border-top: 1px solid #eee;
+      box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+      z-index: 100;
+      border-radius: var(--border-radius) var(--border-radius) 0 0;
+      /* Rounded top corners */
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      color: var(--text-light);
+      font-size: 0.8em;
+      padding: 5px 10px;
+      border-radius: 8px;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .nav-item.active {
+      color: var(--primary-color);
+      font-weight: 600;
+    }
+
+    .nav-item:active {
+      background-color: rgba(106, 27, 154, 0.1);
+      /* Light purple feedback */
+    }
+
+    .nav-item i {
+      font-size: 1.6em;
+      margin-bottom: 4px;
+    }
+
+    /* Generic Card Style */
+    .card {
+      background-color: var(--card-background);
+      border-radius: var(--border-radius);
+      padding: 15px 20px;
+      margin-bottom: 15px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      /* Ensure content respects border-radius */
+      position: relative;
+      /* For potential absolute elements inside */
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .card-header h2 {
+      font-size: 1.1em;
+      margin: 0;
+      color: var(--primary-color);
+      font-weight: 600;
+    }
+
+    .card-content p {
+      margin: 5px 0;
+      color: var(--text-color);
+      line-height: 1.5;
+    }
+
+    .card-content strong {
+      color: var(--primary-color);
+      font-weight: 600;
+    }
+
+    .card-actions {
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid #eee;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    /* Button Styles */
+    .btn {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 20px;
+      /* Rounded pill buttons */
+      cursor: pointer;
+      font-size: 0.9em;
+      font-weight: 600;
+      text-decoration: none;
+      text-align: center;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-primary {
+      background-color: var(--primary-color);
+      color: var(--text-on-primary);
+    }
+
+    .btn-primary:hover {
+      background-color: #4a148c;
+      /* Darker Purple */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background-color: var(--secondary-color);
+      color: var(--text-color);
+    }
+
+    .btn-secondary:hover {
+      background-color: #f9a825;
+      /* Darker Yellow */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      transform: translateY(-1px);
+    }
+
+    .btn-accent {
+      background-color: var(--accent-color);
+      color: var(--text-color);
+    }
+
+    .btn-accent:hover {
+      background-color: #00bfa5;
+      /* Darker Teal */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      color: var(--primary-color);
+      border: 1.5px solid var(--primary-color);
+      box-shadow: none;
+    }
+
+    .btn-outline:hover {
+      background-color: rgba(106, 27, 154, 0.05);
+      transform: translateY(-1px);
+    }
+
+    .btn-danger {
+      background-color: #e53935;
+      /* Red */
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background-color: #c62828;
+      /* Darker Red */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      transform: translateY(-1px);
+    }
+
+    .btn-success {
+      background-color: #43a047;
+      /* Green */
+      color: white;
+    }
+
+    .btn-success:hover {
+      background-color: #2e7d32;
+      /* Darker Green */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      transform: translateY(-1px);
+    }
+
+    .btn-block {
+      display: block;
+      width: 100%;
+      margin-top: 15px;
+    }
+
+    /* Gamification Elements */
+    .achievement-badge {
+      display: inline-block;
+      background-color: var(--secondary-color);
+      color: var(--text-color);
+      padding: 5px 10px;
+      border-radius: 15px;
+      font-size: 0.8em;
+      font-weight: 600;
+      margin: 5px 5px 0 0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .achievement-icon {
+      width: 50px;
+      height: 50px;
+      background-color: var(--accent-color);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--text-on-primary);
+      font-size: 1.5em;
+      font-weight: bold;
+      margin: 0 auto 10px auto;
+      box-shadow: var(--shadow);
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 10px;
+      background-color: #e0e0e0;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-top: 5px;
+    }
+
+    .progress-bar-inner {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-color) 0%, var(--secondary-color) 100%);
+      border-radius: 5px;
+      transition: width 0.5s ease-in-out;
+    }
+
+    /* List Styles */
+    .list-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #eee;
+      transition: background-color 0.2s ease;
+    }
+
+    .list-item:last-child {
+      border-bottom: none;
+    }
+
+    .list-item:active {
+      background-color: rgba(0, 0, 0, 0.03);
+    }
+
+    .list-item-icon {
+      font-size: 1.8em;
+      color: var(--primary-color);
+      margin-right: 15px;
+      min-width: 30px;
+      text-align: center;
+    }
+
+    .list-item-content {
+      flex-grow: 1;
+    }
+
+    .list-item-title {
+      font-weight: 600;
+      color: var(--text-color);
+      margin-bottom: 3px;
+    }
+
+    .list-item-subtitle {
+      font-size: 0.9em;
+      color: var(--text-light);
+    }
+
+    .list-item-action {
+      margin-left: 10px;
+      color: var(--text-light);
+      font-size: 1.2em;
+    }
+
+    /* Form Styles */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--primary-color);
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1em;
+      box-sizing: border-box;
+      /* Include padding and border in element's total width and height */
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(106, 27, 154, 0.2);
+      outline: none;
+    }
+
+    textarea.form-control {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    select.form-control {
+      appearance: none;
+      /* Remove default dropdown arrow */
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%236a1b9a'%3E%3Cpath fill-rule='evenodd' d='M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z' clip-rule='evenodd' /%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      background-size: 1.2em;
+      padding-right: 35px;
+      /* Make space for custom arrow */
+    }
+
+    /* Specific Screen Styles */
+
+    /* Dashboard */
+    .dashboard-welcome {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .dashboard-welcome h2 {
+      font-size: 1.6em;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-bottom: 5px;
+    }
+
+    .dashboard-welcome p {
+      color: var(--text-light);
+      font-size: 1.1em;
+    }
+
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .action-card {
+      background: linear-gradient(135deg, var(--primary-color) 0%, #8e24aa 100%);
+      color: var(--text-on-primary);
+      padding: 20px;
+      border-radius: var(--border-radius);
+      text-align: center;
+      text-decoration: none;
+      box-shadow: var(--shadow);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .action-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    .action-card i {
+      font-size: 2.5em;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .action-card span {
+      font-weight: 600;
+      font-size: 1em;
+    }
+
+    /* Schedule View */
+    .schedule-filter {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+      gap: 10px;
+    }
+
+    .schedule-filter .btn {
+      padding: 8px 15px;
+      font-size: 0.85em;
+    }
+
+    .ministry-date-group {
+      margin-bottom: 20px;
+    }
+
+    .date-header {
+      font-size: 1.2em;
+      font-weight: 600;
+      color: var(--primary-color);
+      padding-bottom: 5px;
+      border-bottom: 2px solid var(--secondary-color);
+      margin-bottom: 15px;
+    }
+
+    /* Swap Request / Approval */
+    .request-details p {
+      margin-bottom: 8px;
+    }
+
+    .request-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    /* Achievement Screen */
+    .achievements-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 20px;
+      text-align: center;
+    }
+
+    .achievement-item {
+      background-color: var(--card-background);
+      padding: 15px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+    }
+
+    .achievement-item.locked .achievement-icon {
+      background-color: #bdbdbd;
+      /* Grey out locked badges */
+      filter: grayscale(80%);
+    }
+
+    .achievement-item.locked p {
+      color: var(--text-light);
+    }
+
+    .achievement-item p {
+      font-size: 0.9em;
+      font-weight: 500;
+      margin: 0;
+      color: var(--primary-color);
+    }
+
+    /* Login Screen */
+    .login-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      padding: 30px;
+      background: linear-gradient(135deg, var(--primary-color) 0%, #ab47bc 100%);
+    }
+
+    .login-logo {
+      font-size: 3em;
+      color: var(--text-on-primary);
+      margin-bottom: 30px;
+      /* Placeholder for actual logo/icon */
+      width: 80px;
+      height: 80px;
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 350px;
+      padding: 30px;
+    }
+
+    .login-card h1 {
+      text-align: center;
+      color: var(--primary-color);
+      margin-bottom: 25px;
+    }
+
+    .login-links {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 0.9em;
+    }
+
+    .login-links a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+
+    .login-links a:hover {
+      text-decoration: underline;
+    }
+
+    /* Placeholder Icons (Using simple text) */
+    .icon::before {
+      content: '◇';
+      display: inline-block;
+      margin-right: 5px;
+    }
+
+    .icon-home::before {
+      content: '🏠';
+    }
+
+    .icon-calendar::before {
+      content: '📅';
+    }
+
+    .icon-swap::before {
+      content: '🔄';
+    }
+
+    .icon-profile::before {
+      content: '👤';
+    }
+
+    .icon-bell::before {
+      content: '🔔';
+    }
+
+    .icon-check::before {
+      content: '✅';
+    }
+
+    .icon-cross::before {
+      content: '❌';
+    }
+
+    .icon-leave::before {
+      content: '✈️';
+    }
+
+    .icon-ministry::before {
+      content: '🎶';
+    }
+
+    /* Example: Music */
+    .icon-users::before {
+      content: '👥';
+    }
+
+    .icon-settings::before {
+      content: '⚙️';
+    }
+
+    .icon-logout::before {
+      content: '🚪';
+    }
+
+    .icon-search::before {
+      content: '🔍';
+    }
+
+    .icon-plus::before {
+      content: '➕';
+    }
+
+    .icon-badge::before {
+      content: '🏆';
+    }
+
+    .icon-points::before {
+      content: '⭐';
+    }
+
+    .icon-leader::before {
+      content: '👑';
+    }
+
+
+    /* Web View Adjustments (Basic) */
+    @media (min-width: 768px) {
+      .app-container {
+        max-width: 900px;
+        /* Wider view for tablets/desktops */
+        flex-direction: row;
+      }
+
+      .app-header {
+        position: relative;
+        /* No longer sticky in this basic layout */
+        /* Or implement a fixed sidebar */
+      }
+
+      .bottom-nav {
+        position: relative;
+        /* Becomes a sidebar or top bar */
+        flex-direction: column;
+        justify-content: flex-start;
+        width: 200px;
+        /* Example sidebar width */
+        height: 100vh;
+        padding-top: 20px;
+        border-top: none;
+        border-right: 1px solid #eee;
+        border-radius: 0;
+        max-width: none;
+      }
+
+      .nav-item {
+        width: 100%;
+        justify-content: flex-start;
+        padding: 15px 20px;
+        font-size: 1em;
+        box-sizing: border-box;
+        border-radius: 0;
+      }
+
+      .nav-item i {
+        font-size: 1.4em;
+        margin-right: 15px;
+        margin-bottom: 0;
+      }
+
+      .nav-item span {
+        display: inline;
+        /* Show text */
+      }
+
+      .app-content {
+        padding-bottom: 20px;
+        /* Reset padding */
+        height: 100vh;
+        /* Allow scrolling within content area */
+        box-sizing: border-box;
+      }
+
+      .quick-actions {
+        grid-template-columns: repeat(3, 1fr);
+        /* More columns on wider screens */
+      }
+    }
+  </style>
+  <!-- Add FontAwesome or other icon library link here if desired -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+
+  <!-- Screen: Login -->
+  <div class="login-container" id="login-screen" style="display: none;">
+    <div class="login-logo"><i class="fas fa-church"></i></div>
+    <div class="card login-card">
+      <h1>服事表登入</h1>
+      <form>
+        <div class="form-group">
+          <label for="username">帳號</label>
+          <input type="text" id="username" class="form-control" placeholder="請輸入您的帳號">
+        </div>
+        <div class="form-group">
+          <label for="password">密碼</label>
+          <input type="password" id="password" class="form-control" placeholder="請輸入您的密碼">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">登入</button>
+      </form>
+      <div class="login-links">
+        <a href="#">忘記密碼?</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main App Structure -->
+  <div class="app-container" id="app-main" style="display: flex;"> <!-- Start visible -->
+
+    <!-- Header -->
+    <header class="app-header">
+      <h1>主畫面</h1>
+      <a href="#notifications" class="header-icon"><i class="fas fa-bell"></i><span
+          style="font-size: 0.6em; background: red; border-radius: 50%; padding: 2px 5px; position: relative; top: -10px; right: 5px;">3</span></a>
+    </header>
+
+    <!-- Content Area (Dynamically populated based on nav) -->
+    <main class="app-content" id="app-content-area">
+
+      <!-- Screen: Dashboard (Default View) -->
+      <div id="dashboard-screen">
+        <div class="dashboard-welcome">
+          <h2>歡迎回來, 王大明!</h2>
+          <p>今天也要為主發光 <i class="fas fa-lightbulb" style="color: var(--secondary-color);"></i></p>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2><i class="fas fa-calendar-check icon-ministry" style="color: var(--accent-color);"></i> 近期服事</h2>
+            <a href="#my-schedule" class="btn btn-outline btn-sm">查看全部</a>
+          </div>
+          <div class="card-content">
+            <p><strong>下一次服事:</strong></p>
+            <p><i class="fas fa-calendar-alt"></i> <strong>日期:</strong> 2023/10/28 (六)</p>
+            <p><i class="fas fa-clock"></i> <strong>時間:</strong> 10:00 AM</p>
+            <p><i class="fas fa-guitar"></i> <strong>項目:</strong> 主日敬拜 - 吉他手</p>
+            <p><i class="fas fa-users"></i> <strong>團隊:</strong> A 樂團</p>
+          </div>
+          <div class="card-actions">
+            <a href="#request-swap" class="btn btn-secondary"><i class="fas fa-exchange-alt"></i> 申請換班</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2><i class="fas fa-bell icon-bell" style="color: var(--secondary-color);"></i> 待處理事項</h2>
+          </div>
+          <div class="list-item">
+            <div class="list-item-icon"><i class="fas fa-sync-alt" style="color: #ff9800;"></i></div>
+            <div class="list-item-content">
+              <div class="list-item-title">換班請求</div>
+              <div class="list-item-subtitle">陳小美 希望與您交換 11/04 的司琴服事</div>
+            </div>
+            <div class="list-item-action"><i class="fas fa-chevron-right"></i></div>
+          </div>
+          <div class="list-item">
+            <div class="list-item-icon"><i class="fas fa-check-circle" style="color: var(--primary-color);"></i></div>
+            <div class="list-item-content">
+              <div class="list-item-title">審核通知 (主責)</div>
+              <div class="list-item-subtitle">李四 申請 11/11 請假</div>
+            </div>
+            <div class="list-item-action"><i class="fas fa-chevron-right"></i></div>
+          </div>
+        </div>
+
+        <div class="quick-actions">
+          <a href="#my-schedule" class="action-card">
+            <i class="fas fa-calendar-alt"></i>
+            <span>我的班表</span>
+          </a>
+          <a href="#request-leave" class="action-card">
+            <i class="fas fa-plane-departure"></i>
+            <span>申請休假</span>
+          </a>
+          <a href="#team-schedule" class="action-card">
+            <i class="fas fa-users"></i>
+            <span>團隊班表</span>
+          </a>
+        </div>
+
+        <div class="card" style="margin-top: 25px;">
+          <div class="card-header">
+            <h2><i class="fas fa-trophy icon-badge" style="color: var(--secondary-color);"></i> 我的成就</h2>
+            <a href="#achievements" class="btn btn-outline btn-sm">查看全部</a>
+          </div>
+          <div class="card-content">
+            <p>累積服事點數: <strong style="color: var(--accent-color); font-size: 1.2em;">1250 <i
+                  class="fas fa-star"></i></strong></p>
+            <p>本月服事進度 (目標: 4次)</p>
+            <div class="progress-bar">
+              <div class="progress-bar-inner" style="width: 75%;"></div> <!-- Example: 3 out of 4 -->
+            </div>
+            <div style="margin-top: 10px;">
+              <span class="achievement-badge"><i class="fas fa-medal"></i> 連續服事</span>
+              <span class="achievement-badge"><i class="fas fa-guitar"></i> 敬拜達人</span>
+              <span class="achievement-badge"><i class="fas fa-hands-helping"></i> 最佳隊友</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Screen: My Schedule -->
+      <div id="my-schedule-screen" style="display: none;">
+        <div class="schedule-filter">
+          <button class="btn btn-primary">本月</button>
+          <button class="btn btn-outline">本週</button>
+          <button class="btn btn-outline">搜尋 <i class="fas fa-search"></i></button>
+        </div>
+
+        <div class="ministry-date-group">
+          <div class="date-header">2023 年 10 月</div>
+          <div class="card list-item">
+            <div class="list-item-icon"><i class="fas fa-guitar icon-ministry"></i></div>
+            <div class="list-item-content">
+              <div class="list-item-title">主日敬拜 - 吉他手</div>
+              <div class="list-item-subtitle">10/28 (六) 10:00 AM | A 樂團</div>
+            </div>
+            <a href="#request-swap" class="btn btn-secondary btn-sm"><i class="fas fa-exchange-alt"></i> 換</a>
+          </div>
+          <div class="card list-item">
+            <div class="list-item-icon"><i class="fas fa-praying-hands" style="color: #3f51b5;"></i></div>
+            <div class="list-item-content">
+              <div class="list-item-title">禱告會 - 領會</div>
+              <div class="list-item-subtitle">10/25 (三) 07:30 PM</div>
+            </div>
+            <a href="#request-swap" class="btn btn-secondary btn-sm"><i class="fas fa-exchange-alt"></i> 換</a>
+          </div>
+        </div>
+
+        <div class="ministry-date-group">
+          <div class="date-header">2023 年 11 月</div>
+          <div class="card list-item">
+            <div class="list-item-icon"><i class="fas fa-child" style="color: #009688;"></i></div>
+            <div class="list-item-content">
+              <div class="list-item-title">兒童主日學 - 老師</div>
+              <div class="list-item-subtitle">11/05 (日) 09:30 AM | 小班</div>
+            </div>
+            <a href="#request-swap" class="btn btn-secondary btn-sm"><i class="fas fa-exchange-alt"></i> 換</a>
+          </div>
+          <div class="card list-item list-item-locked"> <!-- Example locked -->
+            <div class="list-item-icon"><i class="fas fa-video" style="color: #795548;"></i></div>
+            <div class="list-item-content">
+              <div class="list-item-title">主日直播 - 控台</div>
+              <div class="list-item-subtitle">11/12 (日) 10:00 AM | <span style="color: red;"><i class="fas fa-lock"></i>
+                  無法更動</span></div>
+            </div>
+            <button class="btn btn-secondary btn-sm" disabled><i class="fas fa-exchange-alt"></i> 換</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Screen: Request Leave -->
+      <div id="request-leave-screen" style="display: none;">
+        <h2><i class="fas fa-plane-departure icon-leave"></i> 申請休假</h2>
+        <div class="card">
+          <form>
+            <div class="form-group">
+              <label for="leave-type">休假類型 (非必要)</label>
+              <select id="leave-type" class="form-control">
+                <option>個人事務</option>
+                <option>病假</option>
+                <option>出差</option>
+                <option>家庭旅遊</option>
+                <option>其他</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="leave-start-date">開始日期</label>
+              <input type="date" id="leave-start-date" class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="leave-end-date">結束日期</label>
+              <input type="date" id="leave-end-date" class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="leave-reason">原因說明 (非必要)</label>
+              <textarea id="leave-reason" class="form-control" placeholder="請簡單說明原因..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-paper-plane"></i> 送出申請</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Screen: Request Swap (Find Substitute) -->
+      <div id="request-swap-screen" style="display: none;">
+        <h2><i class="fas fa-exchange-alt icon-swap"></i> 申請換班 / 代班</h2>
+        <div class="card">
+          <div class="card-content request-details">
+            <p><strong>您要換掉的服事:</strong></p>
+            <p><i class="fas fa-calendar-alt"></i> <strong>日期:</strong> 2023/10/28 (六) 10:00 AM</p>
+            <p><i class="fas fa-guitar"></i> <strong>項目:</strong> 主日敬拜 - 吉他手</p>
+            <p><i class="fas fa-users"></i> <strong>團隊:</strong> A 樂團</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2><i class="fas fa-user-friends"></i> 尋找幫手</h2>
+          </div>
+          <div class="card-content">
+            <p>系統將會自動發送請求給以下符合資格的同工:</p>
+            <ul>
+              <li>陳小美 (吉他手, 當天有空)</li>
+              <li>李四 (吉他手, 當天有空)</li>
+              <li>趙五 (吉他手, 當天有空)</li>
+            </ul>
+            <p style="font-size: 0.9em; color: var(--text-light);">一旦有人接受，系統會自動通知您及主責，並取消其他人的請求。</p>
+            <div class="form-group">
+              <label for="swap-message">附加訊息 (非必要)</label>
+              <textarea id="swap-message" class="form-control" placeholder="可以留下想對代班同工說的話..."></textarea>
+            </div>
+          </div>
+          <div class="card-actions">
+            <button class="btn btn-primary"><i class="fas fa-share-square"></i> 發送請求</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Screen: Notifications / Approvals (Could be combined or separate) -->
+      <div id="notifications-screen" style="display: none;">
+        <h2><i class="fas fa-bell icon-bell"></i> 通知中心</h2>
+
+        <!-- Example: Swap request received -->
+        <div class="card">
+          <div class="card-header">
+            <h2><i class="fas fa-sync-alt" style="color: #ff9800;"></i> 收到換班請求</h2>
+          </div>
+          <div class="card-content request-details">
+            <p><strong>請求者:</strong> 陳小美</p>
+            <p><strong>希望交換您的服事:</strong></p>
+            <p><i class="fas fa-calendar-alt"></i> 11/04 (六) 10:00 AM - 主日敬拜 - 司琴</p>
+            <p><strong>用她的服事交換:</strong></p>
+            <p><i class="fas fa-calendar-alt"></i> 11/11 (六) 10:00 AM - 主日敬拜 - 司琴</p>
+            <p><strong>訊息:</strong> "大明，那天家裡剛好有事，方便跟我換嗎？感謝！"</p>
+          </div>
+          <div class="card-actions request-actions">
+            <button class="btn btn-danger"><i class="fas fa-times"></i> 拒絕</button>
+            <button class="btn btn-success"><i class="fas fa-check"></i> 接受交換</button>
+          </div>
+        </div>
+
+        <!-- Example: Leave request for Leader to approve -->
+        <div class="card">
+          <div class="card-header">
+            <h2><i class="fas fa-user-check icon-leader" style="color: var(--primary-color);"></i> 休假申請待審核</h2>
+          </div>
+          <div class="card-content request-details">
+            <p><strong>申請人:</strong> 李四</p>
+            <p><strong>類型:</strong> 個人事務</p>
+            <p><i class="fas fa-calendar-alt"></i> <strong>日期:</strong> 11/11 (六) - 11/12 (日)</p>
+            <p><strong>原因:</strong> "參加親友婚禮"</p>
+          </div>
+          <div class="card-actions request-actions">
+            <button class="btn btn-danger"><i class="fas fa-times"></i> 拒絕</button>
+            <button class="btn btn-success"><i class="fas fa-check"></i> 核准</button>
+          </div>
+        </div>
+
+        <!-- Example: Info notification -->
+        <div class="card">
+          <div class="card-header">
+            <h2><i class="fas fa-info-circle" style="color: #2196f3;"></i> 系統通知</h2>
+          </div>
+          <div class="card-content">
+            <p>您已成功申請 11/18 (六) 的休假。</p>
+            <p style="font-size: 0.8em; color: var(--text-light);">2 小時前</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Screen: Profile & Achievements -->
+      <div id="profile-screen" style="display: none;">
+        <div class="card" style="text-align: center;">
+          <img src="https://via.placeholder.com/100" alt="Profile Picture"
+            style="border-radius: 50%; margin-bottom: 15px; border: 3px solid var(--accent-color);">
+          <h2>王大明</h2>
+          <p style="color: var(--text-light);">一般服事人員</p>
+          <p><i class="fas fa-star icon-points" style="color: var(--secondary-color);"></i> <strong>1250</strong> 服事點數
+          </p>
+          <button class="btn btn-outline btn-sm"><i class="fas fa-pencil-alt"></i> 編輯個人資料</button>
+          <button class="btn btn-danger btn-sm" style="margin-left: 5px;"><i class="fas fa-sign-out-alt"></i>
+            登出</button>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2><i class="fas fa-trophy icon-badge" style="color: var(--secondary-color);"></i> 成就殿堂</h2>
+          </div>
+          <div class="card-content achievements-grid">
+            <div class="achievement-item">
+              <div class="achievement-icon"><i class="fas fa-handshake"></i></div>
+              <p>首次服事</p>
+            </div>
+            <div class="achievement-item">
+              <div class="achievement-icon"><i class="fas fa-calendar-check"></i></div>
+              <p>連續服事者</p>
+            </div>
+            <div class="achievement-item">
+              <div class="achievement-icon"><i class="fas fa-guitar"></i></div>
+              <p>敬拜達人</p>
+            </div>
+            <div class="achievement-item">
+              <div class="achievement-icon"><i class="fas fa-hands-helping"></i></div>
+              <p>最佳隊友</p>
+            </div>
+            <div class="achievement-item locked">
+              <div class="achievement-icon"><i class="fas fa-users"></i></div>
+              <p>團隊核心 (未解鎖)</p>
+            </div>
+            <div class="achievement-item locked">
+              <div class="achievement-icon"><i class="fas fa-cross"></i></div>
+              <p>聖誕同工 (未解鎖)</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Only show for Admin/Leader -->
+        <div class="card" id="admin-leader-section" style="display: none;">
+          <div class="card-header">
+            <h2><i class="fas fa-cog icon-settings" style="color: var(--primary-color);"></i> 管理功能</h2>
+          </div>
+          <div class="list-item">
+            <div class="list-item-icon"><i class="fas fa-users-cog"></i></div>
+            <div class="list-item-content">
+              <div class="list-item-title">人員與權限管理</div>
+              <div class="list-item-subtitle">新增、編輯、設定權限</div>
+            </div>
+            <div class="list-item-action"><i class="fas fa-chevron-right"></i></div>
+          </div>
+          <div class="list-item">
+            <div class="list-item-icon"><i class="fas fa-calendar-plus"></i></div>
+            <div class="list-item-content">
+              <div class="list-item-title">排班管理</div>
+              <div class="list-item-subtitle">安排與調整服事表</div>
+            </div>
+            <div class="list-item-action"><i class="fas fa-chevron-right"></i></div>
+          </div>
+          <div class="list-item">
+            <div class="list-item-icon"><i class="fas fa-chart-bar"></i></div>
+            <div class="list-item-content">
+              <div class="list-item-title">統計報表</div>
+              <div class="list-item-subtitle">查看服事頻率與出席</div>
+            </div>
+            <div class="list-item-action"><i class="fas fa-chevron-right"></i></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Screen: Team Schedule (Example) -->
+      <div id="team-schedule-screen" style="display: none;">
+        <h2><i class="fas fa-users icon-users"></i> 團隊班表</h2>
+        <div class="form-group">
+          <label for="team-select">選擇團隊/服事項目</label>
+          <select id="team-select" class="form-control">
+            <option>主日敬拜 - A 樂團</option>
+            <option>主日敬拜 - B 樂團</option>
+            <option>兒童主日學</option>
+            <option>招待同工</option>
+            <option>直播團隊</option>
+          </select>
+        </div>
+        <div class="schedule-filter">
+          <button class="btn btn-primary">本月</button>
+          <button class="btn btn-outline">下月</button>
+          <button class="btn btn-outline">搜尋 <i class="fas fa-search"></i></button>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2>10/28 (六) 10:00 主日敬拜 - A 樂團</h2>
+          </div>
+          <div class="card-content">
+            <p><strong>主領:</strong> 張三</p>
+            <p><strong>鍵盤:</strong> 陳小美</p>
+            <p><strong>吉他:</strong> 王大明</p>
+            <p><strong>貝斯:</strong> 趙五</p>
+            <p><strong>鼓手:</strong> <span style="color: #ff9800;">待確認 (原: 李四 請假)</span></p>
+            <p><strong>音控:</strong> 孫七</p>
+          </div>
+          <!-- Leader Actions -->
+          <div class="card-actions" style="/* display: none; */"> <!-- Show for Leaders -->
+            <button class="btn btn-accent"><i class="fas fa-plus"></i> 尋找替補</button>
+            <button class="btn btn-outline"><i class="fas fa-edit"></i> 編輯排班</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <h2>11/04 (六) 10:00 主日敬拜 - A 樂團</h2>
+          </div>
+          <div class="card-content">
+            <p><strong>主領:</strong> 林八</p>
+            <p><strong>鍵盤:</strong> <span style="color: red;"><i class="fas fa-exclamation-triangle"></i> 王大明 (與 吉他
+                衝突!)</span></p>
+            <p><strong>吉他:</strong> 王大明</p>
+            <p><strong>貝斯:</strong> 周九</p>
+            <p><strong>鼓手:</strong> 吳十</p>
+            <p><strong>音控:</strong> 孫七</p>
+          </div>
+          <!-- Leader Actions -->
+          <div class="card-actions" style="/* display: none; */"> <!-- Show for Leaders -->
+            <button class="btn btn-outline"><i class="fas fa-edit"></i> 編輯排班</button>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+      <a href="#dashboard" class="nav-item active" data-target="dashboard-screen">
+        <i class="fas fa-home icon-home"></i>
+        <span>主頁</span>
+      </a>
+      <a href="#my-schedule" class="nav-item" data-target="my-schedule-screen">
+        <i class="fas fa-calendar-alt icon-calendar"></i>
+        <span>我的班表</span>
+      </a>
+      <a href="#requests" class="nav-item" data-target="request-swap-screen"> <!-- Link to swap first -->
+        <i class="fas fa-exchange-alt icon-swap"></i>
+        <span>換班請求</span>
+      </a>
+      <a href="#profile" class="nav-item" data-target="profile-screen">
+        <i class="fas fa-user-circle icon-profile"></i>
+        <span>個人檔案</span>
+      </a>
+    </nav>
+
+  </div>
+
+  <script>
+    // Basic Mockup Navigation Logic (Not a full framework)
+    document.addEventListener('DOMContentLoaded', () => {
+      const mainContainer = document.getElementById('app-main');
+      const loginScreen = document.getElementById('login-screen');
+      const contentArea = document.getElementById('app-content-area');
+      const navItems = document.querySelectorAll('.bottom-nav .nav-item');
+      const headerTitle = document.querySelector('.app-header h1');
+      const allScreens = contentArea.children; // Assumes direct children are the screens
+
+      // --- Initial State ---
+      // Check if logged in (simple simulation)
+      const isLoggedIn = true; // Change to false to show login
+
+      if (!isLoggedIn) {
+        mainContainer.style.display = 'none';
+        loginScreen.style.display = 'flex';
+        return; // Stop further execution if not logged in
+      } else {
+        mainContainer.style.display = 'flex'; // Or 'block' depending on layout needs
+        loginScreen.style.display = 'none';
+      }
+
+
+      // Function to switch screens
+      function showScreen(targetId) {
+        // Hide all screens
+        for (let screen of allScreens) {
+          screen.style.display = 'none';
+        }
+        // Show the target screen
+        const targetScreen = document.getElementById(targetId);
+        if (targetScreen) {
+          targetScreen.style.display = 'block';
+          // Update header title (optional, based on screen)
+          const screenTitle = targetScreen.querySelector('h2') ? targetScreen.querySelector('h2').innerText : '服事表';
+          // Heuristic to get title, might need refinement
+          if (targetId === 'dashboard-screen') headerTitle.innerText = "主畫面";
+          else if (targetId === 'my-schedule-screen') headerTitle.innerText = "我的班表";
+          else if (targetId === 'request-leave-screen') headerTitle.innerText = "申請休假";
+          else if (targetId === 'request-swap-screen') headerTitle.innerText = "申請換班";
+          else if (targetId === 'notifications-screen') headerTitle.innerText = "通知中心";
+          else if (targetId === 'profile-screen') headerTitle.innerText = "個人檔案";
+          else if (targetId === 'team-schedule-screen') headerTitle.innerText = "團隊班表";
+          else headerTitle.innerText = screenTitle; // Fallback
+
+          // Scroll to top of content area
+          contentArea.scrollTop = 0;
+
+        } else {
+          console.warn(`Screen with id "${targetId}" not found.`);
+          // Show dashboard as fallback maybe
+          document.getElementById('dashboard-screen').style.display = 'block';
+          headerTitle.innerText = "主畫面";
+        }
+      }
+
+      // Add click listeners to nav items
+      navItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+          e.preventDefault();
+          const targetId = item.getAttribute('data-target');
+
+          // Update active state
+          navItems.forEach(nav => nav.classList.remove('active'));
+          item.classList.add('active');
+
+          showScreen(targetId);
+        });
+      });
+
+      // Add click listeners for other links/buttons that navigate between screens
+      document.querySelectorAll('a[href^="#"]').forEach(link => {
+        // Exclude nav items already handled
+        if (link.closest('.bottom-nav')) return;
+
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const targetId = link.getAttribute('href').substring(1) + '-screen'; // Assuming convention like #my-schedule -> my-schedule-screen
+
+          // Find corresponding nav item and activate it (if exists)
+          let targetNavItem = null;
+          navItems.forEach(nav => {
+            if (nav.getAttribute('data-target') === targetId) {
+              targetNavItem = nav;
+            } else if (nav.getAttribute('href').substring(1) + '-screen' === targetId) {
+              // Handle cases where href is the primary link
+              targetNavItem = nav;
+            }
+          });
+
+          if (targetNavItem) {
+            navItems.forEach(nav => nav.classList.remove('active'));
+            targetNavItem.classList.add('active');
+          } else {
+            // If no direct nav item, maybe keep the current one active or deactivate all?
+            // Let's keep the current one for now unless it's clearly a sub-page.
+          }
+
+          // Special case: Notifications Bell
+          if (link.classList.contains('header-icon')) {
+            targetId = 'notifications-screen'; // Override target
+            // Find a related nav item if desired (e.g., maybe highlight 'Profile' or 'Home'?)
+          }
+
+          showScreen(targetId);
+        });
+      });
+
+
+      // --- Role Simulation ---
+      const userRole = 'Leader'; // Change to 'Admin', 'Leader', or 'User'
+      const adminLeaderSection = document.getElementById('admin-leader-section');
+
+      if (userRole === 'Admin' || userRole === 'Leader') {
+        if (adminLeaderSection) adminLeaderSection.style.display = 'block';
+        // Add logic here to show/hide leader/admin specific buttons/sections
+        document.querySelectorAll('.card-actions').forEach(el => {
+          // Example: Show leader actions on team schedule
+          if (el.closest('#team-schedule-screen')) {
+            el.style.display = 'flex'; // Show leader actions
+          }
+        });
+        // Example: Show approval section in notifications for leader
+        document.querySelectorAll('#notifications-screen .card').forEach(card => {
+          if (card.querySelector('.icon-leader')) {
+            card.style.display = 'block';
+          }
+        });
+
+      } else {
+        // Hide admin/leader sections for regular users
+        if (adminLeaderSection) adminLeaderSection.style.display = 'none';
+        document.querySelectorAll('.card-actions').forEach(el => {
+          if (el.closest('#team-schedule-screen')) {
+            el.style.display = 'none'; // Hide leader actions
+          }
+        });
+        document.querySelectorAll('#notifications-screen .card').forEach(card => {
+          if (card.querySelector('.icon-leader')) {
+            card.style.display = 'none'; // Hide approval cards for non-leaders
+          }
+        });
+      }
+
+
+      // Initial screen load (show dashboard)
+      showScreen('dashboard-screen');
+      document.querySelector('.nav-item[data-target="dashboard-screen"]').classList.add('active');
+
+
+    });
+  </script>
+
+</body>
+
+</html>

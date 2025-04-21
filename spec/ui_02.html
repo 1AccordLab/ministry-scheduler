@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>教會服事表管理系統 - 首頁</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Paytone+One&display=swap"
+    rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      background-color: #F0F4F8;
+      /* Light Sky Blue / Soft Grey */
+      color: #334155;
+      /* Slate 700 */
+    }
+
+    .font-title {
+      font-family: 'Paytone One', sans-serif;
+      /* Playful but readable title font */
+    }
+
+    .card {
+      background-color: #FFFFFF;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+      border: 1px solid #E2E8F0;
+      /* Slate 200 */
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    .icon-placeholder {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: #FFFFFF;
+    }
+
+    .bg-accent-teal {
+      background-color: #2DD4BF;
+    }
+
+    /* Teal 400 */
+    .text-accent-teal {
+      color: #0D9488;
+    }
+
+    /* Teal 600 */
+    .bg-accent-orange {
+      background-color: #FB923C;
+    }
+
+    /* Orange 400 */
+    .text-accent-orange {
+      color: #EA580C;
+    }
+
+    /* Orange 600 */
+    .bg-accent-purple {
+      background-color: #A78BFA;
+    }
+
+    /* Violet 400 */
+    .text-accent-purple {
+      color: #7C3AED;
+    }
+
+    /* Violet 600 */
+    .bg-accent-pink {
+      background-color: #F472B6;
+    }
+
+    /* Pink 400 */
+    .text-accent-pink {
+      color: #DB2777;
+    }
+
+    /* Pink 600 */
+    .bg-accent-green {
+      background-color: #4ADE80;
+    }
+
+    /* Green 400 */
+    .text-accent-green {
+      color: #16A34A;
+    }
+
+    /* Green 600 */
+    .bg-accent-blue {
+      background-color: #60A5FA;
+    }
+
+    /* Blue 400 */
+    .text-accent-blue {
+      color: #2563EB;
+    }
+
+    /* Blue 600 */
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      line-height: 1.2;
+    }
+
+    .badge-pending {
+      background-color: #FEF3C7;
+      color: #D97706;
+    }
+
+    /* Amber 100 / Amber 600 */
+    .badge-success {
+      background-color: #DCFCE7;
+      color: #16A34A;
+    }
+
+    /* Green 100 / Green 600 */
+    .badge-info {
+      background-color: #DBEAFE;
+      color: #2563EB;
+    }
+
+    /* Blue 100 / Blue 600 */
+
+    /* Simple progress bar */
+    .progress-bar-bg {
+      background-color: #E2E8F0;
+      /* Slate 200 */
+      border-radius: 9999px;
+      height: 8px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 9999px;
+      transition: width 0.5s ease-in-out;
+    }
+  </style>
+  <script>
+    // Example JS for dynamic content (like progress bar)
+    document.addEventListener('DOMContentLoaded', () => {
+      const progressBar = document.getElementById('achievementProgress');
+      if (progressBar) {
+        // Simulate loading progress
+        setTimeout(() => {
+          progressBar.style.width = '75%'; // Set desired progress
+        }, 500);
+      }
+    });
+  </script>
+</head>
+
+<body class="p-6 md:p-10">
+  <div class="max-w-7xl mx-auto">
+
+    <!-- Header -->
+    <header class="mb-8 flex justify-between items-center">
+      <h1 class="font-title text-3xl md:text-4xl text-accent-teal">服事方塊 (Ministry Blocks)</h1>
+      <div class="flex items-center space-x-4">
+        <span class="text-sm text-slate-600 hidden sm:inline">歡迎，王大明</span>
+        <img src="https://via.placeholder.com/40/A78BFA/FFFFFF?text=W" alt="User Avatar"
+          class="w-10 h-10 rounded-full border-2 border-white shadow-sm">
+      </div>
+    </header>
+
+    <!-- Main Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      <!-- Card: My Upcoming Service -->
+      <div class="card lg:col-span-2">
+        <div class="flex items-start justify-between mb-3">
+          <div>
+            <h2 class="text-xl font-semibold mb-1 text-slate-800">我的服事</h2>
+            <p class="text-sm text-slate-500">最近的服事安排</p>
+          </div>
+          <div class="icon-placeholder bg-accent-teal">📅</div>
+        </div>
+        <div class="space-y-3">
+          <div class="flex justify-between items-center p-3 bg-emerald-50 rounded-lg border border-emerald-100">
+            <div>
+              <p class="font-medium text-emerald-800">主日敬拜 - 吉他手</p>
+              <p class="text-sm text-emerald-600">2023/10/28 (六) 10:00 AM</p>
+            </div>
+            <span class="badge badge-info">即將到來</span>
+          </div>
+          <div class="flex justify-between items-center p-3 bg-slate-50 rounded-lg border border-slate-100 opacity-70">
+            <div>
+              <p class="font-medium text-slate-700">禱告會 - 領會</p>
+              <p class="text-sm text-slate-500">2023/11/01 (三) 07:30 PM</p>
+            </div>
+          </div>
+        </div>
+        <a href="#" class="mt-4 inline-block text-sm text-accent-teal font-medium hover:underline">查看完整服事表 →</a>
+      </div>
+
+      <!-- Card: Requests -->
+      <div class="card">
+        <div class="flex items-start justify-between mb-3">
+          <div>
+            <h2 class="text-xl font-semibold mb-1 text-slate-800">我的申請</h2>
+            <p class="text-sm text-slate-500">休假與換班狀態</p>
+          </div>
+          <div class="icon-placeholder bg-accent-orange">⇄</div>
+        </div>
+        <div class="space-y-3 mb-4">
+          <div class="flex justify-between items-center">
+            <span class="text-slate-600">待處理休假申請</span>
+            <span class="badge badge-pending">1</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-slate-600">待處理換班請求</span>
+            <span class="badge badge-pending">2</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-slate-600">等待我回應的換班</span>
+            <span class="badge badge-pending font-bold text-orange-700">1 !</span>
+          </div>
+        </div>
+        <div class="flex space-x-2">
+          <a href="#"
+            class="flex-1 text-center py-2 px-3 bg-orange-100 text-accent-orange text-sm font-medium rounded-lg hover:bg-orange-200 transition duration-150">申請休假</a>
+          <a href="#"
+            class="flex-1 text-center py-2 px-3 bg-orange-100 text-accent-orange text-sm font-medium rounded-lg hover:bg-orange-200 transition duration-150">請求換班</a>
+        </div>
+        <a href="#" class="mt-3 block text-center text-sm text-accent-orange font-medium hover:underline">查看所有申請 →</a>
+      </div>
+
+      <!-- Card: Find Substitute / Open Needs -->
+      <div class="card">
+        <div class="flex items-start justify-between mb-3">
+          <div>
+            <h2 class="text-xl font-semibold mb-1 text-slate-800">尋找幫手</h2>
+            <p class="text-sm text-slate-500">需要支援的服事</p>
+          </div>
+          <div class="icon-placeholder bg-accent-pink">🙋</div>
+        </div>
+        <div class="space-y-2 mb-4">
+          <p class="text-sm text-slate-600">目前有 <strong class="text-accent-pink">3</strong> 個服事需要支援：</p>
+          <ul class="list-disc list-inside text-sm text-slate-500 space-y-1 pl-2">
+            <li>主日招待 (10/29)</li>
+            <li>兒童主日學老師 (11/5)</li>
+            <li>...</li>
+          </ul>
+        </div>
+        <a href="#"
+          class="w-full text-center block py-2 px-3 bg-pink-100 text-accent-pink text-sm font-medium rounded-lg hover:bg-pink-200 transition duration-150">查看並協助
+          →</a>
+      </div>
+
+
+      <!-- Card: Team Schedule / Quick View -->
+      <div class="card">
+        <div class="flex items-start justify-between mb-3">
+          <div>
+            <h2 class="text-xl font-semibold mb-1 text-slate-800">團隊總覽</h2>
+            <p class="text-sm text-slate-500">查看他人或團隊服事</p>
+          </div>
+          <div class="icon-placeholder bg-accent-blue">👥</div>
+        </div>
+        <p class="text-sm text-slate-600 mb-4">快速查看指定人員或事工的排班情況。</p>
+        <!-- Maybe add a quick search or dropdown here later -->
+        <a href="#"
+          class="w-full text-center block py-2 px-3 bg-blue-100 text-accent-blue text-sm font-medium rounded-lg hover:bg-blue-200 transition duration-150">進入查詢模式
+          →</a>
+      </div>
+
+      <!-- Card: Achievements / Gamification -->
+      <div class="card">
+        <div class="flex items-start justify-between mb-3">
+          <div>
+            <h2 class="text-xl font-semibold mb-1 text-slate-800">服事成就</h2>
+            <p class="text-sm text-slate-500">紀錄與鼓勵</p>
+          </div>
+          <div class="icon-placeholder bg-accent-purple">🏆</div>
+        </div>
+        <div class="flex items-center space-x-3 mb-3">
+          <img src="https://via.placeholder.com/50/A78BFA/FFFFFF?text=✨" alt="Badge" class="w-12 h-12 rounded-lg">
+          <div>
+            <p class="font-medium text-slate-700">最新徽章：<span class="text-accent-purple">熱心服事 Lv.3</span></p>
+            <p class="text-xs text-slate-500">已完成 25 次服事</p>
+          </div>
+        </div>
+        <div class="mb-2">
+          <div class="flex justify-between text-xs text-slate-500 mb-1">
+            <span>下一目標：服事 50 次</span>
+            <span>75%</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div id="achievementProgress" class="progress-bar-fill bg-accent-purple" style="width: 0%;"></div>
+          </div>
+        </div>
+        <a href="#" class="mt-4 block text-sm text-center text-accent-purple font-medium hover:underline">查看我的成就 →</a>
+      </div>
+
+      <!-- Card: Settings & Integrations -->
+      <div class="card">
+        <div class="flex items-start justify-between mb-3">
+          <div>
+            <h2 class="text-xl font-semibold mb-1 text-slate-800">設定 & 工具</h2>
+            <p class="text-sm text-slate-500">同步與提醒</p>
+          </div>
+          <div class="icon-placeholder bg-accent-green">⚙️</div>
+        </div>
+        <div class="space-y-3">
+          <div class="flex items-center justify-between p-2 rounded-lg hover:bg-green-50">
+            <div class="flex items-center space-x-2">
+              <span class="text-lg">📅</span>
+              <span class="text-sm text-slate-600">Google 行事曆</span>
+            </div>
+            <span class="badge badge-success">已連結</span>
+          </div>
+          <div class="flex items-center justify-between p-2 rounded-lg hover:bg-green-50">
+            <div class="flex items-center space-x-2">
+              <span class="text-lg">💬</span>
+              <span class="text-sm text-slate-600">Line 提醒 / 整合</span>
+            </div>
+            <a href="#" class="text-xs text-accent-green font-medium hover:underline">設定</a>
+          </div>
+          <div class="flex items-center justify-between p-2 rounded-lg hover:bg-green-50">
+            <div class="flex items-center space-x-2">
+              <span class="text-lg">📜</span>
+              <span class="text-sm text-slate-600">版本歷史紀錄</span>
+            </div>
+            <a href="#" class="text-xs text-accent-green font-medium hover:underline">查看</a>
+          </div>
+          <!-- Conditional Admin/Leader links -->
+          <!--
+                     <div class="pt-3 mt-3 border-t border-slate-200">
+                         <h3 class="text-sm font-semibold text-slate-500 mb-2">管理員工具</h3>
+                         <a href="#" class="block text-sm text-accent-green hover:underline mb-1">排班管理</a>
+                         <a href="#" class="block text-sm text-accent-green hover:underline mb-1">用戶與權限</a>
+                         <a href="#" class="block text-sm text-accent-green hover:underline">統計報表</a>
+                     </div>
+                     -->
+        </div>
+      </div>
+
+    </div> <!-- End Grid -->
+
+    <!-- Footer -->
+    <footer class="mt-10 text-center text-xs text-slate-400">
+      教會服事表管理系統 (Ministry-scheduler) | © 2023
+    </footer>
+
+  </div> <!-- End Max Width Container -->
+</body>
+
+</html>
