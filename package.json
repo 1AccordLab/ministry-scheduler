@@ -5,11 +5,11 @@
     "font:download": "mkdir -p public && curl -L -o public/Cubic_11.ttf https://github.com/ACh-K/Cubic-11/raw/refs/heads/main/fonts/ttf/Cubic_11.ttf"
   },
   "devDependencies": {
-    "@tailwindcss/cli": "^4.1.4",
+    "@tailwindcss/cli": "^4.1.7",
     "alpinejs": "^3.14.9",
-    "daisyui": "^5.0.27",
+    "daisyui": "^5.0.38",
     "htmx.org": "^2.0.4",
-    "rolldown": "^1.0.0-beta.7",
-    "tailwindcss": "^4.1.4"
+    "rolldown": "^1.0.0-beta.9",
+    "tailwindcss": "^4.1.7"
   }
 }
