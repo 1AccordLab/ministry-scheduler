@@ -1,5 +1,5 @@
-import gleam/io
+import client/components/counter
 
-pub fn main() -> Nil {
-  io.println("Hello from client!")
+pub fn main() {
+  let assert Ok(_) = counter.register()
 }
