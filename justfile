@@ -1,3 +1,8 @@
+# Update dependencies
+update-deps:
+  cd client && gleam update
+  cd server && gleam update
+
 # Rebuild and restart the app on change
 dev:
   # Create this directory so watchexec can detect it during the first `just dev` run
