@@ -8,8 +8,11 @@ import lustre/event
 const component_name = "lustre-counter"
 
 pub fn register() -> Result(Nil, lustre.Error) {
-  let component = lustre.component(init, update, view, [])
-  lustre.register(component, component_name)
+  lustre.register(component(), component_name)
+}
+
+pub fn component() -> lustre.App(Nil, Model, Msg) {
+  lustre.component(init, update, view, [])
 }
 
 pub fn element() -> Element(Msg) {
