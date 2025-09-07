@@ -102,6 +102,6 @@ fn serve_index() -> wisp.Response {
     ])
 
   html
-  |> element.to_document_string_tree
+  |> element.to_document_string()
   |> wisp.html_response(200)
 }
