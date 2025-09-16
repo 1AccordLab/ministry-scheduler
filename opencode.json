@@ -1,0 +1,35 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "custom": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "custom",
+      "options": {
+        "baseURL": "http://localhost:4000"
+      },
+      "models": {
+        "us.anthropic.claude-sonnet-4-20250514-v1:0": {
+          "name": "claude sonnet 4"
+        },
+        "gpt-5": {
+          "name": "gpt 5"
+        },
+        "gpt-4.1": {
+          "name": "gpt 4.1"
+        }
+      }
+    },
+  },
+  "mcp": {
+    "grep": {
+      "type": "remote",
+      "url": "https://mcp.grep.app",
+      "enabled": true
+    },
+    "context7": {
+      "type": "remote",
+      "url": "https://mcp.context7.com/mcp",
+      "enabled": true
+    }
+  }
+}
