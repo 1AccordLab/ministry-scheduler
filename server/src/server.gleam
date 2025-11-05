@@ -1,83 +1,71 @@
 import client/components/counter
+import ewe.{type Request, type Response}
 import gleam/erlang/process
 import gleam/http
-import gleam/http/request.{type Request as HttpRequest}
-import gleam/http/response.{type Response as HttpResponse}
+import gleam/http/request
+import gleam/http/response
+import gleam/int
+import gleam/list
+import gleam/option.{None}
+import gleam/result
+import gleam/string
+import logging
 import lustre/attribute.{attribute}
 import lustre/element
 import lustre/element/html
 import lustre/server_component
-import mist
+import marceau
 import server/server_components/real_time_counter
-import wisp
-import wisp/wisp_mist
-
-type Context {
-  Context(static_dir: String, secret_key_base: String)
-}
 
 pub fn main() {
-  wisp.configure_logger()
-
-  let ctx =
-    Context(
-      static_dir: get_static_dir(),
-      secret_key_base: wisp.random_string(64),
-    )
+  logging.configure()
+  logging.set_level(logging.Info)
 
   let assert Ok(_) =
-    router(_, ctx)
-    |> mist.new
-    |> mist.port(3000)
-    |> mist.start
+    ewe.new(handler)
+    |> ewe.bind_all()
+    |> ewe.listening(port: 3000)
+    |> ewe.start
 
   process.sleep_forever()
 }
 
-fn get_static_dir() -> String {
-  let assert Ok(priv_dir) = wisp.priv_directory("server")
-  priv_dir <> "/static"
-}
+fn handler(req: Request) -> Response {
+  use <- log_request(req)
 
-fn router(req: HttpRequest(_), ctx: Context) -> HttpResponse(_) {
   case req.method, request.path_segments(req) {
-    http.Get, ["ws", path] -> ws_router(req, ctx, path)
-    _, _ -> http_router(req, ctx)
+    http.Get, [] -> serve_index()
+    http.Get, ["static", path] -> serve_static(req, path)
+    http.Get, ["ws", "counter"] -> real_time_counter.serve(req)
+    _, _ -> send_not_found()
   }
 }
 
-fn ws_router(req: HttpRequest(_), ctx: Context, path: String) -> HttpResponse(_) {
-  // ** Adds websocket APIs here **
-  case path {
-    "counter" -> real_time_counter.serve(req)
-    _ -> http_router(req, ctx)
+fn serve_static(req: Request, path: String) -> Response {
+  let file_ext =
+    req.path
+    |> string.split(".")
+    |> list.last
+    |> result.unwrap("")
+
+  let mime_type = marceau.extension_to_mime_type(file_ext)
+
+  let content_type = case mime_type {
+    "application/json" | "text/" <> _ -> mime_type <> "; charset=utf-8"
+    _ -> mime_type
+  }
+
+  case ewe.file("priv/static/" <> path, offset: None, limit: None) {
+    Ok(file) ->
+      response.new(200)
+      |> response.set_header("Content-Type", content_type)
+      |> response.set_body(file)
+
+    Error(_) -> send_not_found()
   }
 }
 
-fn http_router(req: HttpRequest(_), ctx: Context) -> HttpResponse(_) {
-  let handle_request = fn(req: wisp.Request) -> wisp.Response {
-    // ** Middlewares **
-    use <- wisp.log_request(req)
-    use <- wisp.rescue_crashes
-    use req <- wisp.handle_head(req)
-    use <- wisp.serve_static(req, under: "/static", from: ctx.static_dir)
-
-    // ** Adds http APIs here **
-    case req.method, request.path_segments(req) {
-      http.Get, [] -> serve_index()
-      _, _ -> wisp.not_found()
-    }
-  }
-
-  // convert wisp handler to mist handler
-  let mist_handler =
-    handle_request
-    |> wisp_mist.handler(ctx.secret_key_base)
-
-  mist_handler(req)
-}
-
-fn serve_index() -> wisp.Response {
+fn serve_index() -> Response {
   let html =
     html.html([], [
       html.head([], [
@@ -100,8 +88,35 @@ fn serve_index() -> wisp.Response {
         ]),
       ]),
     ])
+    |> element.to_document_string
 
-  html
-  |> element.to_document_string()
-  |> wisp.html_response(200)
+  send_html(html)
+}
+
+fn send_html(body: String) -> Response {
+  response.new(200)
+  |> response.set_header("Content-Type", "text/html; charset=utf-8")
+  |> response.set_body(ewe.TextData(body))
+}
+
+fn send_not_found() -> Response {
+  response.new(404)
+  |> response.set_header("Content-Type", "text/plain; charset=utf-8")
+  |> response.set_body(ewe.TextData("404 Not Found"))
+}
+
+fn log_request(req: Request, handler: fn() -> Response) -> Response {
+  let response = handler()
+
+  [
+    int.to_string(response.status),
+    " ",
+    string.uppercase(http.method_to_string(req.method)),
+    " ",
+    req.path,
+  ]
+  |> string.concat
+  |> logging.log(logging.Info, _)
+
+  response
 }
