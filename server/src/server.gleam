@@ -1,5 +1,23 @@
-import gleam/io
+import ewe.{type Request, type Response, TextData}
+import gleam/erlang/process
+import gleam/http/response
+import logging
 
 pub fn main() -> Nil {
-  io.println("Hello from server!")
+  logging.configure()
+  logging.set_level(logging.Info)
+
+  let assert Ok(_) =
+    ewe.new(handler)
+    |> ewe.bind_all
+    |> ewe.listening(port: 8000)
+    |> ewe.start
+
+  process.sleep_forever()
+}
+
+fn handler(_req: Request) -> Response {
+  response.new(200)
+  |> response.set_header("content-type", "text/plain; charset=utf-8")
+  |> response.set_body(TextData("Hello, world!"))
 }
