@@ -1,28 +1,31 @@
-import gleam/int
+import gleam/dynamic/decode
+import gleam/json
+import gleam/result
 import lustre
 import lustre/effect
-import lustre/element.{text}
-import lustre/element/html.{button, div, p}
-import lustre/event.{on_click}
+import plinth/browser/document
+import plinth/browser/element as browser_element
+import shared.{type Model, type Msg, Decr, Incr, view}
 
 pub fn main() -> Nil {
-  let init_model = 0
+  let init_model = case
+    document.query_selector("#model")
+    |> result.map(browser_element.inner_text)
+    |> result.unwrap("")
+    |> json.parse(decode.int)
+  {
+    Ok(count) -> count
+    Error(_) -> 0
+  }
+
   let app = lustre.application(init:, update:, view:)
   let assert Ok(_) = lustre.start(app, "#app", init_model)
 
   Nil
 }
 
-type Model =
-  Int
-
-type Msg {
-  Incr
-  Decr
-}
-
-fn init(_init_model: Model) -> #(Model, effect.Effect(Msg)) {
-  #(0, effect.none())
+fn init(init_model: Model) -> #(Model, effect.Effect(Msg)) {
+  #(init_model, effect.none())
 }
 
 fn update(model: Model, msg: Msg) -> #(Model, effect.Effect(Msg)) {
@@ -30,14 +33,4 @@ fn update(model: Model, msg: Msg) -> #(Model, effect.Effect(Msg)) {
     Incr -> #(model + 1, effect.none())
     Decr -> #(model - 1, effect.none())
   }
-}
-
-fn view(model: Model) -> element.Element(Msg) {
-  let count = int.to_string(model)
-
-  div([], [
-    button([on_click(Incr)], [text(" + ")]),
-    p([], [text(count)]),
-    button([on_click(Decr)], [text(" - ")]),
-  ])
 }
