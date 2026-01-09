@@ -2,21 +2,21 @@ import gleam/dynamic/decode
 import gleam/json
 import gleam/result
 import lustre
-import lustre/effect
+import lustre/effect.{type Effect}
+import lustre/element.{type Element} as lustre_element
 import plinth/browser/document
-import plinth/browser/element as browser_element
-import shared.{type Model, type Msg, Decr, Incr, view}
+import plinth/browser/element
+import shared/counter
 
 pub fn main() -> Nil {
-  let init_model = case
-    document.query_selector("#model")
-    |> result.map(browser_element.inner_text)
-    |> result.unwrap("")
-    |> json.parse(decode.int)
-  {
-    Ok(count) -> count
-    Error(_) -> 0
-  }
+  let init_model =
+    Model(counter: {
+      document.query_selector("#model")
+      |> result.map(element.inner_text)
+      |> result.unwrap("")
+      |> json.parse(decode.int)
+      |> result.unwrap(0)
+    })
 
   let app = lustre.application(init:, update:, view:)
   let assert Ok(_) = lustre.start(app, "#app", init_model)
@@ -24,13 +24,27 @@ pub fn main() -> Nil {
   Nil
 }
 
-fn init(init_model: Model) -> #(Model, effect.Effect(Msg)) {
+type Model {
+  Model(counter: counter.Model)
+}
+
+type Msg {
+  Counter(counter.Msg)
+}
+
+fn init(init_model: Model) -> #(Model, Effect(Msg)) {
   #(init_model, effect.none())
 }
 
-fn update(model: Model, msg: Msg) -> #(Model, effect.Effect(Msg)) {
+fn update(model: Model, msg: Msg) -> #(Model, Effect(Msg)) {
   case msg {
-    Incr -> #(model + 1, effect.none())
-    Decr -> #(model - 1, effect.none())
+    Counter(msg) -> {
+      let #(model, effect) = counter.update(model.counter, msg)
+      #(Model(counter: model), effect |> effect.map(Counter))
+    }
   }
+}
+
+fn view(model: Model) -> Element(Msg) {
+  counter.view(model.counter) |> lustre_element.map(Counter)
 }
