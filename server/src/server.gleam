@@ -14,7 +14,7 @@ pub fn main() -> Nil {
 
   let assert Ok(_) =
     ewe.new(handler)
-    |> ewe.bind_all
+    |> ewe.bind("0.0.0.0")
     |> ewe.listening(port: 8000)
     |> ewe.start
 
